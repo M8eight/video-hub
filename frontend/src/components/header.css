@@ -1,0 +1,6 @@
+.active-tab {
+    color: #dd3f00;
+    text-decoration: underline;
+    /* Смещаем подчёркивание на 20 пикселей вниз */
+    text-underline-offset: 0.9em;
+}

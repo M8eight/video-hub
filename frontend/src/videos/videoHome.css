@@ -1,0 +1,33 @@
+.cut-text {
+    white-space: nowrap;
+    /* Запрещаем перенос строк */
+    overflow: hidden;
+    /* Обрезаем все, что не помещается в область */
+    text-overflow: ellipsis;
+    /* Добавляем многоточие */
+}
+
+.duration-text {
+    float: right;
+}
+
+.parent video {
+    display: block;
+    width: 100%;
+}
+
+.parent div {
+    position: absolute;
+    width: 100%;
+    right: 0;
+    bottom: 0;
+    color: #fff;
+    padding: 8px 0;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.preview {
+    height: 13em;
+    overflow: hidden;
+    object-fit:cover; 
+}

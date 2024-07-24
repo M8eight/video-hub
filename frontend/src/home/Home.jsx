@@ -1,26 +1,15 @@
-import React from 'react'
-import Header from "../header/Header"
-import './home.css';
+import Header from "../components/Header";
+import React from "react";
 
-function Home() {
+function Home(params) {
     return (
         <React.Fragment>
-            <div className="container">
-                <header>
-                    <Header active="home" />
-                </header>
+            <Header currentTab="home"/>
 
-                    <div className="row">
-                        <div className="col"></div>
-                        <div className="col">
-                            <h2 className="text-center">Сайт с видео</h2>
-                            <img src="https://img.freepik.com/free-photo/realistic-z-letter-with-metallic-surface_23-2150458453.jpg" className="App-logo" alt="logo" />
-                        </div>
-                        <div className="col"></div>
-                    </div>
+            <div id="home">
+                <h2 className="text-center">Главная страница</h2>
             </div>
-
-        </React.Fragment >
+        </React.Fragment>
     );
 }
 
