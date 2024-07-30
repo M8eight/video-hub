@@ -1,6 +1,9 @@
 package com.videohub.configurations;
 
+import com.videohub.models.Comment;
+import com.videohub.models.Rating;
 import com.videohub.models.Video;
+import com.videohub.repositories.CommentRepository;
 import com.videohub.repositories.VideoRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,16 +18,15 @@ public class PreloadDB {
 
     @Bean
     @Autowired
-    CommandLineRunner preloadData(VideoRepository fr) {
+    CommandLineRunner preloadData(VideoRepository fr, CommentRepository commentRepository) {
         return args -> {
-            log.info("preload {}", fr.save(new Video("Gavno", "описание говна", 1488, "example2.mp4", "example.jpg")));
-            log.info("preload {}", fr.save(new Video("JAVA", "описание говна", 777,"example2.mp4", "example.jpg")));
-            log.info("preload {}", fr.save(new Video("JAVA", "описание говна", 777,"example2.mp4", "example.jpg")));
-            log.info("preload {}", fr.save(new Video("JAVA", "описание говна", 777,"example2.mp4", "example.jpg")));
-            log.info("preload {}", fr.save(new Video("JAVA", "описание говна описание говнаописаописание говнаописание говнаописание говнаописание говнаописание говнаописание говнаописание говнаописание говнаописание говнаописание говнаописание говнаописание говнаописание говнаописание говнаописание говнаописание говнаописание говнаописание говна", 777,"example2.mp4", "example.jpg")));
-            log.info("preload {}", fr.save(new Video("JAVA", "описание говна", 777,"example2.mp4", "example.jpg")));
-            log.info("preload {}", fr.save(new Video("JAVA", "описание говна", 777,"example2.mp4", "example.jpg")));
-            log.info("preload {}", fr.save(new Video("JAVA", "описание говна", 777,"example2.mp4", "example.jpg")));
+            log.info("preload {}", fr.save(new Video("Gavno", "описание говна", 1488, "example.mp4", "example.jpg", new Rating())));
+            log.info("preload {}", fr.save(new Video("Gavno", "описание говна", 1488, "example.mp4", "example.jpg", new Rating())));
+            log.info("preload {}", fr.save(new Video("Gavno", "описание говна", 1488, "example.mp4", "example.jpg", new Rating())));
+            log.info("preload {}", fr.save(new Video("Gavno", "описание говна", 1488, "example.mp4", "example.jpg", new Rating())));
+            log.info("preload {}", fr.save(new Video("Gavno", "описание говна", 1488, "example.mp4", "example.jpg", new Rating())));
+
+            log.info("preload {}", commentRepository.save(new Comment("Example comment", new Rating(), fr.getReferenceById(1L))));
         };
     }
 

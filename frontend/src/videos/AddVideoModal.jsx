@@ -6,13 +6,13 @@ function AddVideoModal(props) {
     const [description, setDescription] = useState('');
     const [video, setVideo] = useState(null);
 
-    function submit() {
+    function submit(e) {
         if (name !== "" && description !== "" && video != null) {
             let formReq = new FormData();
             formReq.append("name", name);
             formReq.append("description", description);
             formReq.append("videoFile", video);
-
+            e.target.innerHTML = 'Загрузка <span class="spinner-border spinner-border-sm" aria-hidden="true"></span></>'
             axios({
                 method: "post",
                 url: "http://localhost:8080/api/video",
@@ -23,6 +23,7 @@ function AddVideoModal(props) {
                     console.log(response);
                     window.location.reload();
                     //todo сделать что бы не обновлялась страница
+                    
                 })
                 .catch((response) => {
                     console.error(response);
@@ -53,7 +54,7 @@ function AddVideoModal(props) {
                                 <label htmlFor="descArea">Описание</label>
                             </div>
                             <input required onChange={(e) => setVideo(e.target.files[0])} className="form-control form-control-lg mb-3" name="file" type="file" accept="video/*" />
-                            <button onClick={submit} className="btn btn-lg btn-primary">Опубликовать</button>
+                            <button onClick={submit} className="btn btn-lg btn-primary submit-vid">Опубликовать</button>
                         </div>
                     </div>
                 </div>

@@ -1,5 +1,6 @@
 package com.videohub.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -38,11 +39,11 @@ public class Video {
     @NotNull
     private String preview_path;
 
-    @OneToOne
+    @OneToOne(cascade=CascadeType.ALL)
     @JoinColumn(name = "rating_id")
     public Rating rating;
 
-    @OneToMany(mappedBy = "video", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "video")
     private List<Comment> comments = new ArrayList<>();
 
     @CreationTimestamp
@@ -53,11 +54,12 @@ public class Video {
     @Column
     private java.sql.Timestamp updated_at;
 
-    public Video(String name, String description, int duration, String video_path, String preview_path) {
+    public Video(String name, String description, int duration, String video_path, String preview_path, Rating rating) {
         this.name = name;
         this.description = description;
         this.duration = duration;
         this.video_path = video_path;
         this.preview_path = preview_path;
+        this.rating = rating;
     }
 }

@@ -15,7 +15,7 @@ public class Rating {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long rating_up;
+    private Long rating_up = 0L;
 
-    private Long rating_down;
+    private Long rating_down = 0L;
 }

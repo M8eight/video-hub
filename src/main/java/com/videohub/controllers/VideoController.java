@@ -5,6 +5,7 @@ import com.videohub.exceptions.VideoNotFoundException;
 import com.videohub.helpers.FileStorageManager;
 import com.videohub.helpers.GetImageFromVideo;
 import com.videohub.helpers.GetVideoDuration;
+import com.videohub.models.Rating;
 import com.videohub.models.Video;
 import com.videohub.repositories.VideoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +58,11 @@ public class VideoController {
         video.setVideo_path(path);
         video.setDuration(durationSecond);
         video.setPreview_path(previewPath);
+        video.setRating(new Rating());
         return videoRepository.save(video);
+        //todo сделать csrf и всякую защиту
+        //todo сделать авторизацию
+        //todo админка
     }
 
     @GetMapping("/video/{id}")
@@ -66,19 +71,44 @@ public class VideoController {
         return videoRepository.findById(id).orElseThrow(() -> new VideoNotFoundException(id));
     }
 
-//    @PutMapping("/video/{id}")
-//    Video editvideo(@PathVariable Long id) {
-//        return videoRepository.findById(id).map( (video) -> {
-//            video.setName(newvideo.getName());
-//            video.setDuration(newvideo.getDuration());
-//            return videoRepository.save(video);
-//        }).orElseGet(() -> {
-//            return videoRepository.save(newvideo);
-//        });
-//    }
+//    todo сделать изменение
+    @PutMapping("/video/{id}/edit")
+    @CrossOrigin
+    Video editVideo(@PathVariable Long id, @RequestParam String name, @RequestParam String description, @RequestParam MultipartFile videoFile) {
+
+        Video video = videoRepository.getReferenceById(id);
+        String previewPath, path = "";
+        int durationSecond = 0;
+
+        if (videoFile != null) {
+            String extension = videoFile.getOriginalFilename().substring(videoFile.getOriginalFilename().lastIndexOf(".")+1);
+            if (!extension.equals("mp4") && !extension.equals("avi")) {
+                throw new VideoBadRequestException(name);
+            }
+            path = fileStorageManager.save(videoFile);
+            durationSecond = getVideoDuration.getDuration(path);
+            previewPath = getImageFromVideo.getImageFromVideo(path, durationSecond);
+        } else {
+            previewPath = video.getPreview_path();
+            path = video.getVideo_path();
+            durationSecond = video.getDuration();
+        }
+
+        if (name != null) {
+            video.setName(name);
+        }
+        if (description != null) {
+            video.setDescription(description);
+        }
+        video.setVideo_path(path);
+        video.setDuration(durationSecond);
+        video.setPreview_path(previewPath);
+        video.setRating(video.getRating());
+        return videoRepository.save(video);
+    }
 
     @DeleteMapping("/video/{id}")
-    void deletevideo(@PathVariable Long id) {
+    void deleteVideo(@PathVariable Long id) {
         videoRepository.deleteById(id);
     }
 
