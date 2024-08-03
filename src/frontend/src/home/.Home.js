@@ -13,4 +13,4 @@ function Home(params) {
     );
 }
 
-export default Home;
+// export default Home;

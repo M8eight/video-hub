@@ -82,12 +82,8 @@ function VideoHome(params) {
                     </div>
                 </div>
 
-
-
             </div>
 
         </React.Fragment>
     );
 }
-
-export default VideoHome;
