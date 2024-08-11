@@ -4,7 +4,7 @@ import Header from "../../components/Header"
 export default function Login(props) {
     return (
         <React.Fragment>
-            <Header />
+            <Header currentTab="login" />
             <h1 className="text-center">Войти в аккаунт</h1>
             <input type="text" className="form-control form-control-lg mb-2 text-center" required placeholder="Ваш логин" />
             <input type="password" className="form-control form-control-lg mb-2 text-center" required placeholder="Ваш пароль" />

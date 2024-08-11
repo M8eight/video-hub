@@ -13,7 +13,7 @@ export default class Header extends React.Component {
 
     render() {
         return (
-            <nav className="navbar navbar-expand-lg bg-body-tertiary">
+            <nav className="navbar navbar-expand-lg bg-body-tertiary mb-4">
                 <div className="container-fluid">
                     <a className="navbar-brand" href="/">VideoHub</a>
                     <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -30,8 +30,8 @@ export default class Header extends React.Component {
                         </ul>
                     </div>
                     <form class="d-flex" role="search">
-                        <button class="btn btn-outline-primary me-2" type="submit">Войти</button>
-                        <button class="btn btn-outline-success" type="submit">Регистрация</button>
+                        <a href='/login' class={"btn btn" + (this.checkActive(this.props.currentTab, "login") ? "" : "-outline") + "-primary me-2"} type="submit">Войти</a>
+                        <a href='/register' class={"btn btn" + (this.checkActive(this.props.currentTab, "register") ? "" : "-outline") + "-success"} type="submit">Регистрация</a>
                     </form>
                 </div>
             </nav>

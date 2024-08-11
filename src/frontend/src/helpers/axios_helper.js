@@ -9,5 +9,6 @@ export const request = (method, url, data=[], headers={}) => {
         method: method,
         url: url,
         data: data,
+        headers: headers
     })
 }

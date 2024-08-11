@@ -4,7 +4,7 @@ import Header from "../../components/Header"
 export default function Register(props) {
     return (
         <React.Fragment>
-            <Header />
+            <Header currentTab="register" />
             <div className="container-fluid p-3">
                 <h1 className="text-center">Регистрация</h1>
                 <input type="text" className="form-control form-control-lg mb-2 text-center" required placeholder="Ваша почта" />
