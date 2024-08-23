@@ -1,0 +1,33 @@
+.box {
+    background: #5a5a5a;
+    padding-bottom: 100%;
+    border-radius: 5px;
+    margin-top: 20px !important;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+}
+
+:root {
+    --animation-time: 2s;
+}
+
+.animate-flicker {
+    animation: fadeIn var(--animation-time) ease-in-out infinite alternate;
+}
+
+.form-frame {
+    backdrop-filter: blur(10px);
+}
+
+.convex-button {
+    box-shadow: inset 0px 5px 10px 0px rgba(0, 0, 0, 0.5);
+}
+
+.convex-button:hover {
+    box-shadow: inset 0px 10px 20px 2px rgba(0, 0, 0, 0.25);
+}
