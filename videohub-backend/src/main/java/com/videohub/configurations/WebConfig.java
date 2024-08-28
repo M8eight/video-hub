@@ -16,7 +16,8 @@ public class WebConfig implements WebMvcConfigurer {
         log.info("Allowed fronted domain is: " + allowedDomain);
         registry.addMapping("/**")
                 .allowedOrigins(allowedDomain)
-                .allowedMethods("GET","POST", "PUT", "DELETE", "OPTIONS", "HEAD");
+                .allowedMethods("GET","POST", "PUT", "DELETE", "OPTIONS", "HEAD")
+                .maxAge(3600L);
     }
 
 }

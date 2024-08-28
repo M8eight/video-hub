@@ -47,7 +47,7 @@ public class CommentController {
     }
 
     @CrossOrigin
-    @PostMapping("/video/{id}/comment/delete")
+    @DeleteMapping("/video/{id}/comment/delete")
     public void deleteComment(@PathVariable Long id) {
         commentRepository.deleteById(id);
     }

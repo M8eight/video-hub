@@ -1,64 +1,72 @@
 package com.videohub.configurations;
 
+import com.videohub.filters.JwtAuthenticationFilter;
 import com.videohub.helpers.SecurityHelpers;
 import com.videohub.services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
     private final UserService userService;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final SecurityHelpers securityHelpers;
-    //    @Autowired
-//    public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-//        auth
-//                .inMemoryAuthentication()
-//                .withUser("user1")
-//                .password(passwordEncoder().encode("user1Pass"))
-//                .authorities("ROLE_USER");
-//    }
-
-    //                        request.requestMatchers("/api/**")
-//                        .permitAll()
-//                        .requestMatchers(HttpMethod.GET, "/media/**", "/static/**")
-//                        .permitAll()
-
-    //                .csrf(csrf -> csrf.csrfTokenRepository
-//                        (CookieCsrfTokenRepository.withHttpOnlyFalse()))
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http
-                .authorizeHttpRequests(request -> request
-                        .anyRequest()
-                        .anonymous())
-                .formLogin(form -> form.loginPage("/login")
-                        .loginProcessingUrl("/login")
-                        .defaultSuccessUrl("/", true)
-                        .failureUrl("/login?error=true"))
-                .logout(logout -> logout.logoutUrl("/logout")
-                        .deleteCookies("JSESSIONID"))
+        http
+                .csrf(AbstractHttpConfigurer::disable)
                 .cors(Customizer.withDefaults())
-                .csrf(csrf -> csrf.disable())
-                .build();
-    }
-//                .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse())
+                .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationProvider(authenticationProvider())
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .authorizeHttpRequests(request -> request
+                        .requestMatchers(HttpMethod.GET, "/api/videos").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/video/**").permitAll()
+                        .requestMatchers("/api/video/*").authenticated()
 
-    @Autowired
-    protected void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userService).passwordEncoder(securityHelpers.passwordEncoder());
+                        .requestMatchers(HttpMethod.GET, "/api/video/*/comments").permitAll()
+                        .requestMatchers("/api/video/*/comment/new").authenticated()
+                        .requestMatchers("/api/video/**").hasRole("ROLE_ADMIN")
+
+                        .requestMatchers("/api/rating/**").authenticated()
+                        .requestMatchers("/auth/**").anonymous()
+
+                        .anyRequest().hasRole("ROLE_ADMIN"));
+        return http.build();
+    }
+
+    @Bean
+    public AuthenticationProvider authenticationProvider() {
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
+        authenticationProvider.setUserDetailsService(userService.userDetailsService());
+        authenticationProvider.setPasswordEncoder(securityHelpers.passwordEncoder());
+        return authenticationProvider;
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration configuration) throws Exception {
+        return configuration.getAuthenticationManager();
     }
 }

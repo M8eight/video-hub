@@ -1,6 +1,6 @@
 package com.videohub.services;
 
-import com.videohub.daos.VideoForm;
+import com.videohub.dtos.VideoDto;
 import com.videohub.exceptions.VideoBadRequestException;
 import com.videohub.helpers.FfmpegHelpers;
 import com.videohub.helpers.FileStorageManager;
@@ -9,7 +9,6 @@ import com.videohub.models.Rating;
 import com.videohub.models.Video;
 import com.videohub.repositories.VideoRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -47,29 +46,29 @@ public class VideoService implements VideoDAO {
     }
 
     @Override
-    public Video addVideo(VideoForm videoForm) {
-        String extension = Objects.requireNonNull(videoForm.getVideoFile().getOriginalFilename())
-                .substring(videoForm.getVideoFile().getOriginalFilename().lastIndexOf(".") + 1);
+    public Video addVideo(VideoDto videoDto) {
+        String extension = Objects.requireNonNull(videoDto.getVideoFile().getOriginalFilename())
+                .substring(videoDto.getVideoFile().getOriginalFilename().lastIndexOf(".") + 1);
 
         if (!extension.equals("mp4") && !extension.equals("avi")) {
-            throw new VideoBadRequestException(videoForm.getName());
+            throw new VideoBadRequestException(videoDto.getName());
         }
 
-        String path = fileStorageManager.save(videoForm.getVideoFile());
+        String path = fileStorageManager.save(videoDto.getVideoFile());
         int durationSecond = ffmpegHelpers.getDuration(path);
         String previewPath = ffmpegHelpers.getImageFromVideo(path, durationSecond);
 
-        return videoRepository.save(new Video(videoForm.getName(), videoForm.getDescription(), durationSecond, path, previewPath, new Rating()));
+        return videoRepository.save(new Video(videoDto.getName(), videoDto.getDescription(), durationSecond, path, previewPath, new Rating()));
         //todo сделать авторизацию
         //todo админка
     }
 
     @Override
-    public Video editVideo(Long id, VideoForm videoForm) {
+    public Video editVideo(Long id, VideoDto videoDto) {
         Video video = videoRepository.findById(id).orElseThrow();
 
-        video.setName(videoForm.getName());
-        video.setDescription(videoForm.getDescription());
+        video.setName(videoDto.getName());
+        video.setDescription(videoDto.getDescription());
         return videoRepository.save(video);
     }
 }

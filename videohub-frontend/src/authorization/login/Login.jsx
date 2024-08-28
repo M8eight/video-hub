@@ -4,7 +4,7 @@ import Header from "../../components/Header"
 import { redirect } from "react-router-dom";
 import { useForm } from "react-hook-form";
 
-import { request } from "../../helpers/axios_helper";
+import { request, authRequest, setAuthHeader } from "../../helpers/axios_helper";
 
 import "../authorization.css"
 import "./login.css"
@@ -31,9 +31,12 @@ export default function Login(props) {
 
 
     function onSubmit(data) {
-        request("post", "http://localhost:8080/auth/register", data)
+        let formReq = new FormData();
+        formReq.append("login", data.login);
+        formReq.append("password", data.password);
+        authRequest("post", "http://localhost:8080/auth/login", formReq)
             .then((response) => {
-                console.log(response);
+                setAuthHeader(response.data)
                 redirect("/")
                 //todo сделать что бы не обновлялась страница
             })
@@ -59,33 +62,18 @@ export default function Login(props) {
                         <h1 className="text-center">Вход</h1>
 
                         <form onSubmit={handleSubmit(onSubmit)}>
-                            <input type="text" className="form-control form-control-lg mb-2 convex-button" placeholder="Ваш email"
-                                {...register("email", {
-                                    required: true,
-                                    minLength: 5,
-                                    pattern: /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1, 3}\.[0-9]{1, 3}\.[0-9]{1, 3}\.[0-9]{1, 3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/
-                                })}
-                            />
-                            {errors?.email?.type === "required" && <p className="fs-4 pb-2 mb-4 text-danger border-bottom border-danger"> Поле email обязательно</p>}
-                            {errors?.email?.type === "minLength" && (
-                                <p className="fs-4 pb-2 mb-4 text-danger border-bottom border-danger">Поле email должно быть больше 20 символов</p>
-                            )}
-                            {errors?.email?.type === "pattern" && (
-                                <p className="fs-4 pb-2 mb-4 text-danger border-bottom border-danger">Это не электронная почта</p>
-                            )}
-
                             <input type="text" className="form-control form-control-lg mb-2 convex-button" placeholder="Ваше имя пользователя"
-                                {...register("username", {
+                                {...register("login", {
                                     required: true,
                                     maxLength: 20,
                                     minLength: 5
                                 })}
                             />
-                            {errors?.username?.type === "required" && <p className="fs-4 pb-2 mb-4 text-danger border-bottom border-danger">Поле имя пользователя обязательно</p>}
-                            {errors?.username?.type === "maxLength" && (
+                            {errors?.login?.type === "required" && <p className="fs-4 pb-2 mb-4 text-danger border-bottom border-danger">Поле имя пользователя обязательно</p>}
+                            {errors?.login?.type === "maxLength" && (
                                 <p className="fs-4 pb-2 mb-4 text-danger border-bottom border-danger">Поле имя пользователя должно быть не больше 20 символов</p>
                             )}
-                            {errors?.username?.type === "minLength" && (
+                            {errors?.login?.type === "minLength" && (
                                 <p className="fs-4 pb-2 mb-4 text-danger border-bottom border-danger">Поле имя пользователя должно быть больше 5 символов</p>
                             )}
 

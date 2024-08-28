@@ -1,52 +1,44 @@
 import axios from "axios";
 
-export const instance = axios.create({
-    withCredentials: true,
-    baseURL: "http://localhost:8080/",
-    headers: {
-        post: {
-            "Content-Type": "application/json"
-        }
-    }
-});
+axios.defaults.baseURL = "http://localhost:8080";
+axios.defaults.headers.post["Content-Type"] = "application/json";
 
-instance.interceptors.request.use(
-    (config) => {
-        config.headers.Authorization = `Bearer ${localStorage.getItem("token")}`
-        return config
-    }
-)
+export const getAuthToken = () => {
+    return window.localStorage.getItem("auth_token");
+}
 
-instance.interceptors.response.use(
-    (config) => {
-        return config;
-    },
-    async (error) => {
-        const originalRequest = { ...error.config };
-        originalRequest._isRetry = true;
-        if (
-            error.response.status === 401 &&
-            error.config &&
-            !error.config._isRetry
-        ) {
-            try {
-                const resp = await instance.get("/api/refresh");
-                localStorage.setItem("token", resp.data.accessToken);
-                return instance.request(originalRequest);
-            } catch (error) {
-                console.log("AUTH ERROR");
-            }
-        }
-        throw error;
+export const removeAuth = () => {
+    window.localStorage.removeItem("auth_token");
+}
+
+export const setAuthHeader = (token) => {
+    if (token !== null) {
+        window.localStorage.setItem("auth_token", token);
+    } else {
+        window.localStorage.removeItem("auth_token");
     }
-);
+}
 
 export const request = (method, url, data = [], headers = {}) => {
-    // if headers != null
-    return instance({
+
+    if (getAuthToken() !== null && getAuthToken() !== "null" && getAuthToken() !== undefined && getAuthToken() !== "undefined") {
+        headers['Authorization'] = `Bearer ${getAuthToken()}`;
+    }
+
+    return axios({
         method: method,
         url: url,
+        headers: headers,
         data: data,
-        headers: headers
-    })
+    });
+}
+
+export const authRequest = (method, url, data = [], headers = {}) => {
+    return axios({
+        method: method,
+        url: url,
+        headers: headers,
+        data: data,
+        responseType: 'text'
+    });
 }

@@ -1,6 +1,6 @@
 package com.videohub.interfaces;
 
-import com.videohub.daos.VideoForm;
+import com.videohub.dtos.VideoDto;
 import com.videohub.models.Video;
 
 import java.util.List;
@@ -11,6 +11,6 @@ public interface VideoDAO {
     Optional<Video> getRefById(Long id);
     List<Video> getAll();
     void deleteById(Long id);
-    Video addVideo(VideoForm videoForm);
-    Video editVideo(Long id, VideoForm videoForm);
+    Video addVideo(VideoDto videoDto);
+    Video editVideo(Long id, VideoDto videoDto);
 }

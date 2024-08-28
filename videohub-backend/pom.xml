@@ -31,6 +31,7 @@
         <spring.version>3.3.2</spring.version>
         <jjwt.version>0.12.6</jjwt.version>
         <springdoc-openapi.version>2.6.0</springdoc-openapi.version>
+        <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
     </properties>
     <dependencies>
         <!-- Base Spring -->
@@ -72,7 +73,7 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- SpringDoc OpenApi -->
+        <!-- Debug -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
@@ -116,6 +117,18 @@
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct</artifactId>
+            <version>${org.mapstruct.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mapstruct</groupId>
+            <artifactId>mapstruct-processor</artifactId>
+            <version>${org.mapstruct.version}</version>
+        </dependency>
+
 
     </dependencies>
 

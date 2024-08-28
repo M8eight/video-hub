@@ -1,11 +1,10 @@
 package com.videohub.models;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
+import org.springframework.lang.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -18,7 +17,7 @@ import java.util.Set;
 @ToString
 @RequiredArgsConstructor
 @Table(name = "users", uniqueConstraints = {
-        @UniqueConstraint(columnNames = "username"),
+        @UniqueConstraint(columnNames = "login"),
         @UniqueConstraint(columnNames = "email")
 })
 public class User implements UserDetails {
@@ -27,8 +26,9 @@ public class User implements UserDetails {
     Long id;
 
     @NotNull
-    String username;
+    String login;
 
+    @Email
     String email;
 
     String phoneNumber;
@@ -38,7 +38,8 @@ public class User implements UserDetails {
     @NotNull
     String password;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
+    @ToString.Exclude
     private Set<Role> roles;
 
     @Override
@@ -60,5 +61,10 @@ public class User implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return getRoles();
+    }
+
+    @Override
+    public String getUsername() {
+        return getLogin();
     }
 }

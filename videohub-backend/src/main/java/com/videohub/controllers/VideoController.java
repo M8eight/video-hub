@@ -1,11 +1,10 @@
 package com.videohub.controllers;
 
-import com.videohub.daos.VideoForm;
+import com.videohub.dtos.VideoDto;
 import com.videohub.exceptions.VideoNotFoundException;
 import com.videohub.models.Video;
 import com.videohub.services.VideoService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,8 +24,8 @@ public class VideoController {
 
     @CrossOrigin
     @PostMapping("/video")
-    Video newVideo(@ModelAttribute VideoForm videoForm) {
-        return videoService.addVideo(videoForm);
+    Video newVideo(@ModelAttribute VideoDto videoDto) {
+        return videoService.addVideo(videoDto);
     }
 
     @GetMapping("/video/{id}")
@@ -38,8 +37,8 @@ public class VideoController {
     //    todo сделать изменение
     @PutMapping("/video/{id}/edit")
     @CrossOrigin
-    Video editVideo(@PathVariable Long id, @ModelAttribute VideoForm videoForm) {
-        return videoService.editVideo(id, videoForm);
+    Video editVideo(@PathVariable Long id, @ModelAttribute VideoDto videoDto) {
+        return videoService.editVideo(id, videoDto);
     }
 
     @DeleteMapping("/video/{id}")
