@@ -5,12 +5,6 @@ import com.videohub.repositories.RatingRepository;
 import com.videohub.repositories.VideoRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("api")
@@ -18,8 +12,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class RatingController {
 
-    VideoRepository videoRepository;
-    RatingRepository ratingRepository;
+    private final RatingRepository ratingRepository ;
 
     @CrossOrigin
     @PostMapping("/rating/{id}/up")

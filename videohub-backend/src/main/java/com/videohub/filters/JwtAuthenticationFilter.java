@@ -24,7 +24,6 @@ import java.io.IOException;
 
 @Component
 @AllArgsConstructor
-@Slf4j
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
     public static final String BEARER_PREFIX = "Bearer ";
     public static final String HEADER_NAME = "Authorization";
@@ -45,7 +44,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String jwt = authHeader.substring(BEARER_PREFIX.length());
-        log.info(jwt);
         String login = jwtService.extractUsername(jwt);
 
         if (!(login.isBlank()) && SecurityContextHolder.getContext().getAuthentication() == null) {

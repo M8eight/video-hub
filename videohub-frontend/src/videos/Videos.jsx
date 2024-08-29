@@ -2,6 +2,7 @@ import React from 'react'
 import Header from '../components/Header';
 import { request } from '../helpers/axios_helper';
 import AddVideoModal from './AddVideoModal';
+import { isAuth } from '../helpers/jwt_helper';
 
 import "./videoHome.css";
 
@@ -11,8 +12,10 @@ export default class Videos extends React.Component {
         this.state = {
             data: [],
             errors: "visually-hidden"
-        }
+        }    
     }
+
+    IS_AUTH = isAuth();
 
     getVideos() {
         request('get', '/api/videos')
@@ -41,13 +44,14 @@ export default class Videos extends React.Component {
                 <div id="videos">
                     <h2 className="text-center">Все видео</h2>
 
-                    <div className="container">
+                    {!this.IS_AUTH && (<div className='fs-3 text-center public-video-text'>Войдите что бы публиковать видео</div>)}
+                    {this.IS_AUTH && (<div className="container">
                         <div className="col"></div>
                         <div className="col ">
                             <button type="button" className="btn btn-warning w-100 mb-3" data-bs-toggle="modal" data-bs-target="#videoModal">Загрузить видео</button>
                         </div>
                         <div className="col"></div>
-                    </div>
+                    </div>)}
 
                     <div className="container-fluid">
                         <div className="row row-cols-1 row-cols-md-5 g-4">

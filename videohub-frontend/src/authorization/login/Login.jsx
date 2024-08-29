@@ -37,8 +37,7 @@ export default function Login(props) {
         authRequest("post", "http://localhost:8080/auth/login", formReq)
             .then((response) => {
                 setAuthHeader(response.data)
-                redirect("/")
-                //todo сделать что бы не обновлялась страница
+                window.location.reload(); 
             })
             .catch((response) => {
                 console.error(response);

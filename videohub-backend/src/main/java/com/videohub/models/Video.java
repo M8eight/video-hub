@@ -30,7 +30,6 @@ public class Video {
     @NotNull
     private int duration;
 
-    @NotNull
     @Column(columnDefinition = "TEXT")
     private String description;
 

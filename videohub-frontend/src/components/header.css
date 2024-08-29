@@ -7,7 +7,8 @@
 
 .navbar {
     animation-duration: 3s;
-    animation-name: slidein;
+    animation-name: slidein ;
+    animation-fill-mode: both
 }
 
 @keyframes slidein {

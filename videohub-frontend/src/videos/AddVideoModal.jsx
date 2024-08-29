@@ -38,9 +38,7 @@ export default class AddVideoModal extends React.Component {
 
             request("post", "http://localhost:8080/api/video", formReq, { "Content-Type": "multipart/form-data" })
                 .then((response) => {
-                    console.log(response);
-                    // window.location.reload();
-                    //todo сделать что бы не обновлялась страница
+                    window.location.reload(); 
                 })
                 .catch((response) => {
                     console.error(response);

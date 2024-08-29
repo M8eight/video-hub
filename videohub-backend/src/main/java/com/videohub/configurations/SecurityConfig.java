@@ -42,18 +42,21 @@ public class SecurityConfig {
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(request -> request
+                        .requestMatchers(HttpMethod.GET, "/media/**").permitAll()
+
                         .requestMatchers(HttpMethod.GET, "/api/videos").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/video/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/video").authenticated()
                         .requestMatchers("/api/video/*").authenticated()
 
                         .requestMatchers(HttpMethod.GET, "/api/video/*/comments").permitAll()
                         .requestMatchers("/api/video/*/comment/new").authenticated()
-                        .requestMatchers("/api/video/**").hasRole("ROLE_ADMIN")
+                        .requestMatchers("/api/video/**").hasRole("ADMIN")
 
                         .requestMatchers("/api/rating/**").authenticated()
                         .requestMatchers("/auth/**").anonymous()
 
-                        .anyRequest().hasRole("ROLE_ADMIN"));
+                        .anyRequest().hasRole("ADMIN"));
         return http.build();
     }
 

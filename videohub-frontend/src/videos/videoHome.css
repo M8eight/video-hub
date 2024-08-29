@@ -31,3 +31,7 @@
     overflow: hidden;
     object-fit:cover; 
 }
+
+.public-video-text {
+    filter: drop-shadow(0 0 20px #ff5e00);
+}

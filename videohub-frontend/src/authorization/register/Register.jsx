@@ -34,8 +34,7 @@ export default function Register(props) {
             .then((response) => {
                 console.log(response.data)
                 setAuthHeader(response.data)
-                redirect("/")
-                //todo сделать что бы не обновлялась страница
+                window.location.reload();
             })
             .catch((response) => {
                 console.error(response);
