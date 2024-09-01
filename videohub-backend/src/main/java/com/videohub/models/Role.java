@@ -18,6 +18,9 @@ import java.util.Set;
 @ToString
 @RequiredArgsConstructor
 @Table(name = "roles")
+@JsonIgnoreProperties(value = {
+        "users"
+})
 public class Role implements GrantedAuthority {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

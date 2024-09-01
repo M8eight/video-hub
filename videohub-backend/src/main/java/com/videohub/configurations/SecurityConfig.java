@@ -56,6 +56,8 @@ public class SecurityConfig {
                         .requestMatchers("/api/rating/**").authenticated()
                         .requestMatchers("/auth/**").anonymous()
 
+                        .requestMatchers("/api/user/*").permitAll()
+
                         .anyRequest().hasRole("ADMIN"));
         return http.build();
     }

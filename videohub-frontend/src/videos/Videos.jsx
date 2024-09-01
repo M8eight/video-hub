@@ -3,59 +3,82 @@ import Header from '../components/Header';
 import { request } from '../helpers/axios_helper';
 import AddVideoModal from './AddVideoModal';
 import { isAuth } from '../helpers/jwt_helper';
+import InfiniteScroll from "react-infinite-scroll-component";
 
 import "./videoHome.css";
 
-export default class Videos extends React.Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            data: [],
-            errors: "visually-hidden"
-        }    
-    }
 
-    IS_AUTH = isAuth();
+export default function Videos() {
+    const [data, setData] = React.useState([]);
+    const [errors, setErrors] = React.useState("visually-hidden");
+    const [limit, setLimit] = React.useState(15);
+    const [offset, setOffset] = React.useState(0);
+    const IS_AUTH = isAuth();
 
-    getVideos() {
-        request('get', '/api/videos')
+    React.useEffect(() => {
+        getVideos();
+    }, []);
+
+    const getVideos = () => {
+        request('get', '/api/videos?offset=' + offset + '&limit=' + limit)
             .then((res) => {
-                this.setState({ data: res.data })
+                setData(res.data);
+                setOffset(offset + 1);
+                console.log(offset);
             }).catch(err => {
-                this.setState({ errors: "" })
+                console.error("Error getVideos")
             })
     }
 
-    componentDidMount() {
-        this.getVideos();
+    const getMoreVideos = () => {
+        request('get', '/api/videos?offset=' + offset + '&limit=' + limit)
+            .then((res) => {
+                console.warn(res.data?.content)
+                let dataObj = data
+                dataObj.content = dataObj.content.concat(res.data.content)
+                dataObj.last = res.data.last
+                setData(dataObj);
+                setOffset(offset + 1);
+                console.log(offset);
+            }).catch(err => {
+                console.error("Error getVideos " + err)
+            })
     }
 
-    render() {
-        return (
-            <React.Fragment>
-                <Header currentTab="videos" />
+    return (
+        <React.Fragment>
+            <Header currentTab="videos" />
 
-                <div className={"alert alert-danger w-100 text-center " + this.state.errors} role="alert">
-                    Ошибка загрузки видео
-                </div>
+            <div className={"alert alert-danger w-100 text-center " + errors} role="alert">
+                Ошибка загрузки видео
+            </div>
 
-                <AddVideoModal />
+            <AddVideoModal />
 
-                <div id="videos">
-                    <h2 className="text-center">Все видео</h2>
+            <div id="videos">
+                <h2 className="text-center">Все видео</h2>
 
-                    {!this.IS_AUTH && (<div className='fs-3 text-center public-video-text'>Войдите что бы публиковать видео</div>)}
-                    {this.IS_AUTH && (<div className="container">
-                        <div className="col"></div>
-                        <div className="col ">
-                            <button type="button" className="btn btn-warning w-100 mb-3" data-bs-toggle="modal" data-bs-target="#videoModal">Загрузить видео</button>
-                        </div>
-                        <div className="col"></div>
-                    </div>)}
+                {!IS_AUTH && (<div className='fs-3 text-center public-video-text'>Войдите что бы публиковать видео</div>)}
+                {IS_AUTH && (<div className="container">
+                    <div className="col"></div>
+                    <div className="col ">
+                        <button type="button" className="btn btn-warning w-100 mb-3" data-bs-toggle="modal" data-bs-target="#videoModal">Загрузить видео</button>
+                    </div>
+                    <div className="col"></div>
+                </div>)}
 
+
+                <InfiniteScroll
+                    dataLength={data.content?.length !== undefined ? data.content?.length : 0}
+                    next={getMoreVideos}
+                    hasMore={!data.last}
+                    loader={<h4 className='text-center'>Loading...</h4>}
+                    endMessage={<h4 className='text-center'>Все конец</h4>}
+
+                >
                     <div className="container-fluid">
                         <div className="row row-cols-1 row-cols-md-5 g-4">
-                            {this.state.data.map((el) => (
+                            {data.content?.map((el) => (
                                 <div key={el.id} className="col">
                                     <a href={"http://localhost:3000/video/" + el.id}>
                                         <div className="card mb-3 parent">
@@ -69,10 +92,9 @@ export default class Videos extends React.Component {
                             ))}
                         </div>
                     </div>
+                </InfiniteScroll>
 
-                </div>
-
-            </React.Fragment>
-        )
-    }
+            </div>
+        </React.Fragment >
+    )
 }

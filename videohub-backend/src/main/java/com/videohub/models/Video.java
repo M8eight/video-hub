@@ -39,6 +39,9 @@ public class Video {
     @NotNull
     private String preview_path;
 
+    @ManyToOne
+    private User author;
+
     @OneToOne(cascade=CascadeType.ALL)
     @JoinColumn(name = "rating_id")
     public Rating rating;

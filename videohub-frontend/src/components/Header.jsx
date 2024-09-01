@@ -1,11 +1,12 @@
 import React from 'react'
 import { removeAuth } from '../helpers/axios_helper';
-import { getLogin, isAuth } from '../helpers/jwt_helper';
+import { isAuth, getDecodeJwt } from '../helpers/jwt_helper';
 
 import "./header.css";
 
 export default class Header extends React.Component {
     IS_AUTH = isAuth();
+    user = getDecodeJwt();
 
     //todo сделать динамическое обновление переменной
 
@@ -36,7 +37,7 @@ export default class Header extends React.Component {
                         </ul>
                     </div>
                     <form className="d-flex" role="search">
-                        {this.IS_AUTH && (<div className='mx-1 btn btn-outline-light'>{getLogin()} </div>)}
+                        {this.IS_AUTH && (<a href={'/user/' + this.user?.id} className={"mx-1 btn btn" + (this.checkActive(this.props.currentTab, "user") ? "" : "-outline") + "-light me-1"}>{this.user?.sub} </a>)}
                         {!this.IS_AUTH && (<a href='/login' className={"btn btn" + (this.checkActive(this.props.currentTab, "login") ? "" : "-outline") + "-primary me-1"} type="submit">Войти</a>)}
                         {!this.IS_AUTH && (<a href='/register' className={"mx-1 btn btn" + (this.checkActive(this.props.currentTab, "register") ? "" : "-outline") + "-success"} type="submit">Регистрация</a>)}
                         {this.IS_AUTH && (<button onClick={removeAuth} className="btn btn-outline-danger ms-1">Выход</button>)}

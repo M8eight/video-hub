@@ -9,7 +9,10 @@ import com.videohub.models.Rating;
 import com.videohub.models.Video;
 import com.videohub.repositories.VideoRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Objects;
@@ -36,8 +39,8 @@ public class VideoService implements VideoDAO {
     }
 
     @Override
-    public List<Video> getAll() {
-        return videoRepository.findAll();
+    public Page<Video> getAll(Integer offset, Integer limit) {
+        return videoRepository.findAllVideos(PageRequest.of(offset, limit));
     }
 
     @Override

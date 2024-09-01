@@ -1,10 +1,16 @@
 package com.videohub.controllers;
 
+import com.videohub.dtos.PaginationLimitBodyDto;
 import com.videohub.dtos.VideoDto;
 import com.videohub.exceptions.VideoNotFoundException;
 import com.videohub.models.Video;
 import com.videohub.services.VideoService;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,14 +18,19 @@ import java.util.List;
 @RequestMapping("api")
 @RestController
 @RequiredArgsConstructor
+@Slf4j
 public class VideoController {
-    
+
     private final VideoService videoService;
 
+    //            @RequestParam(defaultValue = "0", value = "offset") @Min(0) Integer offset,
+//            @RequestParam(defaultValue = "20", value = "limit") @Min(2) @Max(100) Integer limit
     @GetMapping("/videos")
     @CrossOrigin
-    List<Video> all() {
-        return videoService.getAll();
+    Page<Video> all(
+            PaginationLimitBodyDto requestParam
+    ) {
+        return videoService.getAll(requestParam.getOffset(), requestParam.getLimit());
     }
 
     @CrossOrigin

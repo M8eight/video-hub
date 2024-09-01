@@ -1,5 +1,7 @@
 package com.videohub.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
@@ -20,6 +22,16 @@ import java.util.Set;
         @UniqueConstraint(columnNames = "login"),
         @UniqueConstraint(columnNames = "email")
 })
+@JsonIgnoreProperties(value = {
+        "accountNonExpired",
+        "accountNonLocked",
+        "credentialsNonExpired",
+        "enabled",
+        "username",
+        "verify",
+        "email",
+        "phoneNumber"
+})
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -33,13 +45,17 @@ public class User implements UserDetails {
 
     String phoneNumber;
 
+    String avatar_path;
+
     boolean isVerify = true;
 
     @NotNull
+    @JsonIgnore
     String password;
 
     @ManyToMany(fetch = FetchType.EAGER)
     @ToString.Exclude
+    @JsonIgnore
     private Set<Role> roles;
 
     @Override

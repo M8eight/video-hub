@@ -6,6 +6,7 @@ import NotFound from "../errors/NotFound";
 import CurrentVideo from "../videos/currentVideo/CurrentVideo";
 import Login from "../authorization/login/Login";
 import Register from "../authorization/register/Register";
+import UserDetails from "../users/UserDetails";
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <Route path="/video/*" element={<CurrentVideo />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/user/*" element={<UserDetails />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>
