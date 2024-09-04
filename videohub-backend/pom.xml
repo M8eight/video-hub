@@ -103,9 +103,9 @@
 
         <!-- Database -->
         <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
-            <scope>runtime</scope>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.7.3</version>
         </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -129,6 +129,12 @@
             <version>${org.mapstruct.version}</version>
         </dependency>
 
+        <!--Build-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+            <version>3.3.3</version>
+        </dependency>
 
     </dependencies>
 
@@ -139,6 +145,7 @@
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>3.3.2</version>
                 <configuration>
+                    <imageName>spring-boot-docker:spring-plugin</imageName>
                     <excludes>
                         <exclude>
                             <groupId>org.project-lombok</groupId>
@@ -147,39 +154,39 @@
                     </excludes>
                 </configuration>
             </plugin>
-            <plugin>
-                <groupId>com.github.eirslett</groupId>
-                <artifactId>frontend-maven-plugin</artifactId>
-                <version>1.6</version>
-                <configuration>
-                    <nodeVersion>v8.11.3</nodeVersion>
-                    <npmVersion>6.1.0</npmVersion>
-                    <workingDirectory>src/frontend</workingDirectory>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>install node and npm</id>
-                        <goals>
-                            <goal>install-node-and-npm</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>npm install</id>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <id>npm run build</id>
-                        <goals>
-                            <goal>npm</goal>
-                        </goals>
-                        <configuration>
-                            <arguments>run build</arguments>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
+            <!--            <plugin>-->
+            <!--                <groupId>com.github.eirslett</groupId>-->
+            <!--                <artifactId>frontend-maven-plugin</artifactId>-->
+            <!--                <version>1.6</version>-->
+            <!--                <configuration>-->
+            <!--                    <nodeVersion>v8.11.3</nodeVersion>-->
+            <!--                    <npmVersion>6.1.0</npmVersion>-->
+            <!--                    <workingDirectory>src/frontend</workingDirectory>-->
+            <!--                </configuration>-->
+            <!--                <executions>-->
+            <!--                    <execution>-->
+            <!--                        <id>install node and npm</id>-->
+            <!--                        <goals>-->
+            <!--                            <goal>install-node-and-npm</goal>-->
+            <!--                        </goals>-->
+            <!--                    </execution>-->
+            <!--                    <execution>-->
+            <!--                        <id>npm install</id>-->
+            <!--                        <goals>-->
+            <!--                            <goal>npm</goal>-->
+            <!--                        </goals>-->
+            <!--                    </execution>-->
+            <!--                    <execution>-->
+            <!--                        <id>npm run build</id>-->
+            <!--                        <goals>-->
+            <!--                            <goal>npm</goal>-->
+            <!--                        </goals>-->
+            <!--                        <configuration>-->
+            <!--                            <arguments>run build</arguments>-->
+            <!--                        </configuration>-->
+            <!--                    </execution>-->
+            <!--                </executions>-->
+            <!--            </plugin>-->
         </plugins>
 
     </build>

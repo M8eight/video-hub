@@ -9,7 +9,7 @@ import "./videoHome.css";
 
 
 export default function Videos() {
-    const [data, setData] = React.useState([]);
+const [data, setData] = React.useState([]);
     const [errors, setErrors] = React.useState("visually-hidden");
     const [limit, setLimit] = React.useState(15);
     const [offset, setOffset] = React.useState(0);

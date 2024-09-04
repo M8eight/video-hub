@@ -8,6 +8,7 @@ import com.videohub.interfaces.VideoDAO;
 import com.videohub.models.Rating;
 import com.videohub.models.Video;
 import com.videohub.repositories.VideoRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -49,6 +50,7 @@ public class VideoService implements VideoDAO {
     }
 
     @Override
+    @Transactional
     public Video addVideo(VideoDto videoDto) {
         String extension = Objects.requireNonNull(videoDto.getVideoFile().getOriginalFilename())
                 .substring(videoDto.getVideoFile().getOriginalFilename().lastIndexOf(".") + 1);

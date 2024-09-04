@@ -5,9 +5,11 @@ export default class Home extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            data: []
+            data: [],
         }
     }
+
+
 
     render() {
         return (
@@ -17,6 +19,8 @@ export default class Home extends React.Component {
                 <div id="home">
                     <h2 className="text-center">Главная страница</h2>
                 </div>
+
+                
             </React.Fragment>
         )
     }
