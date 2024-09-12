@@ -26,6 +26,16 @@
     background: rgba(0, 0, 0, 0.6);
 }
 
+.parent span {
+    position: absolute;
+    width: 100%;
+    right: 0;
+    bottom: 0;
+    color: #7e7e7e;
+    padding: 0.7em 0.3em;
+    background: rgba(0, 0, 0, 0);
+}
+
 .preview {
     height: 13em;
     overflow: hidden;

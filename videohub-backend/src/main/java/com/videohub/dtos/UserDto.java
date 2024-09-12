@@ -17,7 +17,7 @@ public class UserDto implements Serializable {
     public String toString() {
         return "User{" +
                 "login='" + login + '\'' +
-                ", email='" + email + '\'' +
+                ". . . '" + '\'' +
                 '}';
     }
 }

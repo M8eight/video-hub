@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.nio.file.Paths;
 import java.util.concurrent.atomic.AtomicLong;
 
 @Component
@@ -36,10 +37,10 @@ public class FfmpegHelpers {
 
     public int getDuration(String path) {
         final AtomicLong durationMillis = new AtomicLong();
-        System.out.println(path);
+        log.info(path);
         FFmpegResult ffmpegResult = FFmpeg.atPath()
                 .addInput(
-                        UrlInput.fromUrl(storagePath + "/" + path)
+                        UrlInput.fromPath(Paths.get(storagePath, "/", path))
                 )
                 .addOutput(new NullOutput())
                 .setProgressListener(new ProgressListener() {

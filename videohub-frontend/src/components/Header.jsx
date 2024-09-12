@@ -34,8 +34,8 @@ export default class Header extends React.Component {
                             <li className={"nav-item " + (this.checkActive(this.props.currentTab, "videos") ? "active-tab" : "")}>
                                 <a className={"nav-link " + (this.checkActive(this.props.currentTab, "videos") ? "active" : "")} href="/videos">Videos</a>
                             </li>
-                            <li className={"nav-item " + (this.checkActive(this.props.currentTab, "camera") ? "active-tab" : "")}>
-                                <a className={"nav-link " + (this.checkActive(this.props.currentTab, "camera") ? "active" : "")} href="/camera">Камера</a>
+                            <li className={"nav-item " + (this.checkActive(this.props.currentTab, "search") ? "active-tab" : "")}>
+                                <a className={"nav-link " + (this.checkActive(this.props.currentTab, "search") ? "active" : "")} href="/search">Найти</a>
                             </li>
                         </ul>
                     </div>

@@ -10,6 +10,7 @@ import com.videohub.models.Video;
 import com.videohub.repositories.VideoRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class VideoService implements VideoDAO {
 
     private final VideoRepository videoRepository;
@@ -60,6 +62,7 @@ public class VideoService implements VideoDAO {
         }
 
         String path = fileStorageManager.save(videoDto.getVideoFile());
+        log.info("path {}", path);
         int durationSecond = ffmpegHelpers.getDuration(path);
         String previewPath = ffmpegHelpers.getImageFromVideo(path, durationSecond);
 

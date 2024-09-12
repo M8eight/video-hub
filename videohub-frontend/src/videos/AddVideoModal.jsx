@@ -36,13 +36,13 @@ export default class AddVideoModal extends React.Component {
             formReq.append("videoFile", this.state.video);
             e.target.innerHTML = 'Загрузка <span class="spinner-border spinner-border-sm" aria-hidden="true"></span></>'
 
-            request("post", "http://localhost:8080/api/video", formReq, { "Content-Type": "multipart/form-data" })
-                .then((response) => {
-                    window.location.reload(); 
-                })
-                .catch((response) => {
-                    console.error(response);
-                });
+            request("post", "/api/video", formReq, { "Content-Type": "multipart/form-data" })
+            .then((response) => {
+                window.location.reload(); 
+            })
+            .catch((response) => {
+                console.error(response);
+            });
         }
     }
 

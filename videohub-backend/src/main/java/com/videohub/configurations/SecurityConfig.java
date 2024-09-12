@@ -37,7 +37,6 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(AbstractHttpConfigurer::disable)
-                .cors(Customizer.withDefaults())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
@@ -46,7 +45,7 @@ public class SecurityConfig {
 
                         .requestMatchers(HttpMethod.GET, "/api/videos").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/video/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/video").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/api/video").permitAll()
                         .requestMatchers("/api/video/*").authenticated()
 
                         .requestMatchers(HttpMethod.GET, "/api/video/*/comments").permitAll()
@@ -58,7 +57,8 @@ public class SecurityConfig {
 
                         .requestMatchers("/api/user/*").permitAll()
 
-                        .anyRequest().hasRole("ADMIN"));
+//                        .anyRequest().hasRole("ADMIN"));
+                        .anyRequest().permitAll());
         return http.build();
     }
 

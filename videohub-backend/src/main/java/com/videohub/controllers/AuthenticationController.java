@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
-@Slf4j
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
@@ -29,6 +28,7 @@ public class AuthenticationController {
     @CrossOrigin
     @PostMapping("/auth/register")
     String registrationUser(@ModelAttribute @Valid UserDto request) {
+
         return authenticationService.signUp(request);
     }
 
