@@ -14,6 +14,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @RequestMapping("api")
 @RestController
@@ -27,11 +28,15 @@ public class VideoController {
 //            @RequestParam(defaultValue = "20", value = "limit") @Min(2) @Max(100) Integer limit
     @GetMapping("/videos")
     @CrossOrigin
-    Page<Video> all(
-            PaginationLimitBodyDto requestParam
-    ) {
-        return videoService.getAll(requestParam.getOffset(), requestParam.getLimit());
+    Page<Video> all(PaginationLimitBodyDto requestParam, @RequestParam(defaultValue = "") String sortBy) {
+        return videoService.getWithSortBy(requestParam.getOffset(), requestParam.getLimit(), sortBy);
     }
+
+//    @GetMapping("/videos")
+//    @CrossOrigin
+//    Page<Video> all(PaginationLimitBodyDto requestParam, @RequestParam String sortBy) {
+//        return videoService.getWithSortBy(requestParam.getOffset(), requestParam.getLimit(), sortBy);
+//    }
 
     @CrossOrigin
     @PostMapping("/video")

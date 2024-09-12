@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 @RequiredArgsConstructor
 @Slf4j
+@Deprecated(since = "for testing")
 public class PreloadDB {
 
     private final VideoRepository fr;
@@ -29,9 +30,9 @@ public class PreloadDB {
         return args -> {
             log.info("--------------------PRELOAD------------------------");
             log.info("VIDS-----------------------------------------------");
-            log.info("preload {}", fr.save(new Video("Gavno2Gavno2Gavno2Gavno2Gavno2Gavno2Gavno2Gavno2Gavno2Gavno2Gavno2Gavno2Gavno2Gavno2Gavno2Gavno2Gavno2Gavno2Gavno2Gavno2Gavno2Gavno2", "описание говна2", 1488, "example.mp4", "example.jpg", new Rating())));
-            log.info("preload {}", fr.save(new Video("Gavno2", "описание говна2", 1488, "example.mp4", "example.jpg", new Rating())));
-            log.info("preload {}", fr.save(new Video("Gavno2", "описание говна2", 1488, "example.mp4", "example.jpg", new Rating())));
+            log.info("preload {}", fr.save(new Video("One pip", "описание говна2", 1488, "example.mp4", "example.jpg", new Rating(), 1000L)));
+            log.info("preload {}", fr.save(new Video("Two pip", "описание говна2", 1488, "example.mp4", "example.jpg", new Rating(), 10000L)));
+            log.info("preload {}", fr.save(new Video("Three pip", "описание говна2", 1488, "example.mp4", "example.jpg", new Rating(), 100000L)));
             log.info("COMMENTS--------------------------------------------");
             log.info("preload {}", commentRepository.save(new Comment("Example comment", new Rating(), fr.getReferenceById(1L))));
             log.info("preload {}", commentRepository.save(new Comment("Example comment2", new Rating(), fr.getReferenceById(2L))));

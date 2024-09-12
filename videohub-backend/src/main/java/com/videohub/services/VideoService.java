@@ -47,6 +47,23 @@ public class VideoService implements VideoDAO {
     }
 
     @Override
+    public Page<Video> getWithSortBy(Integer offset, Integer limit, String sortBy) {
+        Page<Video> resultVideos;
+
+        log.info(sortBy);
+
+        if ("views".equals(sortBy)) {
+            log.info("sort views");
+            resultVideos = videoRepository.findAllByViews(PageRequest.of(offset, limit));
+        } else {
+            log.info("default");
+            resultVideos = videoRepository.findAllVideos(PageRequest.of(offset, limit));
+        }
+
+        return resultVideos;
+    }
+
+    @Override
     public void deleteById(Long id) {
         videoRepository.deleteById(id);
     }

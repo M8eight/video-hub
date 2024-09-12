@@ -30,6 +30,8 @@ public class Video {
     @NotNull
     private int duration;
 
+    private Long views = 0L;
+
     @Column(columnDefinition = "TEXT")
     private String description;
 
@@ -64,5 +66,16 @@ public class Video {
         this.video_path = video_path;
         this.preview_path = preview_path;
         this.rating = rating;
+    }
+
+    @Deprecated(since = "For tests")
+    public Video(String name, String description, int duration, String video_path, String preview_path, Rating rating, Long views) {
+        this.name = name;
+        this.description = description;
+        this.duration = duration;
+        this.video_path = video_path;
+        this.preview_path = preview_path;
+        this.rating = rating;
+        this.views = views;
     }
 }

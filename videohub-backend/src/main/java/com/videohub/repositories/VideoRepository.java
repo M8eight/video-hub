@@ -12,4 +12,6 @@ import org.springframework.stereotype.Repository;
 public interface VideoRepository extends JpaRepository<Video,Long> {
     @Query("select a from Video a")
     Page<Video> findAllVideos(Pageable pageable);
+    @Query("select a from Video a order by a.views desc")
+    Page<Video> findAllByViews(Pageable pageable);
 }
