@@ -5,8 +5,10 @@ import com.videohub.exceptions.VideoBadRequestException;
 import com.videohub.helpers.FfmpegHelpers;
 import com.videohub.helpers.FileStorageManager;
 import com.videohub.interfaces.VideoDAO;
+import com.videohub.mappers.ElasticVideoMapper;
 import com.videohub.models.Rating;
 import com.videohub.models.Video;
+import com.videohub.models.elasticModels.ElasticVideo;
 import com.videohub.repositories.VideoRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -14,9 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -26,10 +26,10 @@ import java.util.Optional;
 public class VideoService implements VideoDAO {
 
     private final VideoRepository videoRepository;
-
     private final FileStorageManager fileStorageManager;
-
     private final FfmpegHelpers ffmpegHelpers;
+    private final ElasticVideoService elasticVideoService;
+    private final ElasticVideoMapper elasticVideoMapper;
 
     @Override
     public Optional<Video> getById(Long id) {
@@ -49,14 +49,9 @@ public class VideoService implements VideoDAO {
     @Override
     public Page<Video> getWithSortBy(Integer offset, Integer limit, String sortBy) {
         Page<Video> resultVideos;
-
-        log.info(sortBy);
-
         if ("views".equals(sortBy)) {
-            log.info("sort views");
             resultVideos = videoRepository.findAllByViews(PageRequest.of(offset, limit));
         } else {
-            log.info("default");
             resultVideos = videoRepository.findAllVideos(PageRequest.of(offset, limit));
         }
 
@@ -83,7 +78,11 @@ public class VideoService implements VideoDAO {
         int durationSecond = ffmpegHelpers.getDuration(path);
         String previewPath = ffmpegHelpers.getImageFromVideo(path, durationSecond);
 
-        return videoRepository.save(new Video(videoDto.getName(), videoDto.getDescription(), durationSecond, path, previewPath, new Rating()));
+        Video newVideo = videoRepository.save(new Video(videoDto.getName(), videoDto.getDescription(), durationSecond, path, previewPath, new Rating()));
+
+        elasticVideoService.save(elasticVideoMapper.toElasticVideo(newVideo));
+
+        return newVideo;
         //todo сделать авторизацию
         //todo админка
     }

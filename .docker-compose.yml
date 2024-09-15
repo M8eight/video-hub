@@ -1,13 +1,12 @@
 services:
-  prometheus:
-      image: prom/prometheus
-      container_name: prometheus
-      volumes:
-        - ./metrics-env/prometheus.yml:/etc/prometheus/prometheus.yml
-      ports:
-        - 9090:9090
-      depends_on:
-        - client-backend
+  # frontend:
+  #   build:
+  #     context: ./videohub-frontend
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - client-backend
 
   grafana:
     image: grafana/grafana
@@ -17,19 +16,21 @@ services:
     env_file:
       - ./metrics-env/grafana.env
     depends_on:
-      - client-backend
-      
+      - prometheus
 
-  # service-frontend:
-  #   build:
-  #     context: ./videohub-frontend
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "3000:3000"
-  #   depends_on:
-  #     - client-backend
 
-  client-backend:
+  prometheus:
+      image: prom/prometheus
+      container_name: prometheus
+      volumes:
+        - ./metrics-env/prometheus.yml:/etc/prometheus/prometheus.yml
+      ports:
+        - 9090:9090
+      depends_on:
+        - backend
+
+  backend:
+    container_name: backend
     build:
       context: ./videohub-backend
       dockerfile: Dockerfile
@@ -38,7 +39,6 @@ services:
     depends_on:
       - service-db
     environment:
-      - SERVER_ADRESS=192.168.0.101
       - SERVER_PORT=8080
       - PSQL_NAME=jdbc:postgresql://service-db/filmsbase
       - STORAGE_DIR=/app
@@ -51,12 +51,11 @@ services:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root 
       POSTGRES_DB: filmsbase
-    volumes:
-      - service-db:/var/lib/postgresql/data
+    # volumes:
+      # - service-db:/var/lib/postgresql/data
     ports:
       - "6000:5432"
     restart: unless-stopped
 
-
-volumes:
-  service-db:
+# volumes:
+#   service-db:

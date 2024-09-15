@@ -2,6 +2,7 @@ package com.videohub.interfaces;
 
 import com.videohub.dtos.VideoDto;
 import com.videohub.models.Video;
+import com.videohub.models.elasticModels.ElasticVideo;
 import org.springframework.data.domain.Page;
 
 import java.util.List;

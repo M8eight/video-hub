@@ -7,7 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
 @SpringBootTest
-class VideoHubApplicationTests {
+class ElasticVideoHubApplicationTests {
 
 	@Test
 	void contextLoads() {

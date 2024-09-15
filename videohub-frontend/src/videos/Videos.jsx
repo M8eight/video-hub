@@ -115,8 +115,8 @@ export default function Videos() {
                         <div className="col"></div>
                     </div>)}
 
-                    <div className="row">
-                        <div class="d-inline-flex gap-1 m-3">
+                    <div className="row ms-2 mb-3">
+                        <div class="d-inline-flex gap-1">
                             <button class={"btn btn-" + (chkSort("", sortBy) ? "outline-" : "") + "secondary me-md-2"} type="button" onClick={() => setSortByValue("")}>Новые</button>
                             <button class={"btn btn-" + (chkSort("views", sortBy) ? "outline-" : "") + "secondary"} type="button" onClick={() => setSortByValue("views")}>По просмотрам</button>
                         </div>

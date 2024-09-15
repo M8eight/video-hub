@@ -12,7 +12,7 @@
     <artifactId>videohub</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>videohub</name>
-    <description>Demo project for Spring Boot</description>
+    <description>@Alexey_killer</description>
     <url/>
     <licenses>
         <license/>
@@ -37,10 +37,6 @@
         <!-- Base Spring -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-jpa</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
         <dependency>
@@ -53,8 +49,13 @@
             <scope>runtime</scope>
             <optional>true</optional>
         </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
 
-        <!-- JSON Web Token -->
+        <!-- JWT -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
@@ -73,7 +74,7 @@
             <scope>runtime</scope>
         </dependency>
 
-        <!-- Debug -->
+        <!-- OpenApi -->
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
@@ -103,6 +104,10 @@
 
         <!-- Database -->
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <version>42.7.3</version>
@@ -112,12 +117,6 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-
         <dependency>
             <groupId>org.mapstruct</groupId>
             <artifactId>mapstruct</artifactId>
@@ -129,13 +128,12 @@
             <version>${org.mapstruct.version}</version>
         </dependency>
 
-        <!--Build-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-maven-plugin</artifactId>
-            <version>3.3.3</version>
+            <artifactId>spring-boot-starter-data-elasticsearch</artifactId>
         </dependency>
 
+        <!--Debug-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
@@ -145,6 +143,17 @@
             <artifactId>micrometer-registry-prometheus</artifactId>
         </dependency>
 
+        <!--Build-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+            <version>3.3.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-docker-compose</artifactId>
+            <optional>true</optional>
+        </dependency>
     </dependencies>
 
     <build>
@@ -161,6 +170,7 @@
                             <artifactId>lombok</artifactId>
                         </exclude>
                     </excludes>
+                    <excludeDockerCompose>false</excludeDockerCompose>
                 </configuration>
             </plugin>
             <!--            <plugin>-->

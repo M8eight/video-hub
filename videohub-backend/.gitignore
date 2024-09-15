@@ -27,3 +27,5 @@ build/
 .vscode/
 
 target/
+
+elasticsearch_data/**

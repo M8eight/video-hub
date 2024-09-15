@@ -4,6 +4,8 @@ import com.videohub.dtos.PaginationLimitBodyDto;
 import com.videohub.dtos.VideoDto;
 import com.videohub.exceptions.VideoNotFoundException;
 import com.videohub.models.Video;
+import com.videohub.models.elasticModels.ElasticVideo;
+import com.videohub.services.ElasticVideoService;
 import com.videohub.services.VideoService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.constraints.Max;
@@ -14,6 +16,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 @RequestMapping("api")
@@ -23,6 +26,7 @@ import java.util.Objects;
 public class VideoController {
 
     private final VideoService videoService;
+    private final ElasticVideoService elasticVideoService;
 
     //            @RequestParam(defaultValue = "0", value = "offset") @Min(0) Integer offset,
 //            @RequestParam(defaultValue = "20", value = "limit") @Min(2) @Max(100) Integer limit
@@ -32,14 +36,15 @@ public class VideoController {
         return videoService.getWithSortBy(requestParam.getOffset(), requestParam.getLimit(), sortBy);
     }
 
-//    @GetMapping("/videos")
-//    @CrossOrigin
-//    Page<Video> all(PaginationLimitBodyDto requestParam, @RequestParam String sortBy) {
-//        return videoService.getWithSortBy(requestParam.getOffset(), requestParam.getLimit(), sortBy);
-//    }
-
+    @PostMapping("/video/search")
     @CrossOrigin
+    Page<ElasticVideo> findByName(@RequestBody Map<String, String> req) {
+//        log.info(name);
+        return elasticVideoService.findByName( req.get("name"));
+    }
+
     @PostMapping("/video")
+    @CrossOrigin
     Video newVideo(@ModelAttribute VideoDto videoDto) {
         return videoService.addVideo(videoDto);
     }

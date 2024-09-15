@@ -13,7 +13,14 @@ export default function CurrentVideo(props) {
 
     useEffect(() => {
         getCurrentVideo();
+        getSuggestedVideos();
     }, []);
+
+    function getSuggestedVideos() {
+        request('get', '/api/videos?offset=' + 0 + '&limit=' + 5).then((res) => {
+            setSuggestedVideo(res.data)
+        })
+    }
 
     function getCurrentVideo() {
         request("get", 'http://localhost:8080/api/video/' + window.location.pathname.substring(window.location.pathname.lastIndexOf("/") + 1))
@@ -59,7 +66,7 @@ export default function CurrentVideo(props) {
                                 </video>
                             </div>
                         </div>
-                        <div className="row p-2">
+                        <div className="row p-2 mt-2">
                             <div className="col-9 text-break fs-4">
                                 {videoData?.name !== undefined ?
                                     videoData.name :
@@ -84,9 +91,9 @@ export default function CurrentVideo(props) {
                             </div>
                         </div>
                         <hr />
-                        <div className="row p-2 fs-6">
+                        <div className="row p-2">
                             {videoData?.description !== undefined ?
-                                videoData.description :
+                                <p>{videoData.description}</p> :
                                 <p className="placeholder-glow mb-0"><span className="placeholder col-8 placeholder-sm"></span><span className="placeholder col-8 placeholder-sm"></span><span className="placeholder col-8 placeholder-sm"></span></p>
                             }
                         </div>
@@ -105,21 +112,26 @@ export default function CurrentVideo(props) {
                                 <CommentsBlock />
                             </div>
                         ) : (
-                                <div className="alert alert-warning mt-2" role="alert">
-                                    <h4 className="alert-heading">Войдите, чтобы оставлять комментарии</h4>
-                                    <p>Вы не авторизованы, пожалуйста, авторизуйтесь <a href="/login">здесь</a></p>
-                                </div>
+                            <div className="alert alert-warning mt-2" role="alert">
+                                <h4 className="alert-heading">Войдите, чтобы оставлять комментарии</h4>
+                                <p>Вы не авторизованы, пожалуйста, авторизуйтесь <a href="/login">здесь</a></p>
+                            </div>
                         )}
 
 
                     </div>
-                    <div className="col-md- col-lg-3 p-1">
-                        {/* {suggests} */}
+                    <div className="col-md-12 col-lg-3 p-1">
+                        {suggestedVideo.content?.map((el) => (
+                            <a key={el.id} href={'/video/' + el.id}>
+                            <div key={el.id} className="card mb-3 parent">
+                                <img className="card-img-top preview" src={"http://localhost:8080/media/" + el.preview_path} alt="" />
+                            </div>
+                            </a>
+                        ))}
                     </div>
-
                 </div>
-
             </div>
+
         </Fragment>
     )
 
