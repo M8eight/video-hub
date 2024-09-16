@@ -21,8 +21,8 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 public class CommentController {
-    CommentRepository commentRepository;
-    VideoRepository videoRepository;
+    final private CommentRepository commentRepository;
+    final private VideoRepository videoRepository;
     @CrossOrigin
     @GetMapping("/video/{id}/comments")
     public List<Comment> getComments(@PathVariable Long id) {
@@ -31,7 +31,7 @@ public class CommentController {
 
     @CrossOrigin
     @PostMapping("/video/{id}/comment/new")
-    public ResponseEntity<HttpStatusCode>  newComment(@PathVariable Long id, @Valid @RequestBody Comment comment) {
+    public ResponseEntity<HttpStatusCode> newComment(@PathVariable Long id, @Valid @RequestBody Comment comment) {
         comment.setRating(new Rating());
         comment.setVideo(videoRepository.getReferenceById(id));
         commentRepository.save(comment);

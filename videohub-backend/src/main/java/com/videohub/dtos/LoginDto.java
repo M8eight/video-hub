@@ -10,4 +10,12 @@ import lombok.Setter;
 public class LoginDto {
     private String login;
     private String password;
+
+    @Override
+    public String toString() {
+        return "LoginDto{" +
+                "login='" + login + '\'' +
+                ", password='" + password + '\'' +
+                '}';
+    }
 }

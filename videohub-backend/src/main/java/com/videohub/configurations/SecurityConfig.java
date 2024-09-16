@@ -37,17 +37,19 @@ public class SecurityConfig {
                 .authorizeHttpRequests(request -> request
                         .requestMatchers(HttpMethod.GET, "/media/**").permitAll()
 
-                        .requestMatchers(HttpMethod.GET, "/api/videos").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/video/**").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/video").permitAll()
-                        .requestMatchers("/api/video/*").permitAll()
-
-                        .requestMatchers(HttpMethod.GET, "/api/video/*/comments").permitAll()
-                        .requestMatchers("/api/video/*/comment/new").authenticated()
-                        .requestMatchers("/api/video/**").hasRole("ADMIN")
-
-                        .requestMatchers("/api/rating/**").authenticated()
-                        .requestMatchers("/auth/**").anonymous()
+//                        .requestMatchers(HttpMethod.GET, "/api/videos").permitAll()
+//                        .requestMatchers(HttpMethod.GET, "/api/video/**").permitAll()
+//                        .requestMatchers(HttpMethod.POST, "/api/video").permitAll()
+//                        .requestMatchers("/api/video/*").permitAll()
+//
+//                        .requestMatchers(HttpMethod.GET, "/api/video/*/comments").permitAll()
+//                        .requestMatchers("/api/video/*/comment/new").authenticated()
+//                        .requestMatchers("/api/video/**").hasRole("ADMIN")
+//
+//                        .requestMatchers("/api/rating/**").authenticated()
+//                        .requestMatchers("/auth/**").anonymous()
+//
+//                        .requestMatchers("/api/admin/**").permitAll()
 
                         .requestMatchers("/api/user/*").permitAll()
 

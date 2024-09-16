@@ -1,16 +1,18 @@
 import React from 'react'
 import { removeAuth } from '../helpers/axios_helper';
-import { isAuth, getDecodeJwt } from '../helpers/jwt_helper';
+import { isAuth, getDecodeJwt, isAdmin } from '../helpers/jwt_helper';
 
 import "./header.css";
 
-export default class Header extends React.Component {
-    IS_AUTH = isAuth();
-    user = getDecodeJwt();
+export default function Header(props) {
+    const [IS_AUTH, setIS_AUTH] = React.useState(isAuth());
+    const [user, setUser] = React.useState(getDecodeJwt());
 
-    //todo сделать динамическое обновление переменной
+    React.useEffect(() => {
+        console.log(user);
+    }, [user]);
 
-    checkActive(prop, targetTab) {
+    const checkActive = (prop, targetTab) => {
         if (prop === targetTab) {
             return true;
         } else {
@@ -18,35 +20,43 @@ export default class Header extends React.Component {
         }
     }
 
-    render() {
-        return (
-            <nav className="navbar navbar-expand-lg bg-body-tertiary mb-4">
-                <div className="container-fluid">
-                    <a className="navbar-brand" href="/">VideoHub😛</a>
-                    <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                        <span className="navbar-toggler-icon"></span>
-                    </button>
-                    <div className="collapse navbar-collapse" id="navbarNav">
-                        <ul className="navbar-nav">
-                            <li className={"nav-item " + (this.checkActive(this.props.currentTab, "home") ? "active-tab" : "")}>
-                                <a className={"nav-link " + (this.checkActive(this.props.currentTab, "home") ? "active" : "")} aria-current="page" href="/">Home</a>
+    return (
+        <nav className="navbar navbar-expand-lg bg-body-tertiary">
+            <div className="container-fluid">
+                <a className="navbar-brand" href="/">VideoHub😛</a>
+                <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span className="navbar-toggler-icon"></span>
+                </button>
+                <div className="collapse navbar-collapse" id="navbarNav">
+                    <ul className="navbar-nav">
+                        <li className={"nav-item " + (checkActive(props.currentTab, "home") ? "active-tab" : "")}>
+                            <a className={"nav-link " + (checkActive(props.currentTab, "home") ? "active" : "")} aria-current="page" href="/">Home</a>
+                        </li>
+                        <li className={"nav-item " + (checkActive(props.currentTab, "videos") ? "active-tab" : "")}>
+                            <a className={"nav-link " + (checkActive(props.currentTab, "videos") ? "active" : "")} href="/videos">Videos</a>
+                        </li>
+                        <li className={"nav-item " + (checkActive(props.currentTab, "search") ? "active-tab" : "")}>
+                            <a className={"nav-link " + (checkActive(props.currentTab, "search") ? "active" : "")} href="/search">Найти</a>
+                        </li>
+                        {isAdmin() === true ? (
+
+                            <li className={"nav-item " + (checkActive(props.currentTab, "admin") ? "active-tab" : "")}>
+                                <a className={"nav-link " + (checkActive(props.currentTab, "admin") ? "active" : "")} href="/admin">Админка</a>
                             </li>
-                            <li className={"nav-item " + (this.checkActive(this.props.currentTab, "videos") ? "active-tab" : "")}>
-                                <a className={"nav-link " + (this.checkActive(this.props.currentTab, "videos") ? "active" : "")} href="/videos">Videos</a>
-                            </li>
-                            <li className={"nav-item " + (this.checkActive(this.props.currentTab, "search") ? "active-tab" : "")}>
-                                <a className={"nav-link " + (this.checkActive(this.props.currentTab, "search") ? "active" : "")} href="/search">Найти</a>
-                            </li>
-                        </ul>
-                    </div>
-                    <form className="d-flex" role="search">
-                        {this.IS_AUTH && (<a href={'/user/' + this.user?.id} className={"mx-1 btn btn" + (this.checkActive(this.props.currentTab, "user") ? "" : "-outline") + "-light me-1"}>{this.user?.sub} </a>)}
-                        {!this.IS_AUTH && (<a href='/login' className={"btn btn" + (this.checkActive(this.props.currentTab, "login") ? "" : "-outline") + "-primary me-1"} type="submit">Войти</a>)}
-                        {!this.IS_AUTH && (<a href='/register' className={"mx-1 btn btn" + (this.checkActive(this.props.currentTab, "register") ? "" : "-outline") + "-success"} type="submit">Регистрация</a>)}
-                        {this.IS_AUTH && (<button onClick={removeAuth} className="btn btn-outline-danger ms-1">Выход</button>)}
-                    </form>
+
+                            // <a className={"nav-link " + (checkActive(props.currentTab, "admin") ? "active" : "")} href="/admin">Админка</a>
+                        ) : ""
+                        }
+                    </ul>
                 </div>
-            </nav>
-        )
-    }
+                <form className="d-flex" role="search">
+                    {IS_AUTH && (<a href={'/user/' + user?.id} className={"mx-1 btn btn" + (checkActive(props.currentTab, "user") ? "" : "-outline") + "-light me-1"}>{user?.sub} </a>)}
+                    {!IS_AUTH && (<a href='/login' className={"btn btn" + (checkActive(props.currentTab, "login") ? "" : "-outline") + "-primary me-1"} type="submit">Войти</a>)}
+                    {!IS_AUTH && (<a href='/register' className={"mx-1 btn btn" + (checkActive(props.currentTab, "register") ? "" : "-outline") + "-success"} type="submit">Регистрация</a>)}
+                    {IS_AUTH && (<button onClick={() => removeAuth(setIS_AUTH)} className="btn btn-outline-danger ms-1">Выход</button>)}
+                </form>
+            </div>
+        </nav>
+    )
 }
+

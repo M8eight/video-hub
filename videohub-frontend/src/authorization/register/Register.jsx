@@ -34,7 +34,9 @@ export default function Register(props) {
             .then((response) => {
                 console.log(response.data)
                 setAuthHeader(response.data)
-                window.location.reload();
+                // window.location.reload();
+                // TODO сделать env host вместо localhost
+                window.location.replace("http://localhost:3000/");
             })
             .catch((response) => {
                 console.error(response);
@@ -79,8 +81,8 @@ export default function Register(props) {
                             <input type="text" className="form-control form-control-lg mb-2 convex-button" placeholder="Ваше имя пользователя"
                                 {...register("login", {
                                     required: true,
-                                    maxLength: 20,
-                                    minLength: 5
+                                    maxLength: 25,
+                                    minLength: 4
                                 })}
                             />
                             {errors?.login?.type === "required" && <p className="fs-4 pb-2 mb-4 text-danger border-bottom border-danger">Поле имя пользователя обязательно</p>}

@@ -13,6 +13,9 @@ import com.videohub.repositories.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,6 +26,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserService implements UserDAO {
 
     private final UserRepository userRepository;
@@ -51,16 +55,6 @@ public class UserService implements UserDAO {
     @Override
     public User findByLogin(String username) {
         return userRepository.findUserByLogin(username).orElseThrow(() -> new UserNotFoundException(username));
-    }
-
-    @Override
-    public List<User> getAll() {
-        return userRepository.findAll();
-    }
-
-    @Override
-    public void deleteById(Long id) {
-        userRepository.deleteById(id);
     }
 
     @SneakyThrows
@@ -99,8 +93,6 @@ public class UserService implements UserDAO {
             throw new UserAlreadyRegisterException(userDto);
         }
 
-
-
         User user = userMapper.toUserDtoRegister(userDto);
         user.setRoles(Collections.singleton(new Role(1L, "ROLE_USER")));
         String passwordEncode = passwordEncoder.encode(userDto.getPassword());
@@ -109,9 +101,7 @@ public class UserService implements UserDAO {
         return userRepository.save(user);
     }
 
-    @Override
-    public User editRole(User user, Role role) {
-        return null;
-        //todo сделать изменения ролей
-    }
+
+
+
 }

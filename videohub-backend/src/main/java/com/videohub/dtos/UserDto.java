@@ -6,6 +6,9 @@ import java.io.Serializable;
 
 @Getter
 @Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class UserDto implements Serializable {
     private String login;
     private String email;

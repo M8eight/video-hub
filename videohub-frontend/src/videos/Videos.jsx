@@ -7,7 +7,6 @@ import InfiniteScroll from "react-infinite-scroll-component";
 
 import "./videoHome.css";
 
-
 export default function Videos() {
     const [data, setData] = React.useState([]);
     const [errors, setErrors] = React.useState("visually-hidden");
@@ -99,10 +98,12 @@ export default function Videos() {
                 Ошибка загрузки видео
             </div>
 
-            <AddVideoModal />
+
 
             <div id="videos">
-                <div className="container-fluid">
+                <div className="container-fluid mt-4">
+
+                    <AddVideoModal />
 
                     <h2 className="text-center">Все видео</h2>
 

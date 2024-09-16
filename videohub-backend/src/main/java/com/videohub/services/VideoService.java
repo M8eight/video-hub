@@ -32,7 +32,9 @@ public class VideoService implements VideoDAO {
     private final ElasticVideoMapper elasticVideoMapper;
 
     @Override
+    @Transactional
     public Optional<Video> getById(Long id) {
+        videoRepository.incrementViews(id);
         return videoRepository.findById(id);
     }
 
@@ -69,6 +71,7 @@ public class VideoService implements VideoDAO {
         String extension = Objects.requireNonNull(videoDto.getVideoFile().getOriginalFilename())
                 .substring(videoDto.getVideoFile().getOriginalFilename().lastIndexOf(".") + 1);
 
+        log.info(videoDto.getVideoFile().getOriginalFilename());
         if (!extension.equals("mp4") && !extension.equals("avi")) {
             throw new VideoBadRequestException(videoDto.getName());
         }

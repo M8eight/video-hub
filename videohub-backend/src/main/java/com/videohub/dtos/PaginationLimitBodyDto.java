@@ -12,5 +12,5 @@ import org.springframework.web.bind.annotation.RequestParam;
 @ToString
 public class PaginationLimitBodyDto {
     @Min(0) Integer offset = 0;
-    @Min(2) @Max(100) Integer limit = 20;
+    @Min(2) @Max(100) Integer limit = 30;
 }

@@ -17,23 +17,6 @@ services:
 #    ports:
 #      - 9090:9090
 
-  elasticsearch:
-    image: elasticsearch:8.6.2
-    container_name: elasticsearch
-    environment:
-      - discovery.type=single-node
-      - xpack.security.enabled=false
-#    ulimits:
-#      memlock:
-#        soft: -1
-#        hard: -1
-#    volumes:
-#      - ./elasticsearch_data:/usr/share/elasticsearch/data
-    ports:
-      - 9200:9200
-      - 9300:9300
-
-
 #  kibana:
 #    image: kibana:8.6.2
 #    container_name: kibana
@@ -46,9 +29,21 @@ services:
 #      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
 #    depends_on:
 #      - elasticsearch
-#    networks:
-#      - videohub-net
-#
+
+  elasticsearch:
+    image: elasticsearch:8.6.2
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    volumes:
+      - ./elasticsearch_data:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+      - 9300:9300
+    depends_on:
+      - service-db
+
 #  logstash:
 #    user: root
 #    image: logstash:8.6.2
@@ -80,12 +75,7 @@ services:
     ports:
       - "6000:5432"
     restart: unless-stopped
-#    networks:
-#      - videohub-net
-    
-#networks:
-#  videohub-net:
+
 volumes:
   service-db:
   elasticsearch:
-#  logstash:

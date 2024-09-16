@@ -16,7 +16,6 @@ import java.util.Set;
 @Entity
 @Getter
 @Setter
-@ToString
 @RequiredArgsConstructor
 @Table(name = "users", uniqueConstraints = {
         @UniqueConstraint(columnNames = "login"),
@@ -29,8 +28,8 @@ import java.util.Set;
         "enabled",
         "username",
         "verify",
-        "email",
-        "phoneNumber"
+        "phoneNumber",
+        "authority"
 })
 public class User implements UserDetails {
     @Id
@@ -82,5 +81,12 @@ public class User implements UserDetails {
     @Override
     public String getUsername() {
         return getLogin();
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "login='" + login + '\'' +
+                '}';
     }
 }
