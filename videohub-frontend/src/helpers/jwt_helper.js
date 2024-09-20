@@ -11,14 +11,16 @@ export function getDecodeJwt() {
     }
 }
 
-export function getJwtRoles() {
-    let jwtObj = getDecodeJwt()
-    console.log(jwtObj)
+// export function getJwtRoles() {
+//     let jwtObj = getDecodeJwt()
+//     console.log(jwtObj)
 
-    return jwtObj["role"].map((el) => {
-        return el["name"]
-    })
-}
+//     if (jwtObj !== undefined || jwtObj !== null) {
+//         return jwtObj["role"].map((el) => {
+//             return el["name"]
+//         })
+//     }
+// }
 
 export function getLogin() {
     return getDecodeJwt()?.sub
@@ -35,3 +37,14 @@ export function getUserById(id) {
         }
     )
 }
+
+export function isAdmin() {
+    let jwt = getDecodeJwt()
+    if (jwt === undefined || jwt === null) {
+        return false;
+    }
+    return jwt.role.map((el) => el.name).includes("ROLE_ADMIN")
+}
+
+
+

@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,19 +31,25 @@ public class Video {
     @NotNull
     private int duration;
 
+    @ManyToOne(cascade=CascadeType.ALL)
+    @Nullable
+    @ToString.Exclude
+    @JsonIgnoreProperties("videos")
+    private User user;
+
     private Long views = 0L;
 
     @Column(columnDefinition = "TEXT")
     private String description;
+
+//    @OneToMany(mappedBy = "video")
+//    private List<VideoTag> tags = new ArrayList<>();
 
     @NotNull
     private String video_path;
 
     @NotNull
     private String preview_path;
-
-    @ManyToOne
-    private User author;
 
     @OneToOne(cascade=CascadeType.ALL)
     @JoinColumn(name = "rating_id")
@@ -59,12 +66,23 @@ public class Video {
     @Column
     private java.sql.Timestamp updated_at;
 
-    public Video(String name, String description, int duration, String video_path, String preview_path, Rating rating) {
+    @Deprecated(since = "For tests")
+    public Video(String name, String description, int duration, String video_path, String preview_path , Rating rating) {
         this.name = name;
         this.description = description;
         this.duration = duration;
         this.video_path = video_path;
         this.preview_path = preview_path;
+        this.rating = rating;
+    }
+
+    public Video(String name, String description, int duration, String video_path, String preview_path, User user , Rating rating) {
+        this.name = name;
+        this.description = description;
+        this.duration = duration;
+        this.video_path = video_path;
+        this.preview_path = preview_path;
+        this.user = user;
         this.rating = rating;
     }
 

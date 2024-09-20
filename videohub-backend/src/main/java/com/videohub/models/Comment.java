@@ -22,6 +22,10 @@ public class Comment {
     @NotBlank()
     private String text;
 
+    @ManyToOne(cascade=CascadeType.ALL)
+    @JoinColumn(name = "users_id")
+    private User user;
+
     @OneToOne(cascade=CascadeType.ALL)
     @JoinColumn(name = "ratings_id")
     private Rating rating;

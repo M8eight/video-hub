@@ -11,6 +11,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -45,6 +46,18 @@ public class User implements UserDetails {
     String phoneNumber;
 
     String avatar_path;
+
+    @OneToMany(orphanRemoval = true, mappedBy = "user")
+    @ToString.Exclude
+    @JsonIgnoreProperties("user")
+    List<Comment> comments;
+
+    @OneToMany(orphanRemoval = true, mappedBy = "user")
+    @ToString.Exclude
+    @JsonIgnoreProperties("user")
+    List<Video> videos;
+
+    Long rating = 0L;
 
     boolean isVerify = true;
 

@@ -1,5 +1,6 @@
 package com.videohub.dtos;
 
+import com.videohub.models.User;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 

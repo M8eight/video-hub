@@ -16,12 +16,11 @@ export default function Camera() {
         })
     }
 
-
     return (
         <React.Fragment>
             <Header currentTab="search" />
 
-            <div className='container'>
+            <div className='container mt-4'>
 
                 <div className='row mb-3'>
                     <div class=" input-group">

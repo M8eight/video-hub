@@ -6,6 +6,10 @@
 }
 
 .navbar {
+    height: 70px !important; /*i assume your navbar size 100px*/
+}
+
+.navbar {
     animation-duration: 3s;
     animation-name: slidein ;
     animation-fill-mode: both

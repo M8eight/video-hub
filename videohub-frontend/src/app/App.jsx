@@ -8,6 +8,7 @@ import Login from "../authorization/login/Login";
 import Register from "../authorization/register/Register";
 import UserDetails from "../users/UserDetails";
 import VideoSearch from "../search/VideoSearch";
+import AdminPanel from "../admin/AdminPanel";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/user/*" element={<UserDetails />} />
           <Route path="/search/*" element={<VideoSearch />} />
+          <Route path="/admin/*" element={<AdminPanel />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </Router>

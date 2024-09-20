@@ -7,14 +7,17 @@ import com.videohub.helpers.FileStorageManager;
 import com.videohub.interfaces.VideoDAO;
 import com.videohub.mappers.ElasticVideoMapper;
 import com.videohub.models.Rating;
+import com.videohub.models.User;
 import com.videohub.models.Video;
-import com.videohub.models.elasticModels.ElasticVideo;
+import com.videohub.repositories.UserRepository;
 import com.videohub.repositories.VideoRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
@@ -30,6 +33,7 @@ public class VideoService implements VideoDAO {
     private final FfmpegHelpers ffmpegHelpers;
     private final ElasticVideoService elasticVideoService;
     private final ElasticVideoMapper elasticVideoMapper;
+    private final UserRepository userRepository;
 
     @Override
     @Transactional
@@ -81,7 +85,12 @@ public class VideoService implements VideoDAO {
         int durationSecond = ffmpegHelpers.getDuration(path);
         String previewPath = ffmpegHelpers.getImageFromVideo(path, durationSecond);
 
-        Video newVideo = videoRepository.save(new Video(videoDto.getName(), videoDto.getDescription(), durationSecond, path, previewPath, new Rating()));
+        var authContext = SecurityContextHolder.getContext().getAuthentication();
+        User user = null;
+        if (authContext != null && authContext.isAuthenticated()) {
+            user = userRepository.findUserByLogin(((UserDetails) authContext.getPrincipal()).getUsername()).orElseThrow();
+        }
+        Video newVideo = videoRepository.save(new Video(videoDto.getName(), videoDto.getDescription(), durationSecond, path, previewPath, user, new Rating()));
 
         elasticVideoService.save(elasticVideoMapper.toElasticVideo(newVideo));
 
