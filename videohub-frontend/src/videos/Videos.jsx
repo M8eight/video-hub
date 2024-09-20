@@ -1,9 +1,10 @@
 import React from 'react'
 import Header from '../components/Header';
 import { request } from '../helpers/axios_helper';
-import AddVideoModal from './AddVideoModal';
+import AddVideoCollapse from './AddVideoCollapse';
 import { isAuth } from '../helpers/jwt_helper';
 import InfiniteScroll from "react-infinite-scroll-component";
+import toHHMMSS from '../helpers/toHHMMSS';
 
 import "./videoHome.css";
 
@@ -61,22 +62,7 @@ export default function Videos() {
             })
     }
 
-    function toHHMMSS(str) {
-        var sec_num = parseInt(str, 10); // don't forget the second param
-        var hours = Math.floor(sec_num / 3600);
-        var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
-        var seconds = sec_num - (hours * 3600) - (minutes * 60);
 
-        if (hours < 10) { hours = "0" + hours; }
-        if (minutes < 10) { minutes = "0" + minutes; }
-        if (seconds < 10) { seconds = "0" + seconds; }
-
-        hours = hours + ':'
-        minutes = minutes + ':'
-        if (hours === "00:") { hours = "" }
-        if (minutes === "00:") { hours = "" }
-        return hours + minutes + seconds;
-    }
 
     function setSortByValue(value) {
         setSortBy(value);
@@ -103,18 +89,21 @@ export default function Videos() {
             <div id="videos">
                 <div className="container-fluid mt-4">
 
-                    <AddVideoModal />
 
                     <h2 className="text-center">Все видео</h2>
 
                     {!IS_AUTH && (<div className='fs-3 text-center public-video-text mb-3'>Войдите что бы публиковать видео</div>)}
-                    {IS_AUTH && (<div className="container">
-                        <div className="col"></div>
-                        <div className="col ">
-                            <button type="button" className="btn btn-warning w-100 mb-3" data-bs-toggle="modal" data-bs-target="#videoModal">Загрузить видео</button>
-                        </div>
-                        <div className="col"></div>
-                    </div>)}
+                    {IS_AUTH && (
+                        <React.Fragment>
+                            <div class="d-grid gap-2 col-6 my-3 mx-auto">
+                                <button type="button" className="btn btn-info" data-bs-toggle="collapse" href="#videoCollapse" aria-expanded="false" aria-controls="videoCollapse">Загрузить видео</button>
+                            </div>
+                            <div className="col-lg-6 mx-auto">
+                                <AddVideoCollapse />
+                            </div>
+                        </React.Fragment>
+                    )}
+
 
                     <div className="row ms-2 mb-3">
                         <div class="d-inline-flex gap-1">

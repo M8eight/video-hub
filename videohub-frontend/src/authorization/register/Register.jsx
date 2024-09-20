@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react"
 import Header from "../../components/Header"
-import { redirect } from "react-router-dom";
 
 import { useForm } from "react-hook-form";
 

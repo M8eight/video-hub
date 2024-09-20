@@ -53,7 +53,7 @@ export default function CurrentVideo(props) {
 
             <div className="container-fluid">
                 <div className="row p-2">
-                    <div className="col-9 p-2 col-md-12 col-lg-9">
+                    <div className="col-9 p-2 col-md-12 col-lg-9 col-12">
                         <div className="row">
                             <div className="ratio ratio-16x9">
                                 <video controls poster={videoData?.preview_path !== undefined ?
@@ -91,6 +91,12 @@ export default function CurrentVideo(props) {
                             </div>
                         </div>
                         <hr />
+                        <div className="row ms-2">
+                            <p><span className="me-1">Автор:</span>
+                                <img className="rounded-circle shadow-4-strong me-1" style={{ maxHeight: "35px" }} src={videoData?.user?.avatar_path !== null ? videoData?.user?.avatar : "http://localhost:8080/media/avatar.png"} alt="" />
+                                {videoData?.user !== null ? videoData?.user?.login : "Аноним" }
+                            </p>
+                        </div>
                         <div className="row p-2">
                             {videoData?.description !== undefined ?
                                 <p>{videoData.description}</p> :
@@ -105,7 +111,6 @@ export default function CurrentVideo(props) {
                                     </div>
                                     <div className="d-flex flex-row align-items-center">
                                         <button type="button" className="btn btn-info" data-bs-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">Новый кометарий</button>
-                                        {/* todo какашки сделать коменты */}
                                     </div>
                                 </div>
 
@@ -123,9 +128,9 @@ export default function CurrentVideo(props) {
                     <div className="col-md-12 col-lg-3 p-1">
                         {suggestedVideo.content?.map((el) => (
                             <a key={el.id} href={'/video/' + el.id}>
-                            <div key={el.id} className="card mb-3 parent">
-                                <img className="card-img-top preview" src={"http://localhost:8080/media/" + el.preview_path} alt="" />
-                            </div>
+                                <div key={el.id} className="card mb-3 parent">
+                                    <img className="card-img-top preview" src={"http://localhost:8080/media/" + el.preview_path} alt="" />
+                                </div>
                             </a>
                         ))}
                     </div>
