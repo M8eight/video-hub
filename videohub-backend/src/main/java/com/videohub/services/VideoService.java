@@ -4,6 +4,7 @@ import com.videohub.dtos.VideoDto;
 import com.videohub.exceptions.VideoBadRequestException;
 import com.videohub.helpers.FfmpegHelpers;
 import com.videohub.helpers.FileStorageManager;
+import com.videohub.helpers.SaveFileType;
 import com.videohub.interfaces.VideoDAO;
 import com.videohub.mappers.ElasticVideoMapper;
 import com.videohub.models.Rating;
@@ -80,7 +81,7 @@ public class VideoService implements VideoDAO {
             throw new VideoBadRequestException(videoDto.getName());
         }
 
-        String path = fileStorageManager.save(videoDto.getVideoFile());
+        String path = fileStorageManager.save(videoDto.getVideoFile(), SaveFileType.VIDEO);
         log.info("path {}", path);
         int durationSecond = ffmpegHelpers.getDuration(path);
         String previewPath = ffmpegHelpers.getImageFromVideo(path, durationSecond);

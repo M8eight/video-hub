@@ -9,6 +9,7 @@ import Register from "../authorization/register/Register";
 import UserDetails from "../users/UserDetails";
 import VideoSearch from "../search/VideoSearch";
 import AdminPanel from "../admin/AdminPanel";
+import EditVideo from "../videos/editVideo/EditVideo";
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/videos" element={<Videos />} />
           <Route path="/video/*" element={<CurrentVideo />} />
+          <Route path="/video/:id/edit" element={<EditVideo />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/user/*" element={<UserDetails />} />

@@ -1,6 +1,19 @@
 import toHHMMSS from "./toHHMMSS"
 import { React, useEffect } from "react"
 
+/**
+ * Component for loading more content on scroll. Expects two props:
+ * - callbackFirstLoad: function that will be called on first render to load initial content
+ * - callbackLoadMore: function that will be called on scroll to load more content
+ * 
+ * Returns a component that renders a list of cards with preview images, names and durations.
+ * The list is loaded on first render and on scroll.
+ * 
+ * @param {Object} props - object with two props: callbackFirstLoad and callbackLoadMore
+ * @returns {React.Component} - React component that renders the list of cards
+ * @deprecated
+ */
+
 export default function LoadMoreHelper(props) {
     const callbackFirstLoad = props.callbackFirstLoad
     const callbackLoadMore = props.callbackLoadMore

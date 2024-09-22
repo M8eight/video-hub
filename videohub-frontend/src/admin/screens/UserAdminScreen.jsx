@@ -12,9 +12,9 @@ export default function UserAdminScreen(props) {
             console.log(res.data.content)
             setUsers(res.data.content)
         })
-        setOffset(offset+1)
+        setOffset(offset + 1)
     }
-// todo fix last list
+    // todo fix last list
     function getMoreUsers() {
         request('get', '/api/admin/user/users?offset=' + offset + '&limit=' + limit)
             .then((res) => {
@@ -57,14 +57,16 @@ export default function UserAdminScreen(props) {
 
 
                             <div class="col">
-                                <div class={"card text-bg-" + (user.authorities.map((el) => el.name).includes("ROLE_ADMIN") === true ? "light" : "dark")}>
+                                <div className={"card text-bg-dark"}>
                                     {/* <img src="..." class="card-img-top" alt="..." /> */}
-                                    <div class="card-body">
-                                        <h4 class="card-title">{user.id} {user.login} {(user.authorities.map((el) => el.name).includes("ROLE_ADMIN") === true ? (
-                                            <span class="badge text-bg-primary">Admin</span>
-                                        ) : <span class="badge text-bg-secondary">User</span>)}</h4>
-                                        <p class="card-text">{user.email}</p>
-                                    </div>
+                                    <a className='text-decoration-none text-light' href={"/user/" + user.id}>
+                                        <div class="card-body">
+                                            <h4 class="card-title">{user.id}: {user.login} {(user.authorities.map((el) => el.name).includes("ROLE_ADMIN") === true ? (
+                                                <span class="badge text-bg-primary">Admin</span>
+                                            ) : <span class="badge text-bg-secondary">User</span>)}</h4>
+                                            <p class="card-text">{user.email}</p>
+                                        </div>
+                                    </a>
                                 </div>
                             </div>
 

@@ -21,12 +21,10 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     public String signUp(UserDto userDto) {
-        log.info ("try to sign up" + userDto.toString());
         return jwtService.generateToken(userService.createUser(userDto));
     }
 
     public String signIn(LoginDto loginDto) {
-        log.info("try to sign in" + loginDto.toString());
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
                 loginDto.getLogin(),
                 loginDto.getPassword()

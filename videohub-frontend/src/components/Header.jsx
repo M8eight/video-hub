@@ -8,9 +8,9 @@ export default function Header(props) {
     const [IS_AUTH, setIS_AUTH] = React.useState(isAuth());
     const [user, setUser] = React.useState(getDecodeJwt());
 
-    React.useEffect(() => {
-        console.log(user);
-    }, [user]);
+    // React.useEffect(() => {
+    //     // console.log(user);
+    // }, [user]);
 
     const checkActive = (prop, targetTab) => {
         if (prop === targetTab) {
@@ -23,7 +23,7 @@ export default function Header(props) {
     return (
         <nav className="navbar navbar-expand-lg bg-body-tertiary">
             <div className="container-fluid">
-                <a className="navbar-brand" href="/">VideoHub😛</a>
+                <a className="navbar-brand" href="/">VideoHub<img src="http://localhost:8080/media/cold.gif" style={{ width: "25px", height: "25px" }} alt="" /></a>
                 <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span className="navbar-toggler-icon"></span>
                 </button>

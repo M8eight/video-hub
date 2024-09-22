@@ -1,9 +1,12 @@
 package com.videohub.services;
 
 import com.videohub.dtos.UserDto;
-import com.videohub.dtos.UserResponseDto;
+import com.videohub.exceptions.OldPasswordNotEqualsException;
 import com.videohub.exceptions.UserAlreadyRegisterException;
+import com.videohub.exceptions.UserNotAuthorizedException;
 import com.videohub.exceptions.UserNotFoundException;
+import com.videohub.helpers.FileStorageManager;
+import com.videohub.helpers.SaveFileType;
 import com.videohub.helpers.ValidUserFields;
 import com.videohub.interfaces.UserDAO;
 import com.videohub.mappers.UserMapper;
@@ -11,18 +14,19 @@ import com.videohub.models.Role;
 import com.videohub.models.User;
 import com.videohub.repositories.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -34,6 +38,7 @@ public class UserService implements UserDAO {
     private final UserMapper userMapper;
 
     private final JwtService jwtService;
+    private final FileStorageManager fileStorageManager;
 
     @SneakyThrows
     @Override
@@ -59,13 +64,13 @@ public class UserService implements UserDAO {
 
     @SneakyThrows
     @Override
-    public UserResponseDto editUser(Long id, UserDto userDto) {
+    public User editUser(Long id, UserDto userDto) {
         User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
         user.setLogin(ValidUserFields.validNotNull(userDto.getLogin(), user.getLogin()));
         user.setEmail(ValidUserFields.validNotNull(userDto.getEmail(), user.getEmail()));
         user.setPhoneNumber(ValidUserFields.validNotNull(userDto.getPhoneNumber(), user.getPhoneNumber()));
 
-        return userMapper.toUserResponse(userRepository.save(user));
+        return userRepository.save(user);
     }
 
     @Override
@@ -75,10 +80,19 @@ public class UserService implements UserDAO {
 
     @SneakyThrows
     @Override
-    public UserResponseDto changePassword(Long id, String password) {
-        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
-        user.setPassword(passwordEncoder.encode(password));
-        return userMapper.toUserResponse(userRepository.save(user));
+    public User changePassword(String oldPassword, String password) {
+        var authContext = SecurityContextHolder.getContext().getAuthentication();
+        User user;
+        if (authContext != null && authContext.isAuthenticated()) {
+            user = userRepository.findUserByLogin(((UserDetails) authContext.getPrincipal()).getUsername()).orElseThrow();
+        } else {
+            throw new UserNotAuthorizedException();
+        }
+        if (passwordEncoder.matches(oldPassword, user.getPassword())) {
+            user.setPassword(passwordEncoder.encode(password));
+            return userRepository.save(user);
+        }
+        throw new OldPasswordNotEqualsException();
     }
 
     @Override
@@ -101,7 +115,21 @@ public class UserService implements UserDAO {
         return userRepository.save(user);
     }
 
+    @SneakyThrows
+    @Transactional
+    @Override
+    public User updateAvatar(MultipartFile avatar) {
+        var authContext = SecurityContextHolder.getContext().getAuthentication();
+        User user;
+        if (authContext != null && authContext.isAuthenticated()) {
+            user = userRepository.findUserByLogin(((UserDetails) authContext.getPrincipal()).getUsername()).orElseThrow();
+        } else {
+            throw new UserNotAuthorizedException();
+        }
 
-
+        String avatarFilename = fileStorageManager.save(avatar, SaveFileType.AVATAR);
+        user.setAvatar_path(avatarFilename);
+        return userRepository.save(user);
+    }
 
 }

@@ -4,12 +4,15 @@ import Header from "../../components/Header";
 import CommentsBlock from "./CommentsBlock";
 import { isAuth } from "../../helpers/jwt_helper";
 
+import { useParams } from "react-router-dom";
+
 
 export default function CurrentVideo(props) {
     const IS_AUTH = isAuth();
     const [videoData, setVideoData] = useState({});
     const [rating, setRating] = useState({});
     const [suggestedVideo, setSuggestedVideo] = useState([]);
+    const params  = useParams() 
 
     useEffect(() => {
         getCurrentVideo();
@@ -47,6 +50,12 @@ export default function CurrentVideo(props) {
         })
     }
 
+    function deleteVideo() {
+        request("delete", "http://localhost:8080/api/video/" + videoData?.id).then((response) => {
+            window.location.replace("http://localhost:3000/videos");
+        })
+    }
+
     return (
         <Fragment>
             <Header currentTab="videos" />
@@ -67,6 +76,11 @@ export default function CurrentVideo(props) {
                             </div>
                         </div>
                         <div className="row p-2 mt-2">
+                            <div className="btn-group mb-3" role="group" aria-label="Basic mixed styles example">
+                                <button type="button" onClick={() => {deleteVideo()}} className="btn btn-danger">Удалить видео</button>
+                                <button type="button" onClick={() => {window.location.replace("http://localhost:3000/video/" + videoData?.id + "/edit")}} className="btn btn-warning">Изменить видео</button>
+                                {/* {"route" + params.id} */}
+                            </div>
                             <div className="col-9 text-break fs-4">
                                 {videoData?.name !== undefined ?
                                     videoData.name :
@@ -94,7 +108,7 @@ export default function CurrentVideo(props) {
                         <div className="row ms-2">
                             <p><span className="me-1">Автор:</span>
                                 <img className="rounded-circle shadow-4-strong me-1" style={{ maxHeight: "35px" }} src={videoData?.user?.avatar_path !== null ? videoData?.user?.avatar : "http://localhost:8080/media/avatar.png"} alt="" />
-                                {videoData?.user !== null ? videoData?.user?.login : "Аноним" }
+                                {videoData?.user !== null ? videoData?.user?.login : "Аноним"}
                             </p>
                         </div>
                         <div className="row p-2">

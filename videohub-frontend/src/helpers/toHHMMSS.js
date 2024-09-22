@@ -1,3 +1,8 @@
+/**
+ * Converts a duration given in seconds to a string in the format HH:MM:SS
+ * @param {string} str the duration in seconds
+ * @returns {string} The duration in the format HH:MM:SS
+ */
 export default function toHHMMSS(str) {
     var sec_num = parseInt(str, 10); // don't forget the second param
     var hours = Math.floor(sec_num / 3600);
