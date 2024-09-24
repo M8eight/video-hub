@@ -1,18 +1,23 @@
 {
-  "name": "semantic",
+  "name": "frontend",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
-    "axios": "^1.7.7",
+    "axios": "^1.7.2",
+    "dotenv": "^16.4.5",
+    "history": "^5.3.0",
+    "js-cookie": "^3.0.5",
+    "jwt-decode": "^4.0.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "react-router-dom": "^6.26.2",
+    "react-hook-form": "^7.52.2",
+    "react-infinite-scroll-component": "^6.1.0",
+    "react-konva": "^18.2.10",
+    "react-router-dom": "^6.24.0",
     "react-scripts": "5.0.1",
-    "semantic-ui-css": "^2.5.0",
-    "semantic-ui-react": "^2.1.5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -38,5 +43,9 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@babel/plugin-transform-private-property-in-object": "^7.24.7"
   }
 }
