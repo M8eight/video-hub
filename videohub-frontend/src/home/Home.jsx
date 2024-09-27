@@ -4,8 +4,8 @@ import Header from "../components/Header";
 import "./Home.css";
 
 export default function Home() {
-    const [data, setData] = React.useState([]);
     const [horrorSlide, setHorrorSlide] = React.useState(false);
+    const [homeImageUrl, setHomeImageUrl] = React.useState("http://localhost:8080/media/globus.gif");
 
     return (
         <React.Fragment>
@@ -17,7 +17,7 @@ export default function Home() {
                     {
                         horrorSlide ? (
                             <React.Fragment>
-                                <img src="https://i.gifer.com/GMxB.gif" class="all-screen noselect" onDragStart={e => e.preventDefault()} onMouseDown={e => {return false}} alt="" />
+                                <img src="https://i.gifer.com/GMxB.gif" class="all-screen noselect" onDragStart={e => e.preventDefault()} onMouseDown={e => { return false }} alt="" />
                                 <audio autoPlay onPlay={(e) => {
                                     let audio = e.target;
                                     let initialVolume = audio.volume;
@@ -39,12 +39,15 @@ export default function Home() {
                             : null
                     }
                     <div id="carouselExampleInterval" class="carousel slide">
+                        <div className="d-flex row ">
+                            <button onClick={() => {setHomeImageUrl("http://localhost:8080/media/anime.gif")}} className="btn btn-light">Если натурал</button>
+                        </div>
                         <div class="carousel-inner">
                             <div class="carousel-item active">
-                                <img src={"http://localhost:8080/media/globus.gif"} class="d-block carouselca-img" style={{ maxHeight: "300px" }} alt="..." />
+                                <img src={homeImageUrl} class="d-block carouselca-img" style={{ maxHeight: "300px" }} alt="..." />
                             </div>
                             <div class="carousel-item" >
-                                <img src="https://i.pinimg.com/564x/f0/ac/57/f0ac57cce3d0ec44bbed6035eb7af1d7.jpg" class="d-block carouselca-img noselect face" onDragStart={e => e.preventDefault()} onMouseDown={e => {return false}} alt="..." />
+                                <img src="https://i.pinimg.com/564x/f0/ac/57/f0ac57cce3d0ec44bbed6035eb7af1d7.jpg" class="d-block carouselca-img noselect face" onDragStart={e => e.preventDefault()} onMouseDown={e => { return false }} alt="..." />
                             </div>
                         </div>
                         {

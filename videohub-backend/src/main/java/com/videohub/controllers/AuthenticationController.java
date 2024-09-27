@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @AllArgsConstructor
+@CrossOrigin
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
@@ -25,9 +26,8 @@ public class AuthenticationController {
      * Registration mapping
      * @return JwtToken
      * */
-    @CrossOrigin
     @PostMapping("/auth/register")
-    String registrationUser(@ModelAttribute @Valid UserDto request) {
+    String registrationUserEndpoint(@ModelAttribute @Valid UserDto request) {
 
         return authenticationService.signUp(request);
     }
@@ -37,9 +37,8 @@ public class AuthenticationController {
      * @return JwtToken
      * */
     @SneakyThrows
-    @CrossOrigin
     @PostMapping("/auth/login")
-    String loginUser(@ModelAttribute @Valid LoginDto request) {
+    String loginUserEndpoint(@ModelAttribute @Valid LoginDto request) {
         return authenticationService.signIn(request);
     }
 }

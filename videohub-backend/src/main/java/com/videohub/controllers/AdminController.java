@@ -27,39 +27,39 @@ public class AdminController {
 
     @SneakyThrows
     @PostMapping("/create")
-    public User createAdmin(@ModelAttribute @Valid UserDto userDto) {
+    public User createAdminEndpoint(@ModelAttribute @Valid UserDto userDto) {
         return adminService.createAdmin(userDto);
     }
 
     @SneakyThrows
     @GetMapping("/user/users")
-    public Page<User> getAllUsers(PaginationLimitBodyDto requestParam) {
+    public Page<User> getAllUsersEndpoint(PaginationLimitBodyDto requestParam) {
         return adminService.getAll(requestParam.getOffset(), requestParam.getLimit());
     }
 
     @PostMapping("/user/edit/roles")
-    public User editUserRoles(@RequestBody EditRolesDto editRolesDto) {
+    public User editUserRolesEndpoint(@RequestBody EditRolesDto editRolesDto) {
         return adminService.editUserRoles(editRolesDto.getId(), editRolesDto.getRoles());
     }
 
     @DeleteMapping("/user/delete/{id}")
-    public boolean deleteUser(@PathVariable Long id) {
+    public boolean deleteUserEndpoint(@PathVariable Long id) {
         adminService.deleteById(id);
         return true;
     }
 
     @GetMapping("/count/video")
-    public long countVideo() {
+    public long countVideoEndpoint() {
         return adminService.countVideo();
     }
 
     @GetMapping("/count/user")
-    public long countUser() {
+    public long countUserEndpoint() {
         return adminService.countUser();
     }
 
     @GetMapping("/count/comment")
-    public long countComment() {
+    public long countCommentEndpoint() {
         return adminService.countComment();
     }
 }

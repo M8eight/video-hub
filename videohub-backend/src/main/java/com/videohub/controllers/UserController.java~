@@ -17,17 +17,17 @@ public class UserController {
     UserService userService;
 
     @GetMapping("/api/user/{id}")
-    User getUserEndpoint(@PathVariable Long id) {
+    User getUser(@PathVariable Long id) {
         return userService.getById(id);
     }
 
     @PostMapping("/api/user/avatar")
-    User setUserAvatarEndpoint(@RequestAttribute MultipartFile avatar) {
+    User setUserAvatar(@RequestAttribute MultipartFile avatar) {
         return userService.updateAvatar(avatar);
     }
 
     @PostMapping("/api/user/password/reset")
-    User userPasswordResetEndpoint(@ModelAttribute ResetPasswordDto dto) {
+    User userPasswordReset(@ModelAttribute ResetPasswordDto dto) {
         return userService.changePassword(dto.getOldPassword(), dto.getPassword());
     }
 }

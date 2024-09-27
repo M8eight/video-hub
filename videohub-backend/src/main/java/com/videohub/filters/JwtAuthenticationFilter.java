@@ -2,6 +2,7 @@ package com.videohub.filters;
 
 import com.videohub.services.JwtService;
 import com.videohub.services.UserService;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -44,7 +45,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String jwt = authHeader.substring(BEARER_PREFIX.length());
-        String login = jwtService.extractUsername(jwt);
+        String login;
+        try {
+            login = jwtService.extractUsername(jwt);
+        } catch (ExpiredJwtException e) {
+            //TODO Поменять статус на нормальный (здесь приходит свой статус если токен устарел)
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            filterChain.doFilter(request, response);
+            return;
+        }
 
         if (!(login.isBlank()) && SecurityContextHolder.getContext().getAuthentication() == null) {
             UserDetails userDetails = userService.findByLogin(login);

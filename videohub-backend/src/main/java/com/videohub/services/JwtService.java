@@ -3,16 +3,15 @@ package com.videohub.services;
 import com.videohub.models.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
-import java.security.Key;
-import java.security.PublicKey;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -64,10 +63,9 @@ public class JwtService {
         return extractClaim(token, Claims::getExpiration);
     }
 
+    @SneakyThrows
     private Claims extractAllClaims(String token) {
         return Jwts.parser().verifyWith(getSigningKey()).build().parseSignedClaims(token).getPayload();
-//        return Jwts.parser().setSigningKey(getSigningKey()).build().parseClaimsJwt(token)
-//                .getBody();
     }
 
     private SecretKey getSigningKey() {

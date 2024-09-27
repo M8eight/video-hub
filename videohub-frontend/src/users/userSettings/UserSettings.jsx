@@ -41,8 +41,32 @@ export default function UserSettings(props) {
                             <div className="collapse" id="userEdit">
                                 <div className="card card-body">
                                     <div className="col-lg-12 ">
-                                        <h1 className="text-center">Изменить профиль </h1>
+                                        <h1 className="text-center text-secondary">Изменить профиль </h1>
 
+                                        <h4 className="text">Аватар:</h4>
+                                        <form onSubmit={(e) => {
+                                            e.preventDefault()
+                                            const formData = new FormData();
+                                            formData.append("avatar", avatar)
+                                            setAvatarLoadStatus(1)
+                                            request("post", `/api/user/avatar`, formData, { "Content-Type": "multipart/form-data" }).then((res) => {
+                                                setUserData(res.data)
+                                                setAvatarLoadStatus(2)
+                                                window.location.reload()
+                                            }).catch((err) => {
+                                                setAvatarLoadStatus(-1)
+                                            })
+                                        }}>
+                                            <div className="form-group mb-3">
+                                                {avatar !== null && avatar !== undefined ? (<img className='img-fluid center rounded-circle' style={{ maxHeight: "200px" }} src={URL.createObjectURL(avatar)} alt="" srcSet="" />) : null}
+                                                <input required className="form-control mb-2" onChange={(e) => setAvatar(e.target.files[0])} type="file" name="avatar" />
+                                                {avatarLoadStatus === -1 && <p className="fs-4 pb-2 mb-4 text-danger border-bottom border-danger">Ошибка загрузки</p>}
+                                                <button type="submit" className={"btn btn-primary" + ([1, 2].includes(avatarLoadStatus) ? " disabled" : "")}>{(passLoadStatus === 2 ? "Успешно" : "Изменить аватар")}</button>
+                                            </div>
+                                        </form>
+
+
+                                        <h4 className="text">Изменить пароль:</h4>
 
                                         <form onSubmit={handleSubmit(onSubmit)}>
                                             <input type="text" className="form-control form-control-lg mb-2 convex-button" placeholder="Старый пароль"
@@ -88,46 +112,12 @@ export default function UserSettings(props) {
 
 
 
-                                            <input type="submit" className={"btn btn-lg btn-primary w-100 mb-3 fs-3" + ([1, 2].includes(passLoadStatus) ? " disabled" : "")} value={(passLoadStatus === 2 ? "Успешно" : "Сбросить пароль")} />
+                                            <input type="submit" className={"btn btn-primary" + ([1, 2].includes(passLoadStatus) ? " disabled" : "")} value={(passLoadStatus === 2 ? "Успешно" : "Сбросить пароль")} />
 
                                         </form>
 
-                                        {/* <form onSubmit={(e) => {
-                                            e.preventDefault()
-                                            request("post", "/api/user/edit/email", {
-                                                email: e.target.elements.email.value
-                                            }).then((res) => {
-                                                setUserData(res.data)
-                                            })
-                                        }}>
-                                            <div className="form-group">
-                                                <label className="text">Email:</label>
-                                                <input className="form-control" type="email" name="email" defaultValue={userData.email} />
-                                            </div>
-                                            <button type="submit" className="btn btn-primary mt-3">Изменить email</button>
-                                        </form> */}
 
-                                        <form onSubmit={(e) => {
-                                            e.preventDefault()
-                                            const formData = new FormData();
-                                            formData.append("avatar", avatar)
-                                            setAvatarLoadStatus(1)
-                                            request("post", `/api/user/avatar`, formData, { "Content-Type": "multipart/form-data" }).then((res) => {
-                                                setUserData(res.data)
-                                                setAvatarLoadStatus(2)
-                                                window.location.reload()
-                                            }).catch((err) => {
-                                                setAvatarLoadStatus(-1)
-                                            })
-                                        }}>
-                                            <div className="form-group mt-3">
-                                                <h4 className="text">Аватар:</h4>
-                                                {avatar !== null && avatar !== undefined ? (<img className='img-fluid center rounded-circle' style={{ maxHeight: "200px" }} src={URL.createObjectURL(avatar)} alt="" srcSet="" />) : null}
-                                                <input required className="form-control" onChange={(e) => setAvatar(e.target.files[0])} type="file" name="avatar" />
-                                                {avatarLoadStatus === -1 && <p className="fs-4 pb-2 mb-4 text-danger border-bottom border-danger">Ошибка загрузки</p>}
-                                            </div>
-                                            <button type="submit" className={"btn btn-primary mt-3" + ([1, 2].includes(avatarLoadStatus) ? " disabled" : "")}>{(passLoadStatus === 2 ? "Успешно" : "Изменить аватар")}</button>
-                                        </form>
+
                                     </div>
                                 </div>
                             </div>

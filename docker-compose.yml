@@ -1,0 +1,74 @@
+services:
+  # frontend:
+  #   build:
+  #     context: ./videohub-frontend
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "3000:3000"
+  #   depends_on:
+  #     - backend
+
+  # grafana:
+  #   image: grafana/grafana
+  #   container_name: grafana
+  #   ports:
+  #     - 3001:3000
+  #   env_file:
+  #     - ./metrics-env/grafana.env
+  #   depends_on:
+  #     - prometheus
+
+  # prometheus:
+  #     image: prom/prometheus
+  #     container_name: prometheus
+  #     volumes:
+  #       - ./metrics-env/prometheus.yml:/etc/prometheus/prometheus.yml
+  #     ports:
+  #       - 9090:9090
+  #     depends_on:
+  #       - backend
+
+  # backend:
+  #   container_name: backend
+  #   build:
+  #     context: ./videohub-backend
+  #     dockerfile: Dockerfile
+  #   ports:
+  #     - "8080:8080"
+  #   depends_on:
+  #     - elasticsearch
+  #   environment:
+  #     - BACKEND_DOCKER_FILE=/app/docker-compose.yml
+  #     - STORAGE_DIR=/app
+  #     - LOG_FILENAME=/app/logs.txt
+  #   restart: unless-stopped
+
+  elasticsearch:
+    image: elasticsearch:8.15.2
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+    depends_on:
+      - service-db
+    volumes:
+      - ./elasticsearch_data:/usr/share/elasticsearch/data
+    ports:
+      - 9200:9200
+      - 9300:9300
+
+  service-db:
+    image: postgres:14.7-alpine
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: filmsbase
+    volumes:
+      - service-db:/var/lib/postgresql/data
+    ports:
+      - "6000:5432"
+    restart: unless-stopped
+
+volumes:
+  service-db:
+  elasticsearch:

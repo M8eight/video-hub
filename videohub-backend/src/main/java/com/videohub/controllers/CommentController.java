@@ -20,35 +20,32 @@ import java.util.List;
 @RequestMapping("api")
 @RestController
 @RequiredArgsConstructor
+@CrossOrigin
 public class CommentController {
     final private CommentRepository commentRepository;
     final private VideoRepository videoRepository;
-    @CrossOrigin
     @GetMapping("/video/{id}/comments")
-    public List<Comment> getComments(@PathVariable Long id) {
+    public List<Comment> getCommentsEndpoint(@PathVariable Long id) {
         return videoRepository.findById(id).orElseThrow(() -> new VideoNotFoundException(id)).getComments();
     }
 
-    @CrossOrigin
     @PostMapping("/video/{id}/comment/new")
-    public ResponseEntity<HttpStatusCode> newComment(@PathVariable Long id, @Valid @RequestBody Comment comment) {
+    public ResponseEntity<HttpStatusCode> newCommentEndpoint(@PathVariable Long id, @Valid @RequestBody Comment comment) {
         comment.setRating(new Rating());
         comment.setVideo(videoRepository.getReferenceById(id));
         commentRepository.save(comment);
         return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @CrossOrigin
     @PutMapping("/video/{id}/comment/edit")
-    public Comment editComment(@PathVariable Long id, @RequestParam String text) {
+    public Comment editCommentEndpoint(@PathVariable Long id, @RequestParam String text) {
         Comment comment = commentRepository.getReferenceById(id);
         comment.setText(text);
         return commentRepository.save(comment);
     }
 
-    @CrossOrigin
     @DeleteMapping("/video/{id}/comment/delete")
-    public void deleteComment(@PathVariable Long id) {
+    public void deleteCommentEndpoint(@PathVariable Long id) {
         commentRepository.deleteById(id);
     }
 }
