@@ -16,13 +16,9 @@ export default function AddVideoModal() {
         formReq.append("name", data.name);
         formReq.append("description", data.description);
         formReq.append("videoFile", data.videoFile[0]);
-        let sortedVidTags = []
-        videoTags.forEach((el) => {
-            if (el !== "") {
-                sortedVidTags.push(el.trim());
-            }
-        })
-        formReq.append("videoTags", sortedVidTags);
+        let sortedVidTags = Array.from(videoTags.filter((el) => el.trim() !== "").map((el) => el.trim()));
+
+        formReq.append("videoTags", Array.from(new Set(sortedVidTags)));
 
         setIsLoading(true);
         request("post", "/api/video", formReq, { "Content-Type": "multipart/form-data" })
@@ -33,6 +29,14 @@ export default function AddVideoModal() {
             .catch((response) => {
                 console.error(response);
             });
+    }
+
+    function checkDistinct(array) {
+        const checkSet = new Set(array);
+        
+        // Strict equality 
+        // Return boolean value
+        return checkSet.size === array.length;  
     }
 
     return (
@@ -59,29 +63,12 @@ export default function AddVideoModal() {
                                     <p className="fs-4 pb-2 mb-4 text-danger border-bottom border-danger">Поле название должно быть больше 5 символов</p>
                                 )}
 
-
-                                {/* <input type="text" className="form-control form-control-lg mb-2 convex-button" ref={videoTagRef} placeholder="Теги видео (через запятую)"
-                                    {...register("videoTags", {
-                                        required: true,
-                                        maxLength: 50,
-                                        minLength: 1
-                                    })}
-                                />
-                                {errors?.videoTags?.type === "required" && <p className="fs-4 pb-2 mb-4 text-danger border-bottom border-danger">Поле тэги обязательно</p>}
-                                {errors?.videoTags?.type === "maxLength" && (
-                                    <p className="fs-4 pb-2 mb-4 text-danger border-bottom border-danger">Поле тэги должно быть не больше 50 символов</p>
-                                )}
-                                {errors?.videoTags?.type === "minLength" && (
-                                    <p className="fs-4 pb-2 mb-4 text-danger border-bottom border-danger">Поле тэги должно быть больше 1 символа</p>
-                                )} */}
-
-
+                                {!checkDistinct(videoTags) && <p className="fs-4 pb-2 mb-4 text-danger border-bottom border-danger">Теги должны быть уникальными</p>}
                                 <h4 className="overflow-hidden">
                                     {videoTags?.map((el) => el !== "" && (
                                         <span key={el} class="badge text-bg-secondary me-2">{el}</span>
                                     ))}
                                 </h4>
-
                                 <input type="text" className="form-control form-control-lg mb-2 convex-button" ref={videoTagRef} placeholder="Теги видео (через запятую)"
                                     {...register("videoTags", {
                                         required: true,
@@ -89,7 +76,7 @@ export default function AddVideoModal() {
                                         minLength: 1
                                     })}
                                     onChange={(e) => {
-                                        setVideoTags(e.target.value.split(','));
+                                        setVideoTags(Array.from(e.target.value.split(',').filter((el) => el.trim() !== "").map((el) => el.trim())));
                                     }}
                                 />
 

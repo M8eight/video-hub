@@ -76,6 +76,7 @@ export default function CurrentVideo(props) {
                                 </video>
                             </div>
                         </div>
+
                         <div className="row p-2 mt-2">
                             {isAdmin() && (
                                 <div className="btn-group mb-3" role="group" aria-label="Basic mixed styles example">
@@ -85,11 +86,16 @@ export default function CurrentVideo(props) {
                                 </div>
                             )}
                             <div className="col-9 text-break fs-4">
-                                {/* {videoData?.tags.map((el) => <span className="badge rounded-pill bg-primary me-1">{el}</span>)} */}
                                 {videoData?.name !== undefined ?
                                     videoData.name :
                                     <p className="placeholder-glow"><span className="placeholder col-8 placeholder-lg"></span></p>
                                 }
+                                <br />
+                                {videoData.tags !== undefined && videoData.tags.length > 0 && (
+                                    <div>
+                                        <b>Теги:</b> {videoData?.tags.map((el) => <span className="badge rounded-pill bg-primary me-1">{el.text}</span>)}
+                                    </div>
+                                )}
                             </div>
                             <div className="col m-0 p-0 text-center">
                                 <div className="btn-group" role="group" aria-label="Basic mixed styles example">

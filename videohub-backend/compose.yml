@@ -31,7 +31,7 @@ services:
 #      - elasticsearch
 
   elasticsearch:
-    image: elasticsearch:8.6.2
+    image: elasticsearch:8.15.2
     container_name: elasticsearch
     environment:
       - discovery.type=single-node

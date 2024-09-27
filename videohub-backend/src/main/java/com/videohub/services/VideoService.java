@@ -95,55 +95,51 @@ public class VideoService implements VideoDAO {
         String extension = Objects.requireNonNull(videoDto.getVideoFile().getOriginalFilename())
                 .substring(videoDto.getVideoFile().getOriginalFilename().lastIndexOf(".") + 1);
 
-        log.info(videoDto.getVideoFile().getOriginalFilename());
         if (!extension.equals("mp4") && !extension.equals("avi")) {
             throw new VideoBadRequestException(videoDto.getName());
         }
 
+        //Save video and get duration
         String videoPath = fileStorageManager.save(videoDto.getVideoFile(), SaveFileType.VIDEO);
-        log.info("path {}", videoPath);
         int durationSecond = ffmpegHelpers.getDuration(videoPath);
         String previewPath = ffmpegHelpers.getImageFromVideo(videoPath, durationSecond);
 
+        //Set user
         Authentication authContext = SecurityContextHolder.getContext().getAuthentication();
         User user = null;
         if (authContext != null && authContext.isAuthenticated()) {
             user = userRepository.findUserByLogin(((UserDetails) authContext.getPrincipal()).getUsername()).orElseThrow();
         }
 
+        //Set tags
         List<VideoTag> videoTagList = new ArrayList<>();
-
-        for (String el : videoDto.getVideoTags()) {
-            videoTagList.add(videoTagRepository.save(new VideoTag(el)));
+        if (videoDto.getVideoTags() != null) {
+            for (String el : videoDto.getVideoTags()) {
+                videoTagList.add(videoTagRepository.save(new VideoTag(el)));
+            }
         }
 
-        Video newVideo = videoRepository.save(new Video(videoDto.getName(), videoDto.getDescription(), durationSecond, videoTagList, videoPath, previewPath, user, new Rating()));
-
+        Video newVideo = videoRepository.save(new Video(
+                videoDto.getName(),
+                videoDto.getDescription(),
+                durationSecond,
+                videoTagList,
+                videoPath,
+                previewPath,
+                user,
+                new Rating()
+        ));
         elasticVideoService.save(elasticVideoMapper.toElasticVideo(newVideo));
 
         return newVideo;
-
-
-//        Video video = Video.builder()
-//                .name(videoDto.getName())
-//                .description(videoDto.getDescription())
-//                .preview_path(previewPath)
-//                .video_path(videoPath)
-//                .duration(durationSecond)
-//                .rating(new Rating())
-//                .user(user)
-//                .tags(videoDto.getTags())
-//                .build();
-//        Video newVideo = videoRepository.save(video);
-
     }
 
     @Override
     public Video editVideo(Long id, VideoDto videoDto) {
         Video video = videoRepository.findById(id).orElseThrow();
-
         video.setName(videoDto.getName());
         video.setDescription(videoDto.getDescription());
+
         return videoRepository.save(video);
     }
 }
