@@ -1,6 +1,7 @@
 package com.videohub.services;
 
 import com.videohub.dtos.VideoDto;
+import com.videohub.enumerations.SortVideosBy;
 import com.videohub.exceptions.VideoBadRequestException;
 import com.videohub.helpers.FfmpegHelpers;
 import com.videohub.helpers.FileStorageManager;
@@ -10,19 +11,23 @@ import com.videohub.mappers.ElasticVideoMapper;
 import com.videohub.models.Rating;
 import com.videohub.models.User;
 import com.videohub.models.Video;
+import com.videohub.models.VideoTag;
 import com.videohub.repositories.UserRepository;
 import com.videohub.repositories.VideoRepository;
+import com.videohub.repositories.VideoTagRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -35,6 +40,7 @@ public class VideoService implements VideoDAO {
     private final ElasticVideoService elasticVideoService;
     private final ElasticVideoMapper elasticVideoMapper;
     private final UserRepository userRepository;
+    private final VideoTagRepository videoTagRepository;
 
     @Override
     @Transactional
@@ -53,13 +59,26 @@ public class VideoService implements VideoDAO {
         return videoRepository.findAllVideos(PageRequest.of(offset, limit));
     }
 
+    @SneakyThrows
     @Override
-    public Page<Video> getWithSortBy(Integer offset, Integer limit, String sortBy) {
+    public Page<Video> getWithSortBy(Integer offset, Integer limit, SortVideosBy sortBy) {
         Page<Video> resultVideos;
-        if ("views".equals(sortBy)) {
-            resultVideos = videoRepository.findAllByViews(PageRequest.of(offset, limit));
-        } else {
-            resultVideos = videoRepository.findAllVideos(PageRequest.of(offset, limit));
+
+        switch (sortBy) {
+            case NEW:
+                resultVideos = videoRepository.findAllVideos(PageRequest.of(offset, limit));
+                break;
+            case OLD:
+                resultVideos = videoRepository.findAllByCreated_atDesc(PageRequest.of(offset, limit));
+                break;
+            case RATING:
+                resultVideos = videoRepository.findAllByRating(PageRequest.of(offset, limit));
+                break;
+            case VIEWS:
+                resultVideos = videoRepository.findAllByViews(PageRequest.of(offset, limit));
+                break;
+            default:
+                throw new BadRequestException();
         }
 
         return resultVideos;
@@ -81,23 +100,42 @@ public class VideoService implements VideoDAO {
             throw new VideoBadRequestException(videoDto.getName());
         }
 
-        String path = fileStorageManager.save(videoDto.getVideoFile(), SaveFileType.VIDEO);
-        log.info("path {}", path);
-        int durationSecond = ffmpegHelpers.getDuration(path);
-        String previewPath = ffmpegHelpers.getImageFromVideo(path, durationSecond);
+        String videoPath = fileStorageManager.save(videoDto.getVideoFile(), SaveFileType.VIDEO);
+        log.info("path {}", videoPath);
+        int durationSecond = ffmpegHelpers.getDuration(videoPath);
+        String previewPath = ffmpegHelpers.getImageFromVideo(videoPath, durationSecond);
 
-        var authContext = SecurityContextHolder.getContext().getAuthentication();
+        Authentication authContext = SecurityContextHolder.getContext().getAuthentication();
         User user = null;
         if (authContext != null && authContext.isAuthenticated()) {
             user = userRepository.findUserByLogin(((UserDetails) authContext.getPrincipal()).getUsername()).orElseThrow();
         }
-        Video newVideo = videoRepository.save(new Video(videoDto.getName(), videoDto.getDescription(), durationSecond, path, previewPath, user, new Rating()));
+
+        List<VideoTag> videoTagList = new ArrayList<>();
+
+        for (String el : videoDto.getVideoTags()) {
+            videoTagList.add(videoTagRepository.save(new VideoTag(el)));
+        }
+
+        Video newVideo = videoRepository.save(new Video(videoDto.getName(), videoDto.getDescription(), durationSecond, videoTagList, videoPath, previewPath, user, new Rating()));
 
         elasticVideoService.save(elasticVideoMapper.toElasticVideo(newVideo));
 
         return newVideo;
-        //todo сделать авторизацию
-        //todo админка
+
+
+//        Video video = Video.builder()
+//                .name(videoDto.getName())
+//                .description(videoDto.getDescription())
+//                .preview_path(previewPath)
+//                .video_path(videoPath)
+//                .duration(durationSecond)
+//                .rating(new Rating())
+//                .user(user)
+//                .tags(videoDto.getTags())
+//                .build();
+//        Video newVideo = videoRepository.save(video);
+
     }
 
     @Override

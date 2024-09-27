@@ -3,16 +3,15 @@ package com.videohub.models;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Getter
@@ -42,8 +41,8 @@ public class Video {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-//    @OneToMany(mappedBy = "video")
-//    private List<VideoTag> tags = new ArrayList<>();
+    @ManyToMany
+    private List<VideoTag> tags;
 
     @NotNull
     private String video_path;
@@ -76,10 +75,11 @@ public class Video {
         this.rating = rating;
     }
 
-    public Video(String name, String description, int duration, String video_path, String preview_path, User user , Rating rating) {
+    public Video(String name, String description, int duration, List<VideoTag> tags,String video_path, String preview_path, User user , Rating rating) {
         this.name = name;
         this.description = description;
         this.duration = duration;
+        this.tags = tags;
         this.video_path = video_path;
         this.preview_path = preview_path;
         this.user = user;

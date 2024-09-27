@@ -4,23 +4,31 @@ import { request } from '../helpers/axios_helper';
 
 export default function Camera() {
     const [videos, setVideos] = React.useState([]);
-    const [name, setName] = React.useState("");
-
-    useEffect(() => {
-
-    }, [])
+    const [searchData, setSearchData] = React.useState([]);
 
     function searchName(name) {
         return request('post', `/api/video/search`, { name: name }).then((res) => {
-            setVideos(res.data.content)
+            setSearchData(res.data.content)
         })
     }
+
+    useEffect(() => {
+        setVideos([]);
+        searchData.map((el) => {
+            request("get", "http://localhost:8080/api/video/" + el.id).then((res) => {
+                setVideos(videos.concat(res.data))
+            })
+        })
+        
+    }, [searchData])
 
     return (
         <React.Fragment>
             <Header currentTab="search" />
 
             <div className='container mt-4'>
+
+            <h2 className="text-center">Поиск</h2>
 
                 <div className='row mb-3'>
                     <div class=" input-group">
@@ -49,6 +57,7 @@ export default function Camera() {
                                 <div className="">
                                     <div className="">
                                         <h6 className="">{el.name}</h6>
+                                        <img style={{maxHeight:"200px"}} src={"http://localhost:8080/media/" + el.preview_path} alt="" />
                                     </div>
                                 </div>
                             </a>

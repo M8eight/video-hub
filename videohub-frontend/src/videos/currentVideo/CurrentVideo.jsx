@@ -2,7 +2,7 @@ import { useEffect, useState, Fragment } from "react";
 import { request } from "../../helpers/axios_helper";
 import Header from "../../components/Header";
 import CommentsBlock from "../helpers/CommentsBlock";
-import { isAuth } from "../../helpers/jwt_helper";
+import { isAuth, isAdmin } from "../../helpers/jwt_helper";
 
 import { useParams } from "react-router-dom";
 
@@ -77,12 +77,15 @@ export default function CurrentVideo(props) {
                             </div>
                         </div>
                         <div className="row p-2 mt-2">
-                            <div className="btn-group mb-3" role="group" aria-label="Basic mixed styles example">
-                                <button type="button" onClick={() => { deleteVideo() }} className="btn btn-danger">Удалить видео</button>
-                                <button type="button" onClick={() => { window.location.replace("http://localhost:3000/video/" + videoData?.id + "/edit") }} className="btn btn-warning">Изменить видео</button>
-                                {/* {"route" + params.id} */}
-                            </div>
+                            {isAdmin() && (
+                                <div className="btn-group mb-3" role="group" aria-label="Basic mixed styles example">
+                                    <button type="button" onClick={() => { deleteVideo() }} className="btn btn-danger">Удалить видео</button>
+                                    <button type="button" onClick={() => { window.location.replace("http://localhost:3000/video/" + videoData?.id + "/edit") }} className="btn btn-warning">Изменить видео</button>
+                                    {/* {"route" + params.id} */}
+                                </div>
+                            )}
                             <div className="col-9 text-break fs-4">
+                                {/* {videoData?.tags.map((el) => <span className="badge rounded-pill bg-primary me-1">{el}</span>)} */}
                                 {videoData?.name !== undefined ?
                                     videoData.name :
                                     <p className="placeholder-glow"><span className="placeholder col-8 placeholder-lg"></span></p>

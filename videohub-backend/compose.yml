@@ -41,8 +41,6 @@ services:
     ports:
       - 9200:9200
       - 9300:9300
-    depends_on:
-      - service-db
 
 #  logstash:
 #    user: root

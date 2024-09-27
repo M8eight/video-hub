@@ -2,6 +2,7 @@ package com.videohub.controllers;
 
 import com.videohub.dtos.PaginationLimitBodyDto;
 import com.videohub.dtos.VideoDto;
+import com.videohub.enumerations.SortVideosBy;
 import com.videohub.exceptions.VideoNotFoundException;
 import com.videohub.models.Video;
 import com.videohub.models.elasticModels.ElasticVideo;
@@ -32,15 +33,15 @@ public class VideoController {
 //            @RequestParam(defaultValue = "20", value = "limit") @Min(2) @Max(100) Integer limit
     @GetMapping("/videos")
     @CrossOrigin
-    Page<Video> all(PaginationLimitBodyDto requestParam, @RequestParam(defaultValue = "") String sortBy) {
-        return videoService.getWithSortBy(requestParam.getOffset(), requestParam.getLimit(), sortBy);
+    Page<Video> all(PaginationLimitBodyDto requestParam, @RequestParam(defaultValue = "new") String sortBy) {
+        return videoService.getWithSortBy(requestParam.getOffset(), requestParam.getLimit(), SortVideosBy.valueOf(sortBy.toUpperCase()));
     }
 
     @PostMapping("/video/search")
     @CrossOrigin
     Page<ElasticVideo> findByName(@RequestBody Map<String, String> req) {
 //        log.info(name);
-        return elasticVideoService.findByName( req.get("name"));
+        return elasticVideoService.findByName(req.get("name"));
     }
 
     @PostMapping("/video")
