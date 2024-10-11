@@ -19,9 +19,7 @@ import com.videohub.repositories.VideoRepository;
 import com.videohub.repositories.VideoTagRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
@@ -87,6 +85,7 @@ public class VideoService implements VideoDAO {
     @Override
     @Transactional
     public Video addVideo(VideoDto videoDto) {
+        assert videoDto.getVideoFile() != null;
         String extension = Objects.requireNonNull(videoDto.getVideoFile().getOriginalFilename())
                 .substring(videoDto.getVideoFile().getOriginalFilename().lastIndexOf(".") + 1);
 
@@ -98,6 +97,8 @@ public class VideoService implements VideoDAO {
         String videoPath = fileStorageManager.save(videoDto.getVideoFile(), SaveFileType.VIDEO);
         int durationSecond = ffmpegHelpers.getDuration(videoPath);
         String previewPath = ffmpegHelpers.getImageFromVideo(videoPath, durationSecond);
+
+        ffmpegHelpers.createVideoCutPreview(videoPath, durationSecond);
 
         //Set user
         Authentication authContext = SecurityContextHolder.getContext().getAuthentication();

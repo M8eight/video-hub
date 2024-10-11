@@ -4,13 +4,14 @@ import Header from "../../components/Header";
 
 import { useParams } from "react-router-dom";
 
-
 export default function EditVideo(props) {
     const [videoData, setVideoData] = useState({});
     const params = useParams()
-    const [video, setVideo] = useState(null);
     const videoRef = useRef();
+
+    const [video, setVideo] = useState(null);
     const [image, setImage] = useState(null);
+    const [videoTags, setVideoTags] = useState([]);
 
     useEffect(() => {
         getCurrentVideo();
@@ -43,7 +44,24 @@ export default function EditVideo(props) {
     function getCurrentVideo() {
         request("get", 'http://localhost:8080/api/video/' + params.id)
             .then(function (response) {
-                setVideoData(response.data)
+                setVideoData(response.data);
+            })
+            .catch(function (error) {
+            })
+            .finally(function () {
+                // выполняется всегда
+            })
+    }
+
+    function sendEditVideoReq() {
+        const formData = new FormData();
+        formData.append('name', videoData.name);
+        formData.append('description', videoData.description);
+        formData.append('videoFile', video);
+        formData.append('previewFile', image);
+        request("put", "http://localhost:8080/api/video/" + params.id + "/edit", formData, { "Content-Type": "multipart/form-data" })
+            .then(function (response) {
+                // window.location.replace("http://localhost:3000/videos");
             })
             .catch(function (error) {
             })
@@ -75,19 +93,43 @@ export default function EditVideo(props) {
                     </div>
 
                     <div className="row">
-                        <div class="d-grid gap-2 col-6 my-3 mx-auto">
+                        <div className="d-grid gap-2 col-6 my-3 mx-auto">
+                            <button type="button" onClick={() => sendEditVideoReq()} className="btn btn-info" data-bs-toggle="collapse" href="#videoCollapse" aria-expanded="false" aria-controls="videoCollapse">Сохранить</button>
+                        </div>
+                    </div>
+
+                    <div className="row">
+                        <div class="gap-2 col-9 my-3">
                             <input required type="file" onChange={(e) => setVideo(e.target.files[0])} className="align-middle form-control-lg my-2" name="video" />
                             <button className="btn btn-primary" onClick={getImage}>Сделать из карда превью</button>
                         </div>
-                        <div className="col">
+                    </div>
+
+                    <div className="row">
+                        <div className="col-3">
                             {image !== null ? <img src={image} alt="" crossOrigin="anonymous" className="img-fluid" /> : null}
                         </div>
                     </div>
 
+                    <div className="row mt-2">
+                        <h3>Теги:</h3>
+                        <h4 className="overflow-hidden">
+                            {videoTags?.map((el) => el !== "" && (
+                                <span key={el} class="badge text-bg-secondary mt-2">{el}</span>
+                            ))}
+                        </h4>
+                        <input type="text" className="form-control form-control-lg mt-2 convex-button" placeholder="Теги видео (через запятую)"
+                            onChange={(e) => {
+                                setVideoTags(Array.from(e.target.value.split(',').filter((el) => el.trim() !== "").map((el) => el.trim())));
+                            }}
+                        />
+                    </div>
+
                     <div className="row p-2 mt-2">
-                        <div className="col-9 text-break fs-4">
+                        <h3>Имя:</h3>
+                        <div className="text-break fs-4">
                             {videoData?.name !== undefined ?
-                                <input type="text" className="form-control-lg form-control" id="name" value={videoData.name} />
+                                <input type="text" onChange={(e) => setVideoData({ ...videoData, name: e.target.value })} className="form-control-lg form-control" id="name" value={videoData.name} />
                                 : <p className="placeholder-glow"><span className="placeholder col-8 placeholder-lg"></span></p>
                             }
                         </div>
@@ -96,14 +138,15 @@ export default function EditVideo(props) {
                     <hr />
 
                     <div className="row p-2">
+                        <h3>Описание:</h3>
                         {videoData?.description !== undefined ?
-                            <textarea className="form-control form-control-lg" id="exampleFormControlTextarea1" value={videoData.description} rows="3"></textarea> :
+                            <textarea className="form-control form-control-lg" onChange={(e) => setVideoData({ ...videoData, description: e.target.value })} id="exampleFormControlTextarea1" value={videoData.description} rows="3"></textarea> :
                             <p className="placeholder-glow mb-0"><span className="placeholder col-8 placeholder-sm"></span><span className="placeholder col-8 placeholder-sm"></span><span className="placeholder col-8 placeholder-sm"></span></p>
                         }
                     </div>
+
                 </div>
             </div>
-
         </Fragment>
     )
 }

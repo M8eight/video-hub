@@ -68,7 +68,7 @@ export default function CurrentVideo(props) {
                         <div className="row">
                             <div className="ratio ratio-16x9">
                                 <video controls poster={videoData?.preview_path !== undefined ?
-                                    "http://localhost:8080/media/" + videoData.preview_path :
+                                    "http://localhost:8080/pictures/" + videoData.preview_path :
                                     "http://localhost:8080/media/video_error.png"} >
 
                                     {videoData?.video_path !== undefined ? (
@@ -132,7 +132,7 @@ export default function CurrentVideo(props) {
                                     <span className="me-1">
                                         Автор:
                                     </span>
-                                    <img className="rounded-circle shadow-4-strong me-1" style={{ maxHeight: "35px" }} src={videoData?.user?.avatar_path !== null ? videoData?.user?.avatar : "http://localhost:8080/media/avatar.png"} alt="" />
+                                    <img className="rounded-circle shadow-4-strong me-1" style={{ maxHeight: "35px" }} src={videoData?.user?.avatar_path !== null ? videoData?.user?.avatar : "http://localhost:8080/pictures/avatar.png"} alt="" />
                                 </p>
                             ) : "Аноним"}
 
@@ -169,7 +169,7 @@ export default function CurrentVideo(props) {
                         {suggestedVideo.content?.map((el) => (
                             <a key={el.id} href={'/video/' + el.id}>
                                 <div key={el.id} className="card mb-3 parent">
-                                    <img className="card-img-top preview" src={"http://localhost:8080/media/" + el.preview_path} alt="" />
+                                    <img className="card-img-top preview" src={"http://localhost:8080/pictures/" + el.preview_path} alt="" />
                                 </div>
                             </a>
                         ))}

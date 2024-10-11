@@ -1,0 +1,32 @@
+#--Server config--
+spring.application.name=videohub
+server.port=8080
+
+#--Jpa/Jdbc config--
+spring.jpa.hibernate.ddl-auto=create
+spring.jpa.show-sql=false
+
+#--Files--
+files.video-directory=${STORAGE_DIR:C:/Storage/}
+spring.servlet.multipart.max-file-size=1000MB
+spring.servlet.multipart.max-request-size=1000MB
+
+#--Logging--
+logging.level.root=info
+
+logging.file.name = ${LOG_FILENAME:C:/Storage/logs/spring.log}
+logging.level.com.github.kokorin.jaffree=fatal
+
+#--Jwt--
+token.signing.key=beautifuldoublegetsymbolthanksbeautifuldoublegetsymbolthanksbeautifuldoublegetsymbolthanksbeautifuldoublegetsymbolthanks
+
+#--Docker config--
+spring.docker.compose.enabled=true
+spring.docker.compose.lifecycle-management=start_only
+spring.docker.compose.host=localhost
+spring.docker.compose.stop.command=stop
+spring.docker.compose.file=${BACKEND_DOCKER_FILE:C:/PROGRAMS/video-hub/docker-compose.yml}
+
+#--Prometheus Grafana--
+#management.endpoints.web.exposure.include=prometheus,health,info,metric
+#management.prometheus.metrics.export.enabled=true

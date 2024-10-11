@@ -25,17 +25,17 @@ public class FfmpegHelpers {
                 .addInput(
                         UrlInput.fromPath(Paths.get(storagePath, "/media/", path))
                                 .setPosition(segments[0], TimeUnit.SECONDS)
-                                .setDuration(3, TimeUnit.SECONDS)
+                                .setDuration(5, TimeUnit.SECONDS)
                 )
                 .addInput(
                         UrlInput.fromPath(Paths.get(storagePath, "/media/", path))
                                 .setPosition(segments[1], TimeUnit.SECONDS)
-                                .setDuration(3, TimeUnit.SECONDS)
+                                .setDuration(5, TimeUnit.SECONDS)
                 )
                 .addInput(
                         UrlInput.fromPath(Paths.get(storagePath, "/media/", path))
                                 .setPosition(segments[2], TimeUnit.SECONDS)
-                                .setDuration(3, TimeUnit.SECONDS)
+                                .setDuration(5, TimeUnit.SECONDS)
                 )
                 .setComplexFilter("[0:v][1:v][2:v]concat=n=3:v=1[outv]")
                 .addArguments("-map", "[outv]")

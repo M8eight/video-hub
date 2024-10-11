@@ -65,7 +65,6 @@ export default function UserSettings(props) {
                                             </div>
                                         </form>
 
-
                                         <h4 className="text">Изменить пароль:</h4>
 
                                         <form onSubmit={handleSubmit(onSubmit)}>
@@ -110,21 +109,15 @@ export default function UserSettings(props) {
                                             />
                                             {errors?.passwordConfirm && <p className="fs-4 pb-2 mb-4 text-danger border-bottom border-danger">Пароли не совпадают</p>}
 
-
-
-                                            <input type="submit" className={"btn btn-primary" + ([1, 2].includes(passLoadStatus) ? " disabled" : "")} value={(passLoadStatus === 2 ? "Успешно" : "Сбросить пароль")} />
+                                            <input type="submit" className={"btn btn-primary" + ([1, 2].includes(passLoadStatus) ? " disabled" : "")} value={(passLoadStatus === 2 ? "Успешно" : "Изменить пароль")} />
 
                                         </form>
-
-
-
                                     </div>
                                 </div>
                             </div>
                         </div>
                     ) : null
                 }
-
             </div>
         </React.Fragment>
     )

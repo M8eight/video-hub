@@ -10,9 +10,7 @@ import org.springframework.lang.Nullable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Entity
 @Getter
@@ -52,10 +50,10 @@ public class User implements UserDetails {
     @JsonIgnoreProperties("user")
     List<Comment> comments;
 
-    @OneToMany(orphanRemoval = true, mappedBy = "user")
-    @ToString.Exclude
+    @OneToMany
+//    @ToString.Exclude
     @JsonIgnoreProperties("user")
-    List<Video> videos;
+    List<Video> favoriteVideos = new ArrayList<>();
 
     Long rating = 0L;
 

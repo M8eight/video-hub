@@ -69,6 +69,7 @@ export default function AddVideoModal() {
                                         <span key={el} class="badge text-bg-secondary me-2">{el}</span>
                                     ))}
                                 </h4>
+                                
                                 <input type="text" className="form-control form-control-lg mb-2 convex-button" ref={videoTagRef} placeholder="Теги видео (через запятую)"
                                     {...register("videoTags", {
                                         required: true,

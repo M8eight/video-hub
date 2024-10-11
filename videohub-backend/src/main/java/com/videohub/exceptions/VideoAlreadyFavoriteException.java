@@ -1,7 +1,10 @@
 package com.videohub.exceptions;
 
-public class VideoAlreadyFavoriteException extends RuntimeException {
-  public VideoAlreadyFavoriteException(String message) {
-    super(message);
-  }
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+
+@ResponseStatus(HttpStatus.BAD_REQUEST)
+public class VideoAlreadyFavoriteException extends Exception {
+    public VideoAlreadyFavoriteException() {
+    }
 }

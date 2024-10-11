@@ -27,11 +27,11 @@ public class FileStorageManager {
             log.info(fileExtension);
 
             String resultFileName = uuidFile + "." + fileExtension;
-            String resultFilePath = videoPath + "/";
+            String resultFilePath = videoPath;
             switch (type) {
-                case VIDEO -> resultFilePath += resultFileName;
-                case AVATAR -> resultFilePath += "avatars/" + resultFileName;
-                case PICTURE -> resultFilePath += "pictures/" + resultFileName;
+                case VIDEO -> resultFilePath += "/media/" + resultFileName;
+                case AVATAR -> resultFilePath += "/avatars/" + resultFileName;
+                case PICTURE -> resultFilePath += "/pictures/" + resultFileName;
             }
 
             switch (type) {

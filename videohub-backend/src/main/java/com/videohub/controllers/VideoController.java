@@ -54,7 +54,7 @@ public class VideoController {
         return videoService.getById(id).orElseThrow(() -> new VideoNotFoundException(id));
     }
 
-    //    todo сделать изменение
+    //todo сделать изменение
     @PutMapping("/video/{id}/edit")
     Video editVideoEndpoint(@PathVariable Long id, @ModelAttribute VideoDto videoDto) {
         return videoService.editVideo(id, videoDto);

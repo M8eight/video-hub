@@ -1,14 +1,11 @@
 package com.videohub.dtos;
 
-import com.videohub.models.User;
-import com.videohub.models.VideoTag;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Nullable;
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @Setter
@@ -19,5 +16,6 @@ public class VideoDto implements Serializable {
     private String name;
     private String description;
     private List<String> videoTags;
-    private MultipartFile videoFile;
+    private @Nullable MultipartFile videoFile;
+    private @Nullable MultipartFile previewFile;
 }

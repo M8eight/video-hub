@@ -1,6 +1,7 @@
 import React, { useEffect } from 'react'
 import Header from '../components/Header';
 import { request } from '../helpers/axios_helper';
+import VideoElements from './../components/VideoElements';
 
 export default function Camera() {
     const [videos, setVideos] = React.useState([]);
@@ -51,18 +52,7 @@ export default function Camera() {
                 </div>
 
                 <div className='row'>
-                    {videos?.map((el) => (
-                        <div key={el.id} className="card">
-                            <a href={"http://localhost:3000/video/" + el.relation_id}>
-                                <div className="">
-                                    <div className="">
-                                        <h6 className="">{el.name}</h6>
-                                        <img style={{maxHeight:"200px"}} src={"http://localhost:8080/media/" + el.preview_path} alt="" />
-                                    </div>
-                                </div>
-                            </a>
-                        </div >
-                    ))}
+                    <VideoElements videos={videos}/>
                 </div>
             </div>
 

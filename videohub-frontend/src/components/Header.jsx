@@ -30,6 +30,9 @@ export default function Header(props) {
                         <li className={"nav-item " + (isActive("search") ? "active-tab" : "")}>
                             <a className={"nav-link " + (isActive("search") ? "active" : "")} href="/search">Найти</a>
                         </li>
+                        <li className={"nav-item " + (isActive("favourites") ? "active-tab" : "")}>
+                            <a className={"nav-link " + (isActive("favourites") ? "active" : "")} href='/favourites'>Избранное</a>
+                        </li>
                         {isAdmin() === true ? (
                             <li className={"nav-item " + (isActive("admin") ? "active-tab" : "")}>
                                 <a className={"nav-link " + (isActive("admin") ? "active" : "")} href="/admin">Админка</a>
