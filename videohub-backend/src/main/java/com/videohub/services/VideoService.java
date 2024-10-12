@@ -108,12 +108,10 @@ public class VideoService implements VideoDAO {
         }
 
         //Set tags
-        List<VideoTag> videoTagList = new ArrayList<>();
+        Set<VideoTag> videoTagList = new HashSet<>();
         if (videoDto.getVideoTags() != null) {
             for (String el : videoDto.getVideoTags()) {
-                videoTagList.add(videoTagRepository.findByText(el).orElseGet(() ->
-                        videoTagRepository.save(new VideoTag(el)))
-                );
+                videoTagList.add(videoTagRepository.save(new VideoTag(el)));
             }
         }
 
@@ -133,6 +131,7 @@ public class VideoService implements VideoDAO {
     }
 
     @Override
+    @Transactional
     public Video editVideo(EditVideoDto editVideoDto) {
         Video video = videoRepository.findById(editVideoDto.getId()).orElseThrow();
 
@@ -146,18 +145,11 @@ public class VideoService implements VideoDAO {
             Set<VideoTag> videoTagList = new HashSet<>();
 
             for (String el : editVideoDto.getVideoTags()) {
-                videoTagRepository.findByText(el).orElseGet(() -> {
-                            VideoTag videoTag = videoTagRepository.save(new VideoTag(el));
-                            videoTagList.add(videoTag);
-                            return videoTag;
-                });
+                videoTagList.add(videoTagRepository.findByText(el).orElseGet(() -> videoTagRepository.save(new VideoTag(el))));
             }
 
-            for (String el : editVideoDto.getVideoTags()) {
-                videoTagList.add(videoTagRepository.findByText(el).orElseGet(() ->
-                        videoTagRepository.save(new VideoTag(el)))
-                );
-            }
+            videoTagList.addAll(video.getTags());
+
             video.setTags(videoTagList);
         }
 
@@ -174,6 +166,7 @@ public class VideoService implements VideoDAO {
             log.info("set duration: {}", transientDuration);
         }
 
+        log.info("set image path?: {}", editVideoDto.getPreviewDataUrl());
         if (editVideoDto.getPreviewDataUrl() != null) {
             String dataUrl = editVideoDto.getPreviewDataUrl();
             MultipartFile multipartFile = fileStorageManager.dataUrlToMultipartFile(dataUrl);

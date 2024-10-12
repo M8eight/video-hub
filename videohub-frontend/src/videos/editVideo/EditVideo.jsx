@@ -63,8 +63,10 @@ export default function EditVideo(props) {
         formData.append('name', videoData.name);
         formData.append('description', videoData.description);
 
+        formData.append('videoTags', videoTags);
+
         formData.append('videoFile', video);
-        formData.append('previewFile', image);
+        formData.append('previewDataUrl', image);
         
         request("put", "http://localhost:8080/api/video/edit", formData, { "Content-Type": "multipart/form-data" })
             .then(function (response) {
