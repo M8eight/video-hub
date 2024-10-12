@@ -4,10 +4,9 @@ import com.videohub.dtos.UserDto;
 import com.videohub.exceptions.OldPasswordNotEqualsException;
 import com.videohub.exceptions.UserAlreadyRegisterException;
 import com.videohub.exceptions.UserNotFoundException;
-import com.videohub.exceptions.VideoAlreadyFavoriteException;
 import com.videohub.helpers.AuthHelper;
 import com.videohub.helpers.FileStorageManager;
-import com.videohub.helpers.SaveFileType;
+import com.videohub.helpers.StorageFileType;
 import com.videohub.helpers.ValidUserFields;
 import com.videohub.interfaces.UserDAO;
 import com.videohub.mappers.UserMapper;
@@ -27,9 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -116,7 +113,7 @@ public class UserService implements UserDAO {
     @Override
     public User updateAvatar(MultipartFile avatar) {
         User user = authHelper.getUserFromAuth();
-        String avatarFilename = fileStorageManager.save(avatar, SaveFileType.AVATAR);
+        String avatarFilename = fileStorageManager.save(avatar, StorageFileType.AVATAR);
         user.setAvatar_path(avatarFilename);
         return userRepository.save(user);
     }

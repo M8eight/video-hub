@@ -1,6 +1,6 @@
 package com.videohub.helpers;
 
-public enum SaveFileType {
+public enum StorageFileType {
     AVATAR,
     PICTURE,
     VIDEO

@@ -20,11 +20,11 @@ public class FileStorageManager {
     private String videoPath;
 
     @SneakyThrows
-    public String save(MultipartFile file, SaveFileType type) {
+    public String save(MultipartFile file, StorageFileType type) {
         if (file != null && !Objects.requireNonNull(file.getOriginalFilename()).isEmpty()) {
             String uuidFile = UUID.randomUUID().toString();
 
-            String fileExtension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".")+1);
+            String fileExtension = file.getOriginalFilename().substring(file.getOriginalFilename().lastIndexOf(".") + 1);
             log.info(fileExtension);
 
             String resultFileName = uuidFile + "." + fileExtension;
@@ -36,12 +36,12 @@ public class FileStorageManager {
             }
 
             switch (type) {
-                case PICTURE,AVATAR:
-                    if(new ArrayList<>(Arrays.asList("jpg", "png", "webp", "jpeg")).stream().noneMatch(s -> Objects.equals(s, fileExtension)))
+                case PICTURE, AVATAR:
+                    if (new ArrayList<>(Arrays.asList("jpg", "png", "webp", "jpeg")).stream().noneMatch(s -> Objects.equals(s, fileExtension)))
                         throw new FileExtensionNotSupport();
                     break;
                 case VIDEO:
-                    if(new ArrayList<>(Arrays.asList("mp4", "avi", "webm", "mkv")).stream().noneMatch(s -> Objects.equals(s, fileExtension)))
+                    if (new ArrayList<>(Arrays.asList("mp4", "avi", "webm", "mkv")).stream().noneMatch(s -> Objects.equals(s, fileExtension)))
                         throw new FileExtensionNotSupport();
                     break;
             }
@@ -53,6 +53,20 @@ public class FileStorageManager {
         } else {
             throw new FileNotFoundException();
         }
+    }
+
+    public boolean delete(String fileName, StorageFileType type) {
+        String filePath = videoPath;
+        switch (type) {
+            case VIDEO -> filePath += "/media/" + fileName;
+            case AVATAR -> filePath += "/avatars/" + fileName;
+            case PICTURE -> filePath += "/pictures/" + fileName;
+        }
+        File file = new File(filePath);
+        if (file.exists()) {
+            return file.delete();
+        }
+        return false;
     }
 
     public MultipartFile dataUrlToMultipartFile(String dataUrl) {

@@ -6,12 +6,16 @@ import { useParams } from "react-router-dom";
 
 export default function EditVideo(props) {
     const [videoData, setVideoData] = useState({});
+    const [editedVideoData, setEditedVideoData] = useState({});
+
+
     const params = useParams()
     const videoRef = useRef();
 
     const [video, setVideo] = useState(null);
     const [image, setImage] = useState(null);
     const [imageBlob, setImageBlob] = useState(null);
+    const [isLoading, setIsLoading] = useState(false);
 
     const [videoTags, setVideoTags] = useState([]);
 
@@ -48,6 +52,7 @@ export default function EditVideo(props) {
         request("get", 'http://localhost:8080/api/video/' + params.id)
             .then(function (response) {
                 setVideoData(response.data);
+                setVideoTags(response.data.tags?.map((el) => el.text));
             })
             .catch(function (error) {
             })
@@ -57,25 +62,23 @@ export default function EditVideo(props) {
     }
 
     function sendEditVideoReq() {
+        setIsLoading(true);
         const formData = new FormData();
         formData.append('id', videoData.id);
 
-        formData.append('name', videoData.name);
-        formData.append('description', videoData.description);
+        formData.append('name', editedVideoData.name);
+        formData.append('description', editedVideoData.description);
 
         formData.append('videoTags', videoTags);
 
-        formData.append('videoFile', video);
-        formData.append('previewDataUrl', image);
-        
+        video !== null && formData.append('videoFile', video);
+        image !== null && formData.append('previewDataUrl', image);
+
         request("put", "http://localhost:8080/api/video/edit", formData, { "Content-Type": "multipart/form-data" })
-            .then(function (response) {
-                // window.location.replace("http://localhost:3000/videos");
+            .then(function (res) {
+                window.location.replace("http://localhost:3000/video/" + videoData?.id);
             })
-            .catch(function (error) {
-            })
-            .finally(function () {
-                // выполняется всегда
+            .catch(function (err) {
             })
     }
 
@@ -84,6 +87,8 @@ export default function EditVideo(props) {
             <Header currentTab="videos" />
 
             <div className="container">
+                <h2 className="text-center my-3">Изменить видео</h2>
+
                 <div className="row p-2">
 
                     <div className="p-2 col-sm-11 col-md-10 col-lg-8 col-12 mx-auto">
@@ -104,8 +109,11 @@ export default function EditVideo(props) {
                     <div className="col-sm-11 col-md-10 col-lg-9 col-12 mx-auto mb-3">
 
                         <div className="row">
-                            <div className="d-grid gap-2 col-6 my-3 mx-auto">
-                                <button type="button" onClick={() => sendEditVideoReq()} className="btn btn-info" data-bs-toggle="collapse" href="#videoCollapse" aria-expanded="false" aria-controls="videoCollapse">Сохранить</button>
+                            <div className="d-grid gap-2 col-6 my-3 mx-auto" >
+                                <button type="button" onClick={() => sendEditVideoReq()} className={"btn btn-info" + (isLoading ? " disabled" : "")} data-bs-toggle="collapse" href="#videoCollapse" aria-expanded="false" aria-controls="videoCollapse">
+                                    {isLoading ? <span class="spinner-border spinner-border-sm" aria-hidden="true"></span> : null}{" "}
+                                    {isLoading ? "Загрузка..." : "Сохранить"}
+                                </button>
                             </div>
                         </div>
 
@@ -124,7 +132,7 @@ export default function EditVideo(props) {
                         <div className="row p-2">
                             <h3>Имя:</h3>
                             {videoData?.name !== undefined ?
-                                <input type="text" onChange={(e) => setVideoData({ ...videoData, name: e.target.value })} className="form-control-lg form-control convex-button" id="name" value={videoData.name} />
+                                <input type="text" onChange={(e) => setEditedVideoData({ ...editedVideoData, name: e.target.value })} value={editedVideoData.name} className="form-control-lg form-control convex-button" id="name" defaultValue={videoData.name} />
                                 : <p className="placeholder-glow"><span className="placeholder col-8 placeholder-lg"></span></p>
                             }
                         </div>
@@ -132,7 +140,7 @@ export default function EditVideo(props) {
                         <div className="row p-2">
                             <h3>Описание:</h3>
                             {videoData?.description !== undefined ?
-                                <textarea className="form-control form-control-lg convex-button" onChange={(e) => setVideoData({ ...videoData, description: e.target.value })} id="exampleFormControlTextarea1" value={videoData.description} rows="3"></textarea> :
+                                <textarea className="form-control form-control-lg convex-button" onChange={(e) => setEditedVideoData({ ...editedVideoData, description: e.target.value })} value={editedVideoData.description} id="exampleFormControlTextarea1" defaultValue={videoData.description} rows="3"></textarea> :
                                 <p className="placeholder-glow mb-0"><span className="placeholder col-8 placeholder-sm"></span><span className="placeholder col-8 placeholder-sm"></span><span className="placeholder col-8 placeholder-sm"></span></p>
                             }
                         </div>
@@ -146,7 +154,7 @@ export default function EditVideo(props) {
                                     <span key={el} class="badge text-bg-secondary mt-2">{el}</span>
                                 ))}
                             </h4>
-                            <input type="text" className="form-control form-control-lg mt-2 convex-button" placeholder="Теги видео (через запятую)"
+                            <input type="text" className="form-control form-control-lg mt-2 convex-button" placeholder="Теги видео (через запятую)" defaultValue={videoData.tags?.map((el) => el.text).join(', ')}
                                 onChange={(e) => {
                                     setVideoTags(Array.from(e.target.value.split(',').filter((el) => el.trim() !== "").map((el) => el.trim())));
                                 }}

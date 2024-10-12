@@ -8,7 +8,7 @@ import com.videohub.exceptions.VideoBadRequestException;
 import com.videohub.filters.VideoSpecification;
 import com.videohub.helpers.FfmpegHelpers;
 import com.videohub.helpers.FileStorageManager;
-import com.videohub.helpers.SaveFileType;
+import com.videohub.helpers.StorageFileType;
 import com.videohub.interfaces.VideoDAO;
 import com.videohub.mappers.ElasticVideoMapper;
 import com.videohub.models.Rating;
@@ -94,7 +94,7 @@ public class VideoService implements VideoDAO {
         }
 
         //Save video and get duration
-        String videoPath = fileStorageManager.save(videoDto.getVideoFile(), SaveFileType.VIDEO);
+        String videoPath = fileStorageManager.save(videoDto.getVideoFile(), StorageFileType.VIDEO);
         int durationSecond = ffmpegHelpers.getDuration(videoPath);
         String previewPath = ffmpegHelpers.getImageFromVideo(videoPath, durationSecond);
 
@@ -136,50 +136,42 @@ public class VideoService implements VideoDAO {
         Video video = videoRepository.findById(editVideoDto.getId()).orElseThrow();
 
         video.setName(editVideoDto.getName());
-
         video.setDescription(editVideoDto.getDescription());
-
         if (editVideoDto.getVideoTags() != null) {
-            log.info("set tags: {}", editVideoDto.getVideoTags());
-
             Set<VideoTag> videoTagList = new HashSet<>();
-
             for (String el : editVideoDto.getVideoTags()) {
                 videoTagList.add(videoTagRepository.findByText(el).orElseGet(() -> videoTagRepository.save(new VideoTag(el))));
             }
-
             videoTagList.addAll(video.getTags());
-
             video.setTags(videoTagList);
         }
 
+        //File edit
         String transientVideoPath = video.getVideo_path();
         String transientPreviewPath = video.getPreview_path();
         int transientDuration = video.getDuration();
 
         if (editVideoDto.getVideoFile() != null) {
-            transientVideoPath = fileStorageManager.save(editVideoDto.getVideoFile(), SaveFileType.VIDEO);
+            transientVideoPath = fileStorageManager.save(editVideoDto.getVideoFile(), StorageFileType.VIDEO);
+            fileStorageManager.delete(video.getVideo_path(), StorageFileType.VIDEO);
             transientDuration = ffmpegHelpers.getDuration(transientVideoPath);
             ffmpegHelpers.createVideoCutPreview(transientVideoPath, transientDuration);
-
-            log.info("set video path: {}", transientVideoPath);
-            log.info("set duration: {}", transientDuration);
         }
 
-        log.info("set image path?: {}", editVideoDto.getPreviewDataUrl());
         if (editVideoDto.getPreviewDataUrl() != null) {
             String dataUrl = editVideoDto.getPreviewDataUrl();
             MultipartFile multipartFile = fileStorageManager.dataUrlToMultipartFile(dataUrl);
-            transientPreviewPath = fileStorageManager.save(multipartFile, SaveFileType.PICTURE);
+            transientPreviewPath = fileStorageManager.save(multipartFile, StorageFileType.PICTURE);
+            fileStorageManager.delete(video.getPreview_path(), StorageFileType.PICTURE);
+        }
 
-            log.info("set preview path: {}", transientPreviewPath);
+        if (editVideoDto.getVideoFile() != null && editVideoDto.getPreviewDataUrl() == null) {
+            transientPreviewPath = ffmpegHelpers.getImageFromVideo(transientVideoPath, transientDuration);
         }
 
         video.setVideo_path(transientVideoPath);
         video.setPreview_path(transientPreviewPath);
         video.setDuration(transientDuration);
-
-        log.info("Edit video {}", video);
 
         return videoRepository.save(video);
     }

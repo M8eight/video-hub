@@ -34,6 +34,12 @@ export default function Favorites() {
                     </div>
                 )}
 
+                {favorites?.length === 0 && (
+                    <div className='text-center text-info'>
+                        Нету ничего в избранном :((((((
+                    </div>
+                )}
+
                 {IS_AUTH && (
                     <React.Fragment>
                         {favorites !== null && (
