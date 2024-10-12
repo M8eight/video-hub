@@ -156,7 +156,7 @@ public class UserService implements UserDAO {
         User user = authHelper.getUserFromAuth();
         Video video = videoRepository.findById(videoId).orElseThrow();
 
-        if (user.getFavoriteVideos().contains(video)) {
+        if (!user.getFavoriteVideos().contains(video)) {
             user.getFavoriteVideos().remove(video);
             userRepository.save(user);
             return false;

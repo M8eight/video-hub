@@ -42,7 +42,7 @@ public class Video {
     private String description;
 
     @ManyToMany
-    private Set<VideoTag> tags;
+    private List<VideoTag> tags;
 
     @NotNull
     private String video_path;
@@ -75,7 +75,7 @@ public class Video {
         this.rating = rating;
     }
 
-    public Video(String name, String description, int duration, Set<VideoTag> tags,String video_path, String preview_path, User user , Rating rating) {
+    public Video(String name, String description, int duration, List<VideoTag> tags,String video_path, String preview_path, User user , Rating rating) {
         this.name = name;
         this.description = description;
         this.duration = duration;

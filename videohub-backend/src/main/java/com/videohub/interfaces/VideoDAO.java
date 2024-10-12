@@ -1,5 +1,6 @@
 package com.videohub.interfaces;
 
+import com.videohub.dtos.EditVideoDto;
 import com.videohub.dtos.VideoDto;
 import com.videohub.dtos.VideoFilterCriteriaDto;
 import com.videohub.enumerations.SortVideosBy;
@@ -16,5 +17,5 @@ public interface VideoDAO {
     Page<Video> getVideosWithFilter(VideoFilterCriteriaDto videoDto);
     void deleteById(Long id);
     Video addVideo(VideoDto videoDto);
-    Video editVideo(Long id, VideoDto videoDto);
+    Video editVideo(EditVideoDto editVideoDto);
 }

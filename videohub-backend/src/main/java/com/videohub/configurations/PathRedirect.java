@@ -18,6 +18,9 @@ public class PathRedirect implements WebMvcConfigurer {
                 .addResourceHandler("/media/**")
                 .addResourceLocations("file:///" + externalFilePath + "/media/");
         registry
+                .addResourceHandler("/static-media/**")
+                .addResourceLocations("file:///" + externalFilePath + "/static/");
+        registry
                 .addResourceHandler("/avatars/**")
                 .addResourceLocations("file:///" + externalFilePath + "/avatars/");
         registry

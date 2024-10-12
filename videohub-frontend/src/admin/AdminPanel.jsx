@@ -37,7 +37,7 @@ export default function Camera() {
                         <div className="d-flex flex-sm-column flex-row flex-nowrap bg-dark align-items-center sticky-top">
                             <a href="/admin" className="d-block p-2 link-light text-decoration-none mb-4" title="" data-bs-toggle="tooltip" data-bs-placement="right" data-bs-original-title="Icon-only">
                                 <i className="bi-bootstrap fs-2 ">
-                                    <img src="http://localhost:8080/media/lightning.svg" className='bg-light zap-logo' alt="" width={"32"} height={"32"} />
+                                    <img src="http://localhost:8080/static-media/lightning.svg" className='bg-light zap-logo' alt="" width={"32"} height={"32"} />
                                 </i>
                             </a>
                             <ul className="nav nav-pills nav-flush flex-sm-column flex-row flex-nowrap mb-auto mx-auto text-center align-items-center">

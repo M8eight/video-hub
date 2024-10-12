@@ -20,7 +20,9 @@ public interface UserDAO {
     User changePassword(String oldPassword, String password);
     UserDetailsService userDetailsService();
     User updateAvatar(MultipartFile avatar);
+
+    boolean isFavorite(Long videoId);
     List<Video> getFavoriteVideos();
-    List<Video> addFavoriteVideo(Long videoId);
-    List<Video> removeFavoriteVideo(Long videoId);
+    boolean addFavoriteVideo(Long videoId);
+    boolean removeFavoriteVideo(Long videoId);
 }

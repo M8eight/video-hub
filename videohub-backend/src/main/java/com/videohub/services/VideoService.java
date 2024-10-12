@@ -1,5 +1,6 @@
 package com.videohub.services;
 
+import com.videohub.dtos.EditVideoDto;
 import com.videohub.dtos.VideoDto;
 import com.videohub.dtos.VideoFilterCriteriaDto;
 import com.videohub.enumerations.SortVideosBy;
@@ -27,11 +28,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -68,7 +67,8 @@ public class VideoService implements VideoDAO {
         Specification<Video> sortSpecification = null;
 
         switch (SortVideosBy.valueOf(videoDto.getSortBy().toUpperCase())) {
-            case NEW -> {}
+            case NEW -> {
+            }
             case OLD -> sortSpecification = VideoSpecification.sortByCreated_atDesc();
             case RATING -> sortSpecification = VideoSpecification.sortByRating();
             case VIEWS -> sortSpecification = VideoSpecification.sortByViews();
@@ -133,10 +133,60 @@ public class VideoService implements VideoDAO {
     }
 
     @Override
-    public Video editVideo(Long id, VideoDto videoDto) {
-        Video video = videoRepository.findById(id).orElseThrow();
-        video.setName(videoDto.getName());
-        video.setDescription(videoDto.getDescription());
+    public Video editVideo(EditVideoDto editVideoDto) {
+        Video video = videoRepository.findById(editVideoDto.getId()).orElseThrow();
+
+        video.setName(editVideoDto.getName());
+
+        video.setDescription(editVideoDto.getDescription());
+
+        if (editVideoDto.getVideoTags() != null) {
+            log.info("set tags: {}", editVideoDto.getVideoTags());
+
+            Set<VideoTag> videoTagList = new HashSet<>();
+
+            for (String el : editVideoDto.getVideoTags()) {
+                videoTagRepository.findByText(el).orElseGet(() -> {
+                            VideoTag videoTag = videoTagRepository.save(new VideoTag(el));
+                            videoTagList.add(videoTag);
+                            return videoTag;
+                });
+            }
+
+            for (String el : editVideoDto.getVideoTags()) {
+                videoTagList.add(videoTagRepository.findByText(el).orElseGet(() ->
+                        videoTagRepository.save(new VideoTag(el)))
+                );
+            }
+            video.setTags(videoTagList);
+        }
+
+        String transientVideoPath = video.getVideo_path();
+        String transientPreviewPath = video.getPreview_path();
+        int transientDuration = video.getDuration();
+
+        if (editVideoDto.getVideoFile() != null) {
+            transientVideoPath = fileStorageManager.save(editVideoDto.getVideoFile(), SaveFileType.VIDEO);
+            transientDuration = ffmpegHelpers.getDuration(transientVideoPath);
+            ffmpegHelpers.createVideoCutPreview(transientVideoPath, transientDuration);
+
+            log.info("set video path: {}", transientVideoPath);
+            log.info("set duration: {}", transientDuration);
+        }
+
+        if (editVideoDto.getPreviewDataUrl() != null) {
+            String dataUrl = editVideoDto.getPreviewDataUrl();
+            MultipartFile multipartFile = fileStorageManager.dataUrlToMultipartFile(dataUrl);
+            transientPreviewPath = fileStorageManager.save(multipartFile, SaveFileType.PICTURE);
+
+            log.info("set preview path: {}", transientPreviewPath);
+        }
+
+        video.setVideo_path(transientVideoPath);
+        video.setPreview_path(transientPreviewPath);
+        video.setDuration(transientDuration);
+
+        log.info("Edit video {}", video);
 
         return videoRepository.save(video);
     }

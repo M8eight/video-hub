@@ -1,9 +1,11 @@
+import React from "react";
 import { useEffect, useState, Fragment } from "react";
 import { request } from "../../helpers/axios_helper";
 import Header from "../../components/Header";
 import CommentsBlock from "../helpers/CommentsBlock";
 import { isAuth, isAdmin } from "../../helpers/jwt_helper";
 import { formatViews } from "../../helpers/formatHelper";
+import { favoriteValid, favoriteAddRemove } from "../../favorites/favorite_handler";
 
 import { useParams } from "react-router-dom";
 
@@ -13,13 +15,18 @@ export default function CurrentVideo(props) {
     const [videoData, setVideoData] = useState({});
     const [rating, setRating] = useState({});
     const [suggestedVideo, setSuggestedVideo] = useState([]);
+    const [isFavorite, setFavorite] = useState(null);
     const params = useParams()
 
     useEffect(() => {
-        console.log(params.id)
         getCurrentVideo();
         getSuggestedVideos();
+        IS_AUTH && favoriteValid(window.location.href.split("/")[window.location.href.split("/").length - 1]).then(res => setFavorite(res.data))
     }, []);
+
+    useEffect(() => {
+        console.log(isFavorite)
+    }, [isFavorite])
 
     function getSuggestedVideos() {
         request('get', '/api/videos?offset=' + 0 + '&limit=' + 5).then((res) => {
@@ -101,6 +108,7 @@ export default function CurrentVideo(props) {
                                     </div>
                                 )}
                             </div>
+
                             <div className="col m-0 p-0 text-center">
                                 {videoData.rating !== undefined ? (
                                     <div className="btn-group" role="group" aria-label="Basic mixed styles example">
@@ -110,6 +118,7 @@ export default function CurrentVideo(props) {
                                             </svg>
                                             <span>{rating?.rating_up}</span>
                                         </button>
+
                                         <button onClick={rateDown} className="btn bg-danger btn-lg">
                                             <span className="me-1">{rating?.rating_down}</span>
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-emoji-angry-fill" viewBox="0 0 16 16">
@@ -119,6 +128,7 @@ export default function CurrentVideo(props) {
                                     </div>
                                 ) : null}
                             </div>
+
                             <span className="text-secondary fs-6">
                                 {videoData?.views !== undefined ? formatViews(videoData?.views) + " просмотра" : <p className="placeholder-glow"><span className="placeholder col-8 placeholder-lg"></span></p>}
                             </span>
@@ -137,25 +147,47 @@ export default function CurrentVideo(props) {
                             ) : "Аноним"}
 
                         </div>
+
                         <div className="row p-2">
-                            {videoData?.description !== undefined ?
-                                <p>{videoData.description}</p> :
-                                <p className="placeholder-glow mb-0"><span className="placeholder col-8 placeholder-sm"></span><span className="placeholder col-8 placeholder-sm"></span><span className="placeholder col-8 placeholder-sm"></span></p>
-                            }
+                            <div className="col-9">
+                                {videoData?.description !== undefined ?
+                                    <p>{videoData.description}</p> :
+                                    <p className="placeholder-glow mb-0"><span className="placeholder col-8 placeholder-sm"></span><span className="placeholder col-8 placeholder-sm"></span><span className="placeholder col-8 placeholder-sm"></span></p>
+                                }
+                            </div>
+                            <div className="col float-right d-grid mx-auto ">
+                                <button onClick={() => favoriteAddRemove(videoData?.id, isFavorite).then(res => setFavorite(res.data))} style={{ backgroundColor: "pink", color: "#921A40" }} className="btn">
+
+                                    {isFavorite ? (
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-heart-fill" viewBox="0 0 16 16">
+                                            <path fillRule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314" />
+                                        </svg>
+                                    ) : (
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-heart" viewBox="0 0 16 16">
+                                            <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15" />
+                                        </svg>
+                                    )}
+                                </button>
+                            </div>
+
                         </div>
+
+
+
                         {IS_AUTH === true ? (
-                            <div className="row p-2">
-                                <div className="d-flex justify-content-between mb-2">
-                                    <div className="d-flex flex-row align-items-center">
-                                        <h3>Комменты</h3>
-                                    </div>
-                                    <div className="d-flex flex-row align-items-center">
-                                        <button type="button" className="btn btn-info" data-bs-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">Новый кометарий</button>
+                            <React.Fragment>
+                                <div className="row p-2">
+                                    <div className="d-flex justify-content-between mb-2">
+                                        <div className="d-flex flex-row align-items-center">
+                                            <h3>Комменты</h3>
+                                        </div>
+                                        <div className="d-flex flex-row align-items-center">
+                                            <button type="button" className="btn btn-info" data-bs-toggle="collapse" href="#collapseExample" aria-expanded="false" aria-controls="collapseExample">Новый кометарий</button>
+                                        </div>
                                     </div>
                                 </div>
-
                                 <CommentsBlock />
-                            </div>
+                            </React.Fragment>
                         ) : (
                             <div className="alert alert-warning mt-2" role="alert">
                                 <h4 className="alert-heading">Войдите, чтобы оставлять комментарии</h4>

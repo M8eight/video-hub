@@ -4,6 +4,7 @@ import com.videohub.exceptions.FileExtensionNotSupport;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -40,7 +41,7 @@ public class FileStorageManager {
                         throw new FileExtensionNotSupport();
                     break;
                 case VIDEO:
-                    if(new ArrayList<>(Arrays.asList("mp4", "avi", "webm", "jpeg")).stream().noneMatch(s -> Objects.equals(s, fileExtension)))
+                    if(new ArrayList<>(Arrays.asList("mp4", "avi", "webm", "mkv")).stream().noneMatch(s -> Objects.equals(s, fileExtension)))
                         throw new FileExtensionNotSupport();
                     break;
             }
@@ -52,6 +53,17 @@ public class FileStorageManager {
         } else {
             throw new FileNotFoundException();
         }
+    }
+
+    public MultipartFile dataUrlToMultipartFile(String dataUrl) {
+        String[] dataUrlParts = dataUrl.split(",");
+        String type = dataUrlParts[0].split(";")[0].split(":")[1];
+        String base64 = dataUrlParts[1];
+        String filename = UUID.randomUUID().toString() + "." + type.split("/")[1];
+
+        byte[] imageBytes = Base64.getDecoder().decode(base64);
+
+        return new MockMultipartFile(filename, filename, type, imageBytes);
     }
 
 }

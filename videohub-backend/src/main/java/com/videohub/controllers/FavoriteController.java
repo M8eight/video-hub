@@ -18,6 +18,11 @@ import java.util.Set;
 public class FavoriteController {
     private final UserService userService;
 
+    @GetMapping("/validate/{videoId}")
+    public boolean isFavorite(@PathVariable Long videoId) {
+        return userService.isFavorite(videoId);
+    }
+
     @SneakyThrows
     @GetMapping("/get")
     public List<Video> getFavoriteVideos() {
@@ -26,12 +31,12 @@ public class FavoriteController {
     }
 
     @PostMapping("/add/{videoId}")
-    public List<Video> addVideo(@PathVariable Long videoId) {
+    public boolean addVideo(@PathVariable Long videoId) {
         return userService.addFavoriteVideo(videoId);
     }
 
     @PostMapping("/remove/{videoId}")
-    public List<Video> removeVideo(@PathVariable Long videoId) {
+    public boolean removeVideo(@PathVariable Long videoId) {
         return userService.removeFavoriteVideo(videoId);
     }
 }

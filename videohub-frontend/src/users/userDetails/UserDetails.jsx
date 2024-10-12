@@ -46,11 +46,11 @@ export default function UserDetails() {
 
                 <UserSettings userData={userData} avatar={avatar} />
 
-                <img className='center' src={userData.avatar_path !== null ? "http://localhost:8080/avatars/" + userData.avatar_path : "http://localhost:8080/media/avatar.png"} alt="Avatar field" />
+                <img className='center' src={userData.avatar_path !== null ? "http://localhost:8080/avatars/" + userData.avatar_path : "http://localhost:8080/static-media/avatar.png"} alt="Avatar field" />
 
                 <div className="container">
                     <h2>Пользователь: {userData.login} {roleFormat()?.includes("ADMIN") === true ? (
-                        <img style={{ height: "20px" }} title='Пользователь является админом' className='bi bi-0-circle-fill bolt' src={"http://localhost:8080/media/gmod.png"} alt="Avatar field" />
+                        <img style={{ height: "20px" }} title='Пользователь является админом' className='bi bi-0-circle-fill bolt' src={"http://localhost:8080/static-media/gmod.png"} alt="Avatar field" />
                     ) : null
                     }</h2>
                     {

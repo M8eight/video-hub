@@ -1,5 +1,6 @@
 package com.videohub.controllers;
 
+import com.videohub.dtos.EditVideoDto;
 import com.videohub.dtos.PaginationLimitBodyDto;
 import com.videohub.dtos.VideoDto;
 import com.videohub.dtos.VideoFilterCriteriaDto;
@@ -55,9 +56,9 @@ public class VideoController {
     }
 
     //todo сделать изменение
-    @PutMapping("/video/{id}/edit")
-    Video editVideoEndpoint(@PathVariable Long id, @ModelAttribute VideoDto videoDto) {
-        return videoService.editVideo(id, videoDto);
+    @PutMapping("/video/edit")
+    Video editVideoEndpoint(@ModelAttribute EditVideoDto editVideoDto) {
+        return videoService.editVideo(editVideoDto);
     }
 
     @DeleteMapping("/video/{id}")
