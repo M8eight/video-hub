@@ -170,8 +170,6 @@ export default function Videos() {
                             dataLength={data.content?.length !== undefined ? data.content?.length : 0}
                             next={getMoreVideos}
                             hasMore={!data.last}
-                            loader={<h4 className='text-center'>Loading...</h4>}
-                            endMessage={<h4 className='text-center'>Все конец</h4>}
                         >
 
                             <div className="container-fluid">

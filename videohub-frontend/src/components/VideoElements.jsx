@@ -18,7 +18,7 @@ export default function VideoElements(props) {
         <React.Fragment>
             {props.videos === undefined && (
                 <div className="text-center text-bg-danger">
-                    <h3>Видеи не найдены :(</h3>
+                    Ошибка
                 </div>
             )}
 
