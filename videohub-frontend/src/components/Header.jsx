@@ -15,10 +15,10 @@ export default function Header(props) {
   return (
     <nav className="navbar navbar-expand-lg bg-body-tertiary">
       <div className="container-fluid">
-        <a className="navbar-brand" href="/">
+        <a className="navbar-brand fugaz-one-regular align-middle p-2 fs-5" href="/">
           VideoHub
           <img
-            src={"http://localhost:8080/static-media/cold.gif"}
+            src="/cold.gif"
             style={{ width: "25px", height: "25px" }}
             alt="ICO"
             onError={(e) => {

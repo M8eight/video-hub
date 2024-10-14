@@ -142,7 +142,7 @@ export default function CurrentVideo(props) {
                                     <span className="me-1">
                                         Автор:
                                     </span>
-                                    <img className="rounded-circle shadow-4-strong me-1" style={{ maxHeight: "35px" }} src={videoData?.user?.avatar_path !== null ? videoData?.user?.avatar : "http://localhost:8080/pictures/avatar.png"} alt="" />
+                                    <img className="rounded-circle shadow-4-strong me-1" style={{ maxHeight: "35px" }} src={videoData?.user?.avatar_path !== null ? videoData?.user?.avatar : "default-avatar.png"} alt="" />
                                 </p>
                             ) : "Аноним"}
 
