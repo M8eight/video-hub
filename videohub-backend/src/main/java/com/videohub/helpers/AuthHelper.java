@@ -1,9 +1,9 @@
 package com.videohub.helpers;
 
 
-import com.videohub.exceptions.UserNotAuthorizedException;
+import com.videohub.exceptions.userExceptions.UserNotAuthorizedException;
 import com.videohub.models.User;
-import com.videohub.repositories.UserRepository;
+import com.videohub.repositories.userRepositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import org.springframework.security.core.context.SecurityContextHolder;

@@ -2,7 +2,7 @@ package com.videohub.configurations;
 
 import com.videohub.filters.JwtAuthenticationFilter;
 import com.videohub.helpers.SecurityHelpers;
-import com.videohub.services.UserService;
+import com.videohub.services.userServices.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

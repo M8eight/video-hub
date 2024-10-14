@@ -1,6 +1,6 @@
 package com.videohub.mappers;
 
-import com.videohub.dtos.UserDto;
+import com.videohub.dtos.userDtos.UserDto;
 import com.videohub.models.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

@@ -1,14 +1,11 @@
 package com.videohub.interfaces;
 
-import com.videohub.dtos.EditVideoDto;
-import com.videohub.dtos.VideoDto;
-import com.videohub.dtos.VideoFilterCriteriaDto;
-import com.videohub.enumerations.SortVideosBy;
+import com.videohub.dtos.videoDtos.EditVideoDto;
+import com.videohub.dtos.videoDtos.VideoDto;
+import com.videohub.dtos.videoDtos.VideoFilterCriteriaDto;
 import com.videohub.models.Video;
-import com.videohub.models.elasticModels.ElasticVideo;
 import org.springframework.data.domain.Page;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface VideoDAO {

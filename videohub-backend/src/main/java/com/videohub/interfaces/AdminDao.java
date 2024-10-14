@@ -1,6 +1,6 @@
 package com.videohub.interfaces;
 
-import com.videohub.dtos.UserDto;
+import com.videohub.dtos.userDtos.UserDto;
 import com.videohub.models.Role;
 import com.videohub.models.User;
 import org.springframework.data.domain.Page;

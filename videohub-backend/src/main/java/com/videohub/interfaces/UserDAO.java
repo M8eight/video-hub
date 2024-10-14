@@ -1,19 +1,18 @@
 package com.videohub.interfaces;
 
-import com.videohub.dtos.UserDto;
+import com.videohub.dtos.userDtos.UserDto;
 import com.videohub.models.User;
 import com.videohub.models.Video;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
-import java.util.Set;
 
 public interface UserDAO {
     User getById(Long id);
     User getRefById(Long id);
     User findByLogin(String login);
-    User createUser(UserDto userForm);
+    User create(UserDto userForm);
     User editUser(Long id, UserDto userForm);
     @Deprecated(since = "Нужно ли в сервисе копировать репозиторий")
     User save(User user);
@@ -22,7 +21,7 @@ public interface UserDAO {
     User updateAvatar(MultipartFile avatar);
 
     boolean isFavorite(Long videoId);
-    List<Video> getFavoriteVideos();
-    boolean addFavoriteVideo(Long videoId);
-    boolean removeFavoriteVideo(Long videoId);
+    List<Video> getFavorite();
+    boolean addFavorite(Long videoId);
+    boolean removeFavorite(Long videoId);
 }

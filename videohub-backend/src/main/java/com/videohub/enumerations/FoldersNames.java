@@ -5,5 +5,5 @@ public final class FoldersNames {
     public static final String MEDIA = "/media/";
     public static final String PICTURES = "/pictures/";
     public static final String AVATARS = "/avatars/";
-    public static final String VIDEO_PREVIEWS = "/video_previews/";
+    public static final String VIDEO_PREVIEWS = "/previews/";
 }
