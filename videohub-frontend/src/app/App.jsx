@@ -26,7 +26,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/user/*" element={<UserDetails />} />
           <Route path="/admin/*" element={<AdminPanel />} />
-          <Route path="/favourites" element={<Favorites />} />
+          <Route path="/favorites" element={<Favorites />} />
 
           <Route path="*" element={<NotFound />} />
         </Routes>

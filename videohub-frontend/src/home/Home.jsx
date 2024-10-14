@@ -1,7 +1,7 @@
 import React from "react";
 import Header from "../components/Header";
 
-import "./Home.css";
+import "./home.css";
 
 export default function Home() {
     const [horrorSlide, setHorrorSlide] = React.useState(false);
