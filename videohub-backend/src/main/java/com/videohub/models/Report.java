@@ -2,6 +2,8 @@ package com.videohub.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.lang.Nullable;
 
@@ -18,6 +20,8 @@ public class Report {
 
     private boolean isResolved = false;
 
+    @Column(nullable = false)
+    @Size(min = 4, max = 200)
     private String message;
 
     @ManyToOne(cascade = CascadeType.ALL)

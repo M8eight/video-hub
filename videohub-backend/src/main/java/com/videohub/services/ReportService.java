@@ -13,6 +13,7 @@ import lombok.SneakyThrows;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.ModelAttribute;
 
 @Service
 @RequiredArgsConstructor
@@ -28,7 +29,7 @@ public class ReportService {
 
     @SneakyThrows
     @Transactional
-    public Report save(ReportDto reportDto) {
+    public Report save(@ModelAttribute ReportDto reportDto) {
 
         Report report = new Report();
         report.setMessage(reportDto.getMessage());

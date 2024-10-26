@@ -22,7 +22,7 @@ public class ReportController {
         return reportService.getAll(offset, limit);
     }
 
-    @PostMapping
+    @PostMapping("/")
     public Report save(@ModelAttribute ReportDto reportDto) {
         log.info("save {}", reportDto);
         return reportService.save(reportDto);

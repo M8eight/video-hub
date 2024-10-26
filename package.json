@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@reduxjs/toolkit": "^2.3.0",
+    "dotenv": "^16.4.5"
+  }
+}

@@ -6,72 +6,50 @@ import { isAuth } from '../../helpers/jwt_helper';
 import toHHMMSS from '../../helpers/toHHMMSS';
 import AddVideoCollapse from '../helpers/AddVideoCollapse';
 import VideoElements from '../../components/VideoElements';
+import { useDispatch } from 'react-redux';
+import { getVideos, getTags, getMoreVideos } from '../../slices/video/videoRequests';
+import { useSelector } from 'react-redux';
 
 import "./Videos.css";
 
+
 export default function Videos() {
-    const [data, setData] = React.useState([]);
-    const [errors, setErrors] = React.useState(false);
-    const [limit, setLimit] = React.useState(15);
+
+    const dispatch = useDispatch();
+    const video = useSelector(state => state.video);
+    const tags = video.tags;
+
+    const [limit, setLimit] = React.useState(20);
     const [offset, setOffset] = React.useState(0);
     const [sortBy, setSortBy] = React.useState("new");
 
     const [sortTags, setSortTags] = React.useState([]);
-    const [tags, setTags] = React.useState([]);
-    const [tagLimit, setTagLimit] = React.useState(50);
-    const [tagOffset, setTagOffset] = React.useState(0);
+    const tagLimit = 50;
+    const tagOffset = 0;
 
     const IS_AUTH = isAuth();
 
     React.useEffect(() => {
-        getTags();
-        getVideos();
-    }, [])
-
-
-    React.useEffect(() => {
-        getVideos();
-    }, [sortBy, sortTags]);
-
-
-    const videoRequest = () => {
-        return request('post', '/api/videos', {
+        dispatch(getVideos({
             offset,
             limit,
             sortBy,
-            'tags': [...sortTags]
-        })
-    }
-    const getVideos = () => {
-        setOffset(0);
-        videoRequest()
-            .then((res) => {
-                setData(res.data);
-            }).catch(err => {
-                setErrors(true)
-            })
-    }
+            tags: sortTags
+        }));
+        dispatch(getTags({
+            offset: tagOffset,
+            limit: tagLimit
+        }));
+    }, [])
 
-    const getMoreVideos = () => {
-        videoRequest()
-            .then((res) => {
-                console.warn(res.data?.content)
-                let dataObj = data
-                dataObj.content = dataObj.content.concat(res.data.content)
-                dataObj.last = res.data.last
-                setData(dataObj);
-                setOffset(offset + 1);
-                console.log(offset);
-            }).catch(err => {
-                setErrors(true)
-            })
-    }
-
-    const getTags = () => {
-        request('get', '/api/video/tag/tags?offset=' + tagOffset + '&limit=' + tagLimit).then((res) => {
-            setTags(res.data.content)
-        })
-    }
+    React.useEffect(() => {
+        dispatch(getVideos({
+            offset,
+            limit,
+            sortBy,
+            tags: sortTags
+        }));
+    }, [sortBy, sortTags]);
 
     const addToFilter = (tagText) => {
         if (sortTags.includes(tagText)) {
@@ -86,8 +64,8 @@ export default function Videos() {
             <div id="videos">
                 <Header currentTab="videos" />
 
-                {errors && (
-                    <div className={"alert alert-danger w-100 text-center " + errors} role="alert">
+                {video.error && (
+                    <div className={"alert alert-danger w-100 text-center " + video.error} role="alert">
                         Ошибка загрузки видео
                     </div>
                 )}
@@ -167,15 +145,21 @@ export default function Videos() {
 
                     <div className="row col-12">
                         <InfiniteScroll
-                            dataLength={data.content?.length !== undefined ? data.content?.length : 0}
-                            next={getMoreVideos}
-                            hasMore={!data.last}
+                            dataLength={video.videos.length ?? 0}
+                            next={ () => {
+                                dispatch(getMoreVideos({
+                                    offset: offset + 1,
+                                    limit,
+                                    sortBy,
+                                    tags: sortTags
+                                }));
+                                setOffset(offset + 1);
+                            }}
+                            hasMore={!video.last}
                         >
-
                             <div className="container-fluid">
-                                <VideoElements videos={data.content} />
+                                <VideoElements videos={video.videos} />
                             </div>
-
                         </InfiniteScroll>
                     </div>
 
