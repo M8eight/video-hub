@@ -30,7 +30,7 @@ public class Video {
     @NotNull
     private int duration;
 
-    @ManyToOne(cascade=CascadeType.ALL)
+    @ManyToOne
     @Nullable
     @ToString.Exclude
     @JsonIgnoreProperties("videos")

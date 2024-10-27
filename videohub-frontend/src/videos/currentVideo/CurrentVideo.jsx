@@ -7,22 +7,26 @@ import { isAuth, isAdmin } from "../../helpers/jwt_helper";
 import { formatViews } from "../../helpers/formatHelper";
 import { favoriteValid, favoriteAddRemove } from "../../favorites/favorite_handler";
 
+import { getCurrentVideo } from "../../slices/video/videoRequests";
+import { useDispatch, useSelector } from "react-redux";
 import ReportCollapse from "./ReportCollapse";
 
 import { useParams } from "react-router-dom";
 
 
 export default function CurrentVideo(props) {
+    const dispatch = useDispatch();
+    const video = useSelector((state) => state.currentVideo);
+
     const IS_AUTH = isAuth();
-    const [videoData, setVideoData] = useState({});
     const [rating, setRating] = useState({});
     const [suggestedVideo, setSuggestedVideo] = useState([]);
     const [isFavorite, setFavorite] = useState(null);
     const params = useParams()
 
     useEffect(() => {
-        getCurrentVideo();
-        getSuggestedVideos();
+        dispatch(getCurrentVideo(params.id))
+
         IS_AUTH && favoriteValid(window.location.href.split("/")[window.location.href.split("/").length - 1]).then(res => setFavorite(res.data))
     }, []);
 
@@ -30,39 +34,20 @@ export default function CurrentVideo(props) {
         console.log(isFavorite)
     }, [isFavorite])
 
-    function getSuggestedVideos() {
-        request('get', '/api/videos?offset=' + 0 + '&limit=' + 5).then((res) => {
-            setSuggestedVideo(res.data)
-        })
-    }
-
-    function getCurrentVideo() {
-        request("get", 'http://localhost:8080/api/video/' + params.id)
-            .then(function (response) {
-                setVideoData(response.data)
-                setRating(response.data.rating)
-            })
-            .catch(function (error) {
-            })
-            .finally(function () {
-                // выполняется всегда
-            })
-    }
-
     function rateUp() {
-        request("post", "http://localhost:8080/api/rating/" + videoData?.id + "/up").then((response) => {
+        request("post", "http://localhost:8080/api/rating/" + video?.id + "/up").then((response) => {
             setRating(response.data);
         })
     }
 
     function rateDown() {
-        request("post", "http://localhost:8080/api/rating/" + videoData?.id + "/down").then((response) => {
+        request("post", "http://localhost:8080/api/rating/" + video?.id + "/down").then((response) => {
             setRating(response.data);
         })
     }
 
     function deleteVideo() {
-        request("delete", "http://localhost:8080/api/video/" + videoData?.id).then((response) => {
+        request("delete", "http://localhost:8080/api/video/" + video?.id).then((response) => {
             window.location.replace("http://localhost:3000/videos");
         })
     }
@@ -76,12 +61,12 @@ export default function CurrentVideo(props) {
                     <div className="col-9 p-2 col-md-12 col-lg-9 col-12">
                         <div className="row">
                             <div className="ratio ratio-16x9">
-                                <video controls poster={videoData?.preview_path !== undefined ?
-                                    "http://localhost:8080/pictures/" + videoData.preview_path :
+                                <video controls poster={video?.preview_path !== undefined ?
+                                    "http://localhost:8080/pictures/" + video.preview_path :
                                     "http://localhost:8080/media/video_error.png"} >
 
-                                    {videoData?.video_path !== undefined ? (
-                                        <source src={"http://localhost:8080/media/" + videoData.video_path} type='video/mp4;codecs="avc1.42E01E, mp4a.40.2"' />
+                                    {video?.video_path !== undefined ? (
+                                        <source src={"http://localhost:8080/media/" + video.video_path} type='video/mp4;codecs="avc1.42E01E, mp4a.40.2"' />
                                     ) : null}
                                 </video>
                             </div>
@@ -91,7 +76,7 @@ export default function CurrentVideo(props) {
                             {isAdmin() && (
                                 <div className="btn-group mb-3" role="group" aria-label="Basic mixed styles example">
                                     <button type="button" onClick={() => { deleteVideo() }} className="btn btn-danger">Удалить видео</button>
-                                    <button type="button" onClick={() => { window.location.replace("http://localhost:3000/video/" + videoData?.id + "/edit") }} className="btn btn-warning">Изменить видео</button>
+                                    <button type="button" onClick={() => { window.location.replace("http://localhost:3000/video/" + video?.id + "/edit") }} className="btn btn-warning">Изменить видео</button>
                                     {/* {"route" + params.id} */}
                                 </div>
                             )}
@@ -100,15 +85,15 @@ export default function CurrentVideo(props) {
                             <div className="row">
                                 <div className="col-9 text-break ">
                                     <span className="fs-4">
-                                        {videoData?.name !== undefined ?
-                                            videoData.name :
+                                        {video?.name !== undefined ?
+                                            video.name :
                                             <p className="placeholder-glow"><span className="placeholder col-8 placeholder-lg"></span></p>
                                         }
                                     </span>
                                 </div>
 
                                 <div className="col m-0 p-0 text-center float-end">
-                                    {videoData.rating !== undefined ? (
+                                    {video?.rating !== undefined ? (
                                         <div className="btn-group" role="group" aria-label="Basic mixed styles example">
                                             <button onClick={rateUp} className="btn bg-success btn-lg">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-emoji-heart-eyes-fill me-1" viewBox="0 0 16 16">
@@ -130,9 +115,9 @@ export default function CurrentVideo(props) {
 
                             <div className="row p-2">
                                 <h5 className="text-secondary">Теги</h5>
-                                {videoData.tags !== undefined && videoData.tags.length > 0 && (
+                                {video?.tags !== undefined && video?.tags?.length > 0 && (
                                     <div className="fs-5">
-                                        {videoData?.tags.map((el) => <span className="badge rounded-pill bg-primary me-1">{el.text}</span>)}
+                                        {video?.tags.map((el) => <span className="badge rounded-pill bg-primary me-1">{el.text}</span>)}
                                     </div>
                                 )}
                             </div>
@@ -143,7 +128,7 @@ export default function CurrentVideo(props) {
                                     <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7" />
                                 </svg>
                                 {" "}
-                                {videoData?.views !== undefined ? formatViews(videoData?.views) : <p className="placeholder-glow"><span className="placeholder col-8 placeholder-lg"></span></p>}
+                                {video?.views !== undefined ? formatViews(video?.views) : <p className="placeholder-glow"><span className="placeholder col-8 placeholder-lg"></span></p>}
                             </span>
                         </div>
 
@@ -154,12 +139,12 @@ export default function CurrentVideo(props) {
 
                             <h5 className="text-secondary">Автор</h5>
 
-                            {videoData?.user !== null ? (
+                            {video?.user !== null ? (
                                 <p>
                                     <span className="me-1">
-                                        <a href={"/user/" + videoData?.user?.id} className="text-decoration-none text-white fs-5">
-                                            <img className="rounded-circle shadow-4-strong me-1" style={{ maxHeight: "35px" }} src={videoData?.user?.avatar_path !== null ? "http://localhost:8080/avatars/" + videoData?.user?.avatar_path : "/default-avatar.png"} alt="" />
-                                            {videoData?.user?.login}
+                                        <a href={"/user/" + video?.user?.id} className="text-decoration-none text-white fs-5">
+                                            <img className="rounded-circle shadow-4-strong me-1" style={{ maxHeight: "35px" }} src={video?.user?.avatar_path !== null ? "http://localhost:8080/avatars/" + video?.user?.avatar_path : "/default-avatar.png"} alt="" />
+                                            {video?.user?.login}
                                         </a>
                                     </span>
                                 </p>
@@ -172,10 +157,10 @@ export default function CurrentVideo(props) {
                             <h5 className="text-secondary">Описание</h5>
 
                             <div className="col-9">
-                                {videoData?.description !== undefined ?
+                                {video?.description !== undefined ?
                                     (
                                         <div>
-                                            <p>{videoData.description}</p>
+                                            <p>{video.description}</p>
                                         </div>
                                     ) :
                                     <p className="placeholder-glow mb-0"><span className="placeholder col-8 placeholder-sm"></span><span className="placeholder col-8 placeholder-sm"></span><span className="placeholder col-8 placeholder-sm"></span></p>
@@ -192,7 +177,7 @@ export default function CurrentVideo(props) {
                                 <ReportCollapse />
 
 
-                                <button onClick={() => favoriteAddRemove(videoData?.id, isFavorite).then(res => setFavorite(res.data))} style={{ backgroundColor: "pink", color: "#921A40" }} className="btn">
+                                <button onClick={() => favoriteAddRemove(video?.id, isFavorite).then(res => setFavorite(res.data))} style={{ backgroundColor: "pink", color: "#921A40" }} className="btn">
 
                                     {isFavorite ? (
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-heart-fill" viewBox="0 0 16 16">

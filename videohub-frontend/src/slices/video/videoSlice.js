@@ -1,5 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { getVideos, getMoreVideos, getTags } from "./videoRequests";
+import { getVideos, getMoreVideos, createVideo, getTags, deleteVideo } from "./videoRequests";
 
 const initialState = {
     videos: [],
@@ -10,6 +10,8 @@ const initialState = {
     first: null,
     empty: null,
     last: null,
+
+    isCreate: false,
 };
 
 const videoSlice = createSlice({
@@ -18,6 +20,7 @@ const videoSlice = createSlice({
     reducers: {
     },
     extraReducers: (builder) => {
+        // GET VIDEOS
         builder.addCase(getVideos.pending, (state) => {
             state.loading = true;
         })
@@ -36,6 +39,7 @@ const videoSlice = createSlice({
         })
 
 
+        // GET MORE VIDEOS
         builder.addCase(getMoreVideos.pending, (state) => {
             state.loading = true;
         })
@@ -51,13 +55,36 @@ const videoSlice = createSlice({
             state.error = true;
             state.loading = false;
         })
-        
 
+    
+        // CREATE VIDEO
+        builder.addCase(createVideo.pending, (state) => {
+            state.isCreate = false;
+            state.loading = true;
+        })
+        builder.addCase(createVideo.fulfilled, (state, action) => {
+            state.videos = [action.payload, ...state.videos];
+            state.isCreate = true;
+            state.loading = false;
+        })
+
+
+        // GET TAGS
         builder.addCase(getTags.pending, (state) => {
             state.loading = true;
         })
         builder.addCase(getTags.fulfilled, (state, action) => {
             state.tags = action.payload;
+            state.loading = false;
+        })
+
+        
+        // DELETE VIDEO
+        builder.addCase(deleteVideo.pending, (state) => {
+            state.loading = true;
+        })
+        builder.addCase(deleteVideo.fulfilled, (state, action) => {
+            state.videos = state.videos.filter(video => video.id !== action.payload);
             state.loading = false;
         })
     },

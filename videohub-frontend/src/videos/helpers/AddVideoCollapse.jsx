@@ -1,10 +1,15 @@
 import React, { useEffect } from "react";
 import { request } from "../../helpers/axios_helper";
 import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
 
 import "./AddVideoCollapse.css";
+import { createVideo } from "../../slices/video/videoRequests";
 
 export default function AddVideoModal() {
+    const dispatch = useDispatch();
+    const video = useSelector(state => state.video);
+
     const [isLoading, setIsLoading] = React.useState(false);
     const videoTagRef = React.createRef();
     const [videoTags, setVideoTags] = React.useState([]);
@@ -12,31 +17,22 @@ export default function AddVideoModal() {
     const { register, handleSubmit, formState: { errors } } = useForm();
 
     function onSubmit(data) {
-        let formReq = new FormData();
-        formReq.append("name", data.name);
-        formReq.append("description", data.description);
-        formReq.append("videoFile", data.videoFile[0]);
-        let sortedVidTags = Array.from(videoTags.filter((el) => el.trim() !== "").map((el) => el.trim()));
+        const sortedVidTags = Array.from(videoTags.filter(
+            (el) => el.trim() !== ""
+        ).map((el) => el.trim()));
+        const videoTagsFormat = Array.from(new Set(sortedVidTags))
 
-        formReq.append("videoTags", Array.from(new Set(sortedVidTags)));
-
-        setIsLoading(true);
-        request("post", "/api/video", formReq, { "Content-Type": "multipart/form-data" })
-            .then((response) => {
-                window.location.reload();
-                setIsLoading(false);
-            })
-            .catch((response) => {
-                console.error(response);
-            });
+        dispatch(createVideo({
+            name: data.name,
+            description: data.description,
+            videoFile: data.videoFile[0],
+            tags: videoTagsFormat
+        }));
     }
 
     function checkDistinct(array) {
         const checkSet = new Set(array);
-        
-        // Strict equality 
-        // Return boolean value
-        return checkSet.size === array.length;  
+        return checkSet.size === array.length;
     }
 
     return (
@@ -69,7 +65,7 @@ export default function AddVideoModal() {
                                         <span key={el} class="badge text-bg-secondary me-2">{el}</span>
                                     ))}
                                 </h4>
-                                
+
                                 <input type="text" className="form-control form-control-lg mb-2 convex-button" ref={videoTagRef} placeholder="Теги видео (через запятую)"
                                     {...register("videoTags", {
                                         required: true,
@@ -108,7 +104,15 @@ export default function AddVideoModal() {
                                     isLoading ? (<p className="loader my-3"></p>) : null
                                 }
 
-                                <input type="submit" className="btn btn-lg btn-success w-100 mb-3 fs-3" value={"Опубликовать"} />
+                                <button type="submit" className={"btn btn-lg btn-success w-100 mb-3 fs-3" + (video.isCreate || video.loading ? " disabled" : "")}>
+                                    {video.isCreate ? "Видео опубликовано" : ""}
+                                    {video.loading ? (
+                                        <div class="spinner-border" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    ) : ""}
+                                    {!video.isCreate && !video.loading ? "Опубликовать" : ""}
+                                </button>
                             </form>
                         </div>
                     </div>

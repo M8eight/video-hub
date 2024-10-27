@@ -1,9 +1,7 @@
 import React from 'react';
 import InfiniteScroll from "react-infinite-scroll-component";
 import Header from '../../components/Header';
-import { request } from '../../helpers/axios_helper';
 import { isAuth } from '../../helpers/jwt_helper';
-import toHHMMSS from '../../helpers/toHHMMSS';
 import AddVideoCollapse from '../helpers/AddVideoCollapse';
 import VideoElements from '../../components/VideoElements';
 import { useDispatch } from 'react-redux';
@@ -12,14 +10,13 @@ import { useSelector } from 'react-redux';
 
 import "./Videos.css";
 
-
 export default function Videos() {
 
     const dispatch = useDispatch();
     const video = useSelector(state => state.video);
     const tags = video.tags;
 
-    const [limit, setLimit] = React.useState(20);
+    const [limit] = React.useState(20);
     const [offset, setOffset] = React.useState(0);
     const [sortBy, setSortBy] = React.useState("new");
 
@@ -120,7 +117,6 @@ export default function Videos() {
                                             <path d="M0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm15 0a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1z" />
                                         </svg>
                                         {" "}Старые
-
                                     </button>
                                     <button onClick={() => setSortBy("views")} type="button" className={"btn " + (sortBy === "views" ? "btn-secondary" : "btn-outline-secondary") + " btn-lg"}>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-eye" viewBox="0 0 16 16">
@@ -128,7 +124,6 @@ export default function Videos() {
                                             <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0" />
                                         </svg>
                                         {" "}По просмотрам
-
                                     </button>
                                     <button onClick={() => setSortBy("rating")} type="button" className={"btn " + (sortBy === "rating" ? "btn-secondary" : "btn-outline-secondary") + " btn-lg"}>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-emoji-heart-eyes" viewBox="0 0 16 16">
@@ -136,7 +131,6 @@ export default function Videos() {
                                             <path d="M11.315 10.014a.5.5 0 0 1 .548.736A4.5 4.5 0 0 1 7.965 13a4.5 4.5 0 0 1-3.898-2.25.5.5 0 0 1 .548-.736h.005l.017.005.067.015.252.055c.215.046.515.108.857.169.693.124 1.522.242 2.152.242s1.46-.118 2.152-.242a27 27 0 0 0 1.109-.224l.067-.015.017-.004.005-.002zM4.756 4.566c.763-1.424 4.02-.12.952 3.434-4.496-1.596-2.35-4.298-.952-3.434m6.488 0c1.398-.864 3.544 1.838-.952 3.434-3.067-3.554.19-4.858.952-3.434" />
                                         </svg>
                                         {" "}По рейтингу
-
                                     </button>
                                 </div>
                             </div>
