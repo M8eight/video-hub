@@ -118,14 +118,6 @@ public class UserService implements UserDAO {
         return userRepository.save(user);
     }
 
-    //FAVORITES
-
-    @Override
-    public boolean isFavorite(Long videoId) {
-        User user = authHelper.getUserFromAuth();
-        return user.getFavoriteVideos().contains(videoRepository.findById(videoId).orElseThrow());
-    }
-
     @SneakyThrows
     @Override
     public List<Video> getFavorite() {

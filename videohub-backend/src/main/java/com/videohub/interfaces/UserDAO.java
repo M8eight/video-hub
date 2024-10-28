@@ -20,7 +20,6 @@ public interface UserDAO {
     UserDetailsService userDetailsService();
     User updateAvatar(MultipartFile avatar);
 
-    boolean isFavorite(Long videoId);
     List<Video> getFavorite();
     boolean addFavorite(Long videoId);
     boolean removeFavorite(Long videoId);
