@@ -17,19 +17,24 @@ import java.util.List;
 public class FavoriteController {
     private final UserService userService;
 
+    @GetMapping("/validate/{videoId}")
+    public boolean isFavorite(@PathVariable Long videoId) {
+        return userService.isFavorite(videoId);
+    }
+
     @SneakyThrows
-    @GetMapping
+    @GetMapping("/get")
     public List<Video> getFavoriteVideos() {
         //todo сделать пагинацию
         return userService.getFavorite();
     }
 
-    @PostMapping("/{videoId}")
+    @PostMapping("/add/{videoId}")
     public boolean addVideo(@PathVariable Long videoId) {
         return userService.addFavorite(videoId);
     }
 
-    @DeleteMapping("/{videoId}")
+    @PostMapping("/remove/{videoId}")
     public boolean removeVideo(@PathVariable Long videoId) {
         return userService.removeFavorite(videoId);
     }

@@ -5,10 +5,8 @@ import Header from "../../components/Header";
 import CommentsBlock from "../helpers/CommentsBlock";
 import { isAuth, isAdmin } from "../../helpers/jwt_helper";
 import { formatViews } from "../../helpers/formatHelper";
-import { videoRatingDown, videoRatingUp } from "../../slices/rating/ratingRequests";
+import { favoriteValid, favoriteAddRemove } from "../../favorites/favorite_handler";
 
-import { deleteFavorite, createFavorite, getFavorites } from "../../slices/favorite/favoriteRequests"
-import { favoriteValid } from "../../slices/favorite/favoriteSlice";
 import { getCurrentVideo } from "../../slices/video/videoRequests";
 import { useDispatch, useSelector } from "react-redux";
 import ReportCollapse from "./ReportCollapse";
@@ -17,28 +15,20 @@ import { useParams } from "react-router-dom";
 
 
 export default function CurrentVideo(props) {
-    const params = useParams();
-    const videoRef = React.useRef();
-
     const dispatch = useDispatch();
     const video = useSelector((state) => state.currentVideo);
-    const isFavorite = useSelector((state) => state.favorite.isFavorite);
-    const favoriteLoading = useSelector((state) => state.favorite.loading);
 
     const IS_AUTH = isAuth();
     const [rating, setRating] = useState({});
     const [suggestedVideo, setSuggestedVideo] = useState([]);
+    const [isFavorite, setFavorite] = useState(null);
+    const params = useParams()
 
     useEffect(() => {
-        dispatch(getCurrentVideo(params.id));
+        dispatch(getCurrentVideo(params.id))
 
-        dispatch(getFavorites());
-        dispatch(favoriteValid(params.id));
+        IS_AUTH && favoriteValid(window.location.href.split("/")[window.location.href.split("/").length - 1]).then(res => setFavorite(res.data))
     }, []);
-
-    useEffect(() => {
-        videoRef.current.load();
-    }, [video]);
 
     useEffect(() => {
         console.log(isFavorite)
@@ -73,7 +63,7 @@ export default function CurrentVideo(props) {
                             <div className="ratio ratio-16x9">
                                 <video controls poster={video?.preview_path !== undefined ?
                                     "http://localhost:8080/pictures/" + video.preview_path :
-                                    "http://localhost:8080/media/video_error.png"} ref={videoRef}>
+                                    "http://localhost:8080/media/video_error.png"} >
 
                                     {video?.video_path !== undefined ? (
                                         <source src={"http://localhost:8080/media/" + video.video_path} type='video/mp4;codecs="avc1.42E01E, mp4a.40.2"' />
@@ -103,17 +93,17 @@ export default function CurrentVideo(props) {
                                 </div>
 
                                 <div className="col m-0 p-0 text-center float-end">
-                                    {video?.rating !== null ? (
+                                    {video?.rating !== undefined ? (
                                         <div className="btn-group" role="group" aria-label="Basic mixed styles example">
-                                            <button onClick={() => dispatch(videoRatingUp(video.rating.id))} className="btn bg-success btn-lg">
+                                            <button onClick={rateUp} className="btn bg-success btn-lg">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-emoji-heart-eyes-fill me-1" viewBox="0 0 16 16">
                                                     <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0M4.756 4.566c.763-1.424 4.02-.12.952 3.434-4.496-1.596-2.35-4.298-.952-3.434m6.559 5.448a.5.5 0 0 1 .548.736A4.5 4.5 0 0 1 7.965 13a4.5 4.5 0 0 1-3.898-2.25.5.5 0 0 1 .548-.736h.005l.017.005.067.015.252.055c.215.046.515.108.857.169.693.124 1.522.242 2.152.242s1.46-.118 2.152-.242a27 27 0 0 0 1.109-.224l.067-.015.017-.004.005-.002zm-.07-5.448c1.397-.864 3.543 1.838-.953 3.434-3.067-3.554.19-4.858.952-3.434z" />
                                                 </svg>
-                                                <span>{video.rating.rating_up}</span>
+                                                <span>{rating?.rating_up}</span>
                                             </button>
 
-                                            <button onClick={() => dispatch(videoRatingDown(video.rating.id))} className="btn bg-danger btn-lg">
-                                                <span className="me-1">{video.rating.rating_down}</span>
+                                            <button onClick={rateDown} className="btn bg-danger btn-lg">
+                                                <span className="me-1">{rating?.rating_down}</span>
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-emoji-angry-fill" viewBox="0 0 16 16">
                                                     <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16M4.053 4.276a.5.5 0 0 1 .67-.223l2 1a.5.5 0 0 1 .166.76c.071.206.111.44.111.687C7 7.328 6.552 8 6 8s-1-.672-1-1.5c0-.408.109-.778.285-1.049l-1.009-.504a.5.5 0 0 1-.223-.67zm.232 8.157a.5.5 0 0 1-.183-.683A4.5 4.5 0 0 1 8 9.5a4.5 4.5 0 0 1 3.898 2.25.5.5 0 1 1-.866.5A3.5 3.5 0 0 0 8 10.5a3.5 3.5 0 0 0-3.032 1.75.5.5 0 0 1-.683.183M10 8c-.552 0-1-.672-1-1.5 0-.247.04-.48.11-.686a.502.502 0 0 1 .166-.761l2-1a.5.5 0 1 1 .448.894l-1.009.504c.176.27.285.64.285 1.049 0 .828-.448 1.5-1 1.5" />
                                                 </svg>
@@ -187,22 +177,16 @@ export default function CurrentVideo(props) {
                                 <ReportCollapse />
 
 
-                                <button onClick={() => isFavorite ? dispatch(deleteFavorite(params.id)) : dispatch(createFavorite(params.id))} style={{ backgroundColor: "pink", color: "#921A40" }} className="btn">
+                                <button onClick={() => favoriteAddRemove(video?.id, isFavorite).then(res => setFavorite(res.data))} style={{ backgroundColor: "pink", color: "#921A40" }} className="btn">
 
-                                    {favoriteLoading ? (
-                                        <div class="spinner-border" role="status">
-                                            <span class="visually-hidden">Loading...</span>
-                                        </div>
+                                    {isFavorite ? (
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-heart-fill" viewBox="0 0 16 16">
+                                            <path fillRule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314" />
+                                        </svg>
                                     ) : (
-                                        isFavorite ? (
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-heart-fill" viewBox="0 0 16 16">
-                                                <path fillRule="evenodd" d="M8 1.314C12.438-3.248 23.534 4.735 8 15-7.534 4.736 3.562-3.248 8 1.314" />
-                                            </svg>
-                                        ) : (
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-heart" viewBox="0 0 16 16">
-                                                <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15" />
-                                            </svg>
-                                        )
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-heart" viewBox="0 0 16 16">
+                                            <path d="m8 2.748-.717-.737C5.6.281 2.514.878 1.4 3.053c-.523 1.023-.641 2.5.314 4.385.92 1.815 2.834 3.989 6.286 6.357 3.452-2.368 5.365-4.542 6.286-6.357.955-1.886.838-3.362.314-4.385C13.486.878 10.4.28 8.717 2.01zM8 15C-7.333 4.868 3.279-3.04 7.824 1.143q.09.083.176.171a3 3 0 0 1 .176-.17C12.72-3.042 23.333 4.867 8 15" />
+                                        </svg>
                                     )}
                                 </button>
                             </div>
