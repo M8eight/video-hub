@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 
 import java.util.Set;
 
-public interface AdminDao {
+public interface AdminDAO {
     User createAdmin(UserDto userDto);
     void deleteById(Long id);
     Page<User> getAll(Integer offset, Integer limit);

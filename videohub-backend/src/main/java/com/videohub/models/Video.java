@@ -19,6 +19,9 @@ import java.util.Set;
 @ToString
 @RequiredArgsConstructor
 @Table(name = "videos")
+@JsonIgnoreProperties(value = {
+        "comments"
+})
 public class Video {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -54,6 +57,7 @@ public class Video {
     @JoinColumn(name = "rating_id")
     public Rating rating;
 
+    @ToString.Exclude
     @OneToMany(mappedBy = "video")
     private List<Comment> comments = new ArrayList<>();
 

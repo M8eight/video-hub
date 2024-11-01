@@ -16,7 +16,6 @@ public class AuthHelper {
 
     @SneakyThrows
     public User getUserFromAuth() {
-
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return userRepository.findUserByLogin(username).orElseThrow(UserNotAuthorizedException::new);
     }

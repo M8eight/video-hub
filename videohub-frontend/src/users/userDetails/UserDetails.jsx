@@ -17,9 +17,9 @@ export default function UserDetails() {
     request(
       "get",
       "http://localhost:8080/api/user/" +
-        window.location.pathname.substring(
-          window.location.pathname.lastIndexOf("/") + 1
-        )
+      window.location.pathname.substring(
+        window.location.pathname.lastIndexOf("/") + 1
+      )
     ).then(function (res) {
       setUserData(res.data);
     });
@@ -48,16 +48,16 @@ export default function UserDetails() {
         <UserSettings userData={userData} avatar={avatar} />
 
         {userData.avatar_path !== undefined && (
-            <img
-              className="center"
-              src={
-                userData.avatar_path !== null
-                  ? "http://localhost:8080/avatars/" + userData.avatar_path
-                  : "/default-avatar.png"
-              }
-              alt="Avatar field"
-            />
-          )}
+          <img
+            className="center"
+            src={
+              userData.avatar_path !== null
+                ? "http://localhost:8080/avatars/" + userData.avatar_path
+                : "/default-avatar.png"
+            }
+            alt="Avatar field"
+          />
+        )}
 
         <div className="container">
           <h2>

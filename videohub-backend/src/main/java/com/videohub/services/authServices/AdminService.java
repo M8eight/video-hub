@@ -3,7 +3,7 @@ package com.videohub.services.authServices;
 import com.videohub.dtos.userDtos.UserDto;
 import com.videohub.exceptions.userExceptions.UserAlreadyRegisterException;
 import com.videohub.exceptions.userExceptions.UserNotFoundException;
-import com.videohub.interfaces.AdminDao;
+import com.videohub.interfaces.AdminDAO;
 import com.videohub.mappers.UserMapper;
 import com.videohub.models.Role;
 import com.videohub.models.User;
@@ -25,7 +25,7 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class AdminService implements AdminDao {
+public class AdminService implements AdminDAO {
     final private UserRepository userRepository;
     final private UserMapper userMapper;
     final private PasswordEncoder passwordEncoder;

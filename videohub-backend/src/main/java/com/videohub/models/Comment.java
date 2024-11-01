@@ -12,6 +12,8 @@ import org.hibernate.annotations.UpdateTimestamp;
 @Getter
 @Setter
 @ToString
+@Builder
+@AllArgsConstructor
 @RequiredArgsConstructor
 @Table(name = "comments")
 public class Comment {
@@ -19,7 +21,7 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @NotBlank()
+    @NotBlank
     private String text;
 
     @ManyToOne(cascade=CascadeType.ALL)

@@ -1,6 +1,6 @@
 
 import { createSlice } from "@reduxjs/toolkit";
-import { getCurrentVideo } from "./videoRequests";
+import { getCurrentVideo } from "../video/videoRequests";
 
 const initialState = {
     id: null,

@@ -18,7 +18,7 @@ export default function Favorites() {
 
     return (
         <React.Fragment>
-            <Header currentTab="favourites" />
+            <Header currentTab="favorites" />
 
             <div className='container-fluid mt-4'>
 

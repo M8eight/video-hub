@@ -13,3 +13,8 @@ div {
   -o-transition: all 0.3s ease-in-out, left 0.5s ease-in-out;
   transition: all 0.3s ease-in-out, left 0.5s ease-in-out;
 }
+
+.img-cropped {
+  object-fit: cover;
+  object-position: center center;
+}

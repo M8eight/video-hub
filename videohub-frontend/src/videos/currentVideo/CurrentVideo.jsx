@@ -174,7 +174,6 @@ export default function CurrentVideo(props) {
                                     </svg>
                                 </button>
 
-                                <ReportCollapse />
 
 
                                 <button onClick={() => favoriteAddRemove(video?.id, isFavorite).then(res => setFavorite(res.data))} style={{ backgroundColor: "pink", color: "#921A40" }} className="btn">
@@ -189,6 +188,11 @@ export default function CurrentVideo(props) {
                                         </svg>
                                     )}
                                 </button>
+                            </div>
+
+                            <div className="mt-2">
+                                <ReportCollapse />
+
                             </div>
 
                         </div>
@@ -207,7 +211,7 @@ export default function CurrentVideo(props) {
                                         </div>
                                     </div>
                                 </div>
-                                <CommentsBlock />
+                                <CommentsBlock videoId={params.id} />
                             </React.Fragment>
                         ) : (
                             <div className="alert alert-warning mt-2" role="alert">
