@@ -7,20 +7,7 @@ const getVideosRequestWithFilter = async (dataReq) => {
     return await request("get", "/api/videos?offset=" + offset + "&limit=" + limit + "&sortBy=" + sortBy + "&tags=" + tags).then((res) => res.data);
 }
 
-export const getCurrentVideo = createAsyncThunk(
-    "currentVideo/getCurrentVideo",
-    async (id) => {
-        return await request("get", '/api/video/' + id).then((res) => res.data);
-    }
-)
-
-export const deleteVideo = createAsyncThunk(
-    "video/deleteVideo",
-    async (id) => {
-        return await request("delete", "/api/video/" + id).then((res) => res.data);
-    }
-)
-
+//VIDEOS
 export const getVideos = createAsyncThunk(
     "video/getVideos",
     async (dataReq) => {
@@ -51,3 +38,31 @@ export const getTags = createAsyncThunk(
     }
 )
 
+//CURRENT VIDEO
+export const getCurrentVideo = createAsyncThunk(
+    "currentVideo/getCurrentVideo",
+    async (id) => {
+        return await request("get", '/api/video/' + id).then((res) => res.data);
+    }
+)
+
+export const videoRatingUp = createAsyncThunk(
+    "currentVideo/videoRatingUp",
+    async (ratingId) => {
+        return await request("post", `/api/rating/${ratingId}/up`).then((res) => res.data);
+    }
+)
+
+export const videoRatingDown = createAsyncThunk(
+    "currentVideo/videoRatingDown",
+    async (ratingId) => {
+        return await request("post", `/api/rating/${ratingId}/down`).then((res) => res.data);
+    }    
+)
+
+export const deleteVideo = createAsyncThunk(
+    "currentVideo/deleteVideo",
+    async (id) => {
+        return await request("delete", "/api/video/" + id).then((res) => res.data);
+    }
+)
