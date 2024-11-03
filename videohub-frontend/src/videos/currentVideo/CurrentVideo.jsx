@@ -16,6 +16,7 @@ import { redirect, useParams } from "react-router-dom";
 export default function CurrentVideo(props) {
     const dispatch = useDispatch();
     const video = useSelector((state) => state.currentVideo);
+    const videoRef = React.useRef();
 
     const IS_AUTH = isAuth();
     const [suggestedVideo, setSuggestedVideo] = useState([]);
@@ -27,6 +28,10 @@ export default function CurrentVideo(props) {
         IS_AUTH && favoriteValid(window.location.href.split("/")[window.location.href.split("/").length - 1]).then(res => setFavorite(res.data))
     }, []);
 
+    useEffect(() => {
+        videoRef.current.load();
+    }, [video])
+
     return (
         <Fragment>
             <Header currentTab="videos" />
@@ -36,7 +41,7 @@ export default function CurrentVideo(props) {
                     <div className="col-9 p-2 col-md-12 col-lg-9 col-12">
                         <div className="row">
                             <div className="ratio ratio-16x9">
-                                <video controls poster={video?.preview_path !== undefined ?
+                                <video ref={videoRef} controls poster={video?.preview_path !== undefined ?
                                     "http://localhost:8080/pictures/" + video.preview_path :
                                     "http://localhost:8080/media/video_error.png"} >
 
@@ -159,7 +164,7 @@ export default function CurrentVideo(props) {
 
                         {/* COMMENTS */}
                         {IS_AUTH === true ? (
-                            <React.Fragment>
+                            <>
                                 <div className="row p-2">
                                     <div className="d-flex justify-content-between mb-2">
                                         <div className="d-flex flex-row align-items-center">
@@ -171,7 +176,7 @@ export default function CurrentVideo(props) {
                                     </div>
                                 </div>
                                 <CommentsBlock videoId={params.id} />
-                            </React.Fragment>
+                            </>
                         ) : (
                             <div className="alert alert-warning mt-2" role="alert">
                                 <h4 className="alert-heading">Войдите, чтобы оставлять комментарии</h4>

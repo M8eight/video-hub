@@ -7,7 +7,7 @@ import "./reportCollapse.css";
 
 export default function ReportCollapse() {
     const dispatch = useDispatch();
-    const report = useSelector((state) => state.report);
+    const reportObj = useSelector((state) => state.report);
 
     const { register, handleSubmit, formState: { errors } } = useForm();
 
@@ -43,14 +43,14 @@ export default function ReportCollapse() {
                                     <p className="fs-4 pb-2 mb-4 text-danger border-bottom border-danger">Поле текст жалобы должно быть больше 4 символов</p>
                                 )}
 
-                                <button type="submit" className="btn btn-lg btn-success w-100 mb-3 fs-3" value={"Отправить жалобу"}>
-                                    {report?.isCreate ? "Видео опубликовано" : ""}
-                                    {report?.loading ? (
+                                <button type="submit" className={"btn btn-lg btn-success w-100 mb-3 fs-3" + (reportObj?.isCreate || reportObj?.loading ? (" disabled") : "")} value={"Отправить жалобу"}>
+                                    {reportObj?.isCreate ? "Жалоба созданна" : ""}
+                                    {reportObj?.loading ? (
                                         <div class="spinner-border" role="status">
                                             <span class="visually-hidden">Loading...</span>
                                         </div>
                                     ) : ""}
-                                    {!report?.isCreate && !report?.loading ? "Опубликовать" : ""}
+                                    {!reportObj?.isCreate && !reportObj?.loading ? "Создать жалобу" : ""}
                                 </button>
                             </form>
                             

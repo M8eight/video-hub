@@ -16,6 +16,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Table(name = "comments")
+@JsonIgnoreProperties(value ={
+        "video"
+})
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

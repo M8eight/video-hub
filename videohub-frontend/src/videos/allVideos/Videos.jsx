@@ -139,7 +139,7 @@ export default function Videos() {
 
                     <div className="row col-12">
                         <InfiniteScroll
-                            dataLength={video.videos.length ?? 0}
+                            dataLength={video?.videos?.length ?? 0}
                             next={ () => {
                                 dispatch(getMoreVideos({
                                     offset: offset + 1,
