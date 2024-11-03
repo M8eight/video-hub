@@ -1,5 +1,4 @@
 import React, { useEffect } from "react";
-import { request } from "../../helpers/axios_helper";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 

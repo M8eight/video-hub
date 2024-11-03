@@ -1,6 +1,6 @@
 
 import { createSlice } from "@reduxjs/toolkit";
-import { getCurrentVideo } from "../video/videoRequests";
+import { getCurrentVideo, videoRatingUp, videoRatingDown, deleteVideo } from "../video/videoRequests";
 
 const initialState = {
     id: null,
@@ -54,6 +54,16 @@ const currentVideoSlice = createSlice({
             state.loading = false;
         })
 
+        builder.addCase(videoRatingUp.fulfilled, (state, action) => {
+            state.rating = action.payload;
+        })
+        builder.addCase(videoRatingDown.fulfilled, (state, action) => {
+            state.rating = action.payload;
+        })
+
+        builder.addCase(deleteVideo.fulfilled, (state) => {
+            state = initialState;
+        })
     },
 })
 

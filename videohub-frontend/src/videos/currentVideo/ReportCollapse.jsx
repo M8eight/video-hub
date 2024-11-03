@@ -1,11 +1,13 @@
 import React, { useEffect } from "react";
-import { request } from "../../helpers/axios_helper";
 import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { addReport } from "../../slices/report/reportRequests"
 
 import "./reportCollapse.css";
 
 export default function ReportCollapse() {
-    const [isLoading, setIsLoading] = React.useState(false);
+    const dispatch = useDispatch();
+    const reportObj = useSelector((state) => state.report);
 
     const { register, handleSubmit, formState: { errors } } = useForm();
 
@@ -14,15 +16,7 @@ export default function ReportCollapse() {
         formReq.append("message", data.message);
         formReq.append("videoId", window.location.pathname.substring(window.location.pathname.lastIndexOf("/") + 1));
 
-        setIsLoading(true);
-        request("post", "/api/report", formReq, { "Content-Type": "multipart/form-data" })
-            .then((response) => {
-                // window.location.reload();
-                setIsLoading(false); 
-            })
-            .catch((response) => {
-                console.error(response);
-            });
+        dispatch(addReport(formReq));
     }
 
     return (
@@ -33,7 +27,6 @@ export default function ReportCollapse() {
                         <div className="col-lg-12 ">
 
                             <h1 className="text-center">Создать жалобу </h1>
-
                             <form onSubmit={handleSubmit(onSubmit)}>
                                 <textarea type="text" className="form-control form-control-lg mb-2 convex-button" placeholder="Текст жалобы"
                                     {...register("message", {
@@ -50,9 +43,17 @@ export default function ReportCollapse() {
                                     <p className="fs-4 pb-2 mb-4 text-danger border-bottom border-danger">Поле текст жалобы должно быть больше 4 символов</p>
                                 )}
 
-                                <input type="submit" className="btn btn-lg btn-success w-100 mb-3 fs-3" value={"Отправить жалобу"} />
-
+                                <button type="submit" className={"btn btn-lg btn-success w-100 mb-3 fs-3" + (reportObj?.isCreate || reportObj?.loading ? (" disabled") : "")} value={"Отправить жалобу"}>
+                                    {reportObj?.isCreate ? "Жалоба созданна" : ""}
+                                    {reportObj?.loading ? (
+                                        <div class="spinner-border" role="status">
+                                            <span class="visually-hidden">Loading...</span>
+                                        </div>
+                                    ) : ""}
+                                    {!reportObj?.isCreate && !reportObj?.loading ? "Создать жалобу" : ""}
+                                </button>
                             </form>
+                            
                         </div>
                     </div>
                 </div>

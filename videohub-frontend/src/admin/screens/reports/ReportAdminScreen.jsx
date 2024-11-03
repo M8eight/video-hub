@@ -1,23 +1,22 @@
 import React, { useEffect } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
-
-import { request } from "../../../helpers/axios_helper";
+import { useDispatch, useSelector } from "react-redux";
+import { getReports, getMoreReports } from "../../../slices/report/reportRequests";
 
 export default function ReportAdminScreen(props) {
+  const dispatch = useDispatch();
+  const report = useSelector((state) => state.report);
 
-  const [reports, setReports] = React.useState([]);
-
+  const limit = 5;
   const [offset, setOffset] = React.useState(0);
 
   useEffect(() => {
-    getReports();
+    dispatch(getReports({ offset, limit }));
   }, []);
 
-  function getReports() {
-    request("get", '/api/report/all?offset=' + offset + '&limit=20').then((res) => {
-      console.log(res.data.content);
-      setReports(res.data.content);
-    });
+  const nextReports = () => {
+    setOffset(offset + 1);
+    dispatch(getMoreReports({ offset, limit }));
   }
 
   return (
@@ -26,45 +25,45 @@ export default function ReportAdminScreen(props) {
 
         <h2 className="text-center">Жалобы</h2>
 
-        {reports?.length === 0 && (
+        {report.reports?.length === 0 && (
           <div className="text-center text-bg-danger">
             Нет жалоб
           </div>
         )}
 
         <InfiniteScroll
-          dataLength={reports.length}
-          next={getReports}
-          hasMore={!reports.last}
+          dataLength={report.reports?.length}
+          next={nextReports}
+          hasMore={!report?.last}
           endMessage={
             <p style={{ textAlign: "center" }}>
               <b>Все жалобы загружены</b>
             </p>
           }
         >
-          {reports?.map((report) => (
+          {report.reports?.map((reportEl) => (
             <div className="card mb-3 p-3">
 
-              {report.video !== null ? (<div>
+              {reportEl.video !== null ? (<div>
                 <p>Видео</p>
-                <a href={"/video/" + report.video.id}>
-                  <img className="card-img-top" src={"http://localhost:8080/pictures/" + report.video.preview_path} alt="..." />
+                <a href={"/video/" + reportEl.video.id}>
+                  <img className="card-img-top" src={"http://localhost:8080/pictures/" + reportEl.video.preview_path} alt="..." />
                 </a>
               </div>) : null}
 
 
-              {report.user !== null ? <div>
+              {reportEl.user !== null ? <div>
                 <p>Пользователь</p>
-                <img style={{ width: "200px", height: "200px" }} src={report.user.avatar_path !== null ? ("localhost:8080/pictures/" + report.user.avatar_path) : ("/default-avatar.png")} className="card-img-top" alt="..." />
+                <img style={{ width: "200px", height: "200px" }} src={reportEl.user.avatar_path !== null ? ("localhost:8080/pictures/" + reportEl.user.avatar_path) : ("/default-avatar.png")} className="card-img-top" alt="..." />
               </div> : null}
 
               <div className="card-body">
                 <h5 className="card-title">
                   Жалоба на
-                  {report.user !== null ? (<React.Fragment> Пользователя: <a className="text-decoration-none fs-4" href={"/user/" + report.user.id}>{report.user.login}</a>  </React.Fragment>) : null}
-                  {report.video !== null ? (<span className="text-bg-secondary"> Видео:  {report.video.name} </span>) : null}
+                  {reportEl.user !== null ? (<React.Fragment> Пользователя: <a className="text-decoration-none fs-4" href={"/user/" + reportEl.user.id}>{reportEl.user.login}</a>  </React.Fragment>) : null}
+                  {reportEl.video !== null ? (<span className="text-bg-secondary"> Видео:  {reportEl.video.name} </span>) : null}
                 </h5>
-                <p className="card-text">Описание жалобы: {report.message}</p>
+                <p className="card-text">Описание жалобы: {reportEl.message}</p>
 
                 <div className="btn-group" role="group" aria-label="Basic example">
                   <button type="button" className="btn btn-warning">Забанить</button>

@@ -11,7 +11,7 @@ export const getComments = createAsyncThunk(
 export const createComment = createAsyncThunk(
     "comment/createComment",
     async ({videoId, text}) => {
-        return await request("post", `/api/video/${videoId}/comment/new`, {text}, { "Content-Type": "multipart/form-data" }).then((res) => res.data);
+        return await request("post", `/api/video/${videoId}/comment`, {text}, { "Content-Type": "multipart/form-data" }).then((res) => res.data);
     }
 );
 

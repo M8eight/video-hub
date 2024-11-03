@@ -16,6 +16,9 @@ import org.hibernate.annotations.UpdateTimestamp;
 @AllArgsConstructor
 @RequiredArgsConstructor
 @Table(name = "comments")
+@JsonIgnoreProperties(value ={
+        "video"
+})
 public class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,6 +29,8 @@ public class Comment {
 
     @ManyToOne(cascade=CascadeType.ALL)
     @JoinColumn(name = "users_id")
+    @ToString.Exclude
+    @JsonIgnoreProperties("comments")
     private User user;
 
     @OneToOne(cascade=CascadeType.ALL)
