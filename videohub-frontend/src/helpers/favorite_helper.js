@@ -20,7 +20,6 @@ export async function getFavorites() {
     let favorites = window.localStorage.getItem("favorite");
     if (favorites === null) {
         favorites = await getReqFavorites().then((req) => {
-            console.log(req.data);
             favorites = req.data;
         });
         window.localStorage.setItem("favorite", favorites);

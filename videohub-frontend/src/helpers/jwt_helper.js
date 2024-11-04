@@ -15,17 +15,6 @@ export function getDecodeJwt() {
     }
 }
 
-// export function getJwtRoles() {
-//     let jwtObj = getDecodeJwt()
-//     console.log(jwtObj)
-
-//     if (jwtObj !== undefined || jwtObj !== null) {
-//         return jwtObj["role"].map((el) => {
-//             return el["name"]
-//         })
-//     }
-// }
-
 export function getLogin() {
     return getDecodeJwt()?.sub
 }

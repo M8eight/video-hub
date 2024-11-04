@@ -6,12 +6,10 @@ export default function VideoElements(props) {
 
     const handleMouseEnter = (id) => {
         setIsVideoVisible((prevState) => ({ ...prevState, [id]: true }))
-        console.log(isVideoVisible)
     }
 
     const handleMouseLeave = (id) => {
         setIsVideoVisible((prevState) => ({ ...prevState, [id]: false }))
-        console.log(isVideoVisible)
     } 
 
     return (

@@ -50,11 +50,9 @@ const reportSlice = createSlice({
         });
 
         builder.addCase(addReport.pending, (state) => {
-            console.log('pending');
             state.loading = true;
         });
         builder.addCase(addReport.fulfilled, (state, action) => {
-            console.log('fulfilled');
             state.isCreate = true;
             state.loading = false;
         });

@@ -3,7 +3,6 @@ import { request } from "../../helpers/axios_helper";
 
 const getVideosRequestWithFilter = async (dataReq) => {
     const { offset, limit, sortBy, tags } = dataReq;
-    console.log(dataReq)
     return await request("get", "/api/videos?offset=" + offset + "&limit=" + limit + "&sortBy=" + sortBy + "&tags=" + tags).then((res) => res.data);
 }
 
@@ -18,7 +17,6 @@ export const getVideos = createAsyncThunk(
 export const createVideo = createAsyncThunk(
     "video/createVideo",
     async (dataReq) => {
-        console.log(dataReq);
         return await request("post", "/api/video", dataReq, { "Content-Type": "multipart/form-data" }).then((res) => res.data);
     }
 );
