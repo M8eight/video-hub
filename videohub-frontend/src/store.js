@@ -4,6 +4,7 @@ import favoriteReducer from "./slices/favorite/favoriteSlice";
 import currentVideoReducer from "./slices/currentVideo/currentVideoSlice";
 import commentReducer from "./slices/comment/commentSlice";
 import reportReducer from "./slices/report/reportSlice";
+import userReducer from "./slices/user/userSlice";
 
 export default configureStore({
     reducer: {
@@ -11,6 +12,7 @@ export default configureStore({
         favorite: favoriteReducer,
         currentVideo: currentVideoReducer,
         comment: commentReducer,
-        report: reportReducer
+        report: reportReducer,
+        user: userReducer
     }
 })

@@ -1,56 +1,43 @@
 import React, { useEffect } from "react";
 import Header from "../../../components/Header";
-import { request } from "../../../helpers/axios_helper";
-// import { getUserId } from '../helpers/jwt_helper';
 import toHHMMSS from "../../../helpers/toHHMMSS";
-// import { useForm, useWatch, wa } from "react-hook-form";
 import UserSettings from "../userSettings/UserSettings";
+import { useDispatch, useSelector } from "react-redux";
+import { getUser } from "../../../slices/user/userRequests";
+import { useParams } from "react-router-dom";
 
 import "./UserDetails.css";
 
-export default function UserDetails() {
-  const [userData, setUserData] = React.useState({});
+export default function UserDetails(props) {
   const [avatar, setAvatar] = React.useState(null);
-  // const [isCurrentUser, setIsCurrentUser] = React.useState(getUserId() === userData.id);
+  const params = useParams()
 
-  function getUser() {
-    request(
-      "get",
-      "http://localhost:8080/api/user/" +
-      window.location.pathname.substring(
-        window.location.pathname.lastIndexOf("/") + 1
-      )
-    ).then(function (res) {
-      setUserData(res.data);
-    });
-  }
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.user.user);
 
   useEffect(() => {
-    getUser();
+    dispatch(getUser({userId: params.id}));
   }, []);
 
-  // function isCurrentUser(params) {
-
-  // }
-
   function roleFormat() {
-    let roles = userData.authorities?.map((el) => el.authority.substring(5));
+    let roles = user?.authorities?.map((el) => el.authority.substring(5));
     return roles;
   }
 
   return (
     <React.Fragment>
       <Header currentTab="user" />
-      <div className="container-fluid mt-4">
-        
-        <UserSettings userData={userData} avatar={avatar} />
 
-        {userData.avatar_path !== undefined && (
+      <div className="container-fluid mt-4">
+
+        <UserSettings userData={user} avatar={avatar} />
+
+        {user?.avatar_path !== undefined && (
           <img
             className="center"
             src={
-              userData.avatar_path !== null
-                ? "http://localhost:8080/avatars/" + userData.avatar_path
+              user?.avatar_path !== null
+                ? "http://localhost:8080/avatars/" + user?.avatar_path
                 : "/default-avatar.png"
             }
             alt="Avatar field"
@@ -59,7 +46,7 @@ export default function UserDetails() {
 
         <div className="container">
           <h2>
-            Пользователь: {userData.login}{" "}
+            Пользователь: {user?.login}{" "}
             {roleFormat()?.includes("ADMIN") === true ? (
               <img
                 style={{ height: "20px" }}
@@ -72,7 +59,7 @@ export default function UserDetails() {
           </h2>
           {
             <div className="row row-cols-1 row-cols-md-5 g-4">
-              {userData.videos?.map((el) => (
+              {user?.videos?.map((el) => (
                 <div key={el.id} className="col">
                   <a href={"http://localhost:3000/video/" + el.id}>
                     <div className="card mb-3 parent">
