@@ -27,7 +27,7 @@ public class Comment {
     @NotBlank
     private String text;
 
-    @ManyToOne(cascade=CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "users_id")
     @ToString.Exclude
     @JsonIgnoreProperties("comments")

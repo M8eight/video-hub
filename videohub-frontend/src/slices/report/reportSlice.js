@@ -1,6 +1,6 @@
 
 import { createSlice } from "@reduxjs/toolkit";
-import { getReports, addReport, getMoreReports } from "./reportRequests";
+import { getReports, addReport, getMoreReports, acceptReport, ignoreReport } from "./reportRequests";
 
 const initialState = {
     reports: [],
@@ -56,6 +56,13 @@ const reportSlice = createSlice({
             state.isCreate = true;
             state.loading = false;
         });
+
+        builder.addCase(acceptReport.fulfilled, (state, action) => {
+            state.reports = state.reports.filter((report) => report.id !== action.payload.id);
+        })
+        builder.addCase(ignoreReport.fulfilled, (state, action) => {
+            state.reports = state.reports.filter((report) => report.id !== action.payload.id);
+        })
     }
 });
 

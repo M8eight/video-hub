@@ -2,16 +2,17 @@ package com.videohub.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Size;
 import lombok.*;
-import org.springframework.lang.Nullable;
 
 @Entity
 @Getter
 @Setter
 @ToString
 @Table(name = "reports")
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Report {
 
     @Id
@@ -24,24 +25,9 @@ public class Report {
     @Size(min = 4, max = 200)
     private String message;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @ToString.Exclude
     @JsonIgnoreProperties("reports")
-    @Nullable
     private Video video;
-
-    @ManyToOne(cascade = CascadeType.ALL)
-    @ToString.Exclude
-    @JsonIgnoreProperties("reports")
-    @Nullable
-    private User user;
-
-    @PrePersist
-    @PreUpdate
-    public void notNullCheck() {
-        if (video == null && user == null) {
-            throw new RuntimeException("one of the fields (video, user) must be non-null");
-        }
-    }
 
 }

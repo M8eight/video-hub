@@ -29,12 +29,12 @@ public class ReportController {
     }
 
     @PostMapping("/accept/{reportId}")
-    public Report accept(@PathVariable Long reportId) {
+    public boolean accept(@PathVariable Long reportId) {
         return reportService.resolve(reportId);
     }
 
     @PostMapping("/ignore/{reportId}")
-    public Report ignore(@PathVariable Long reportId) {
+    public boolean ignore(@PathVariable Long reportId) {
         return reportService.ignore(reportId);
     }
 

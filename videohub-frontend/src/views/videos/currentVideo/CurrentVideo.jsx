@@ -54,7 +54,7 @@ export default function CurrentVideo(props) {
                         <div className="row p-2 mt-2">
                             {isAdmin() && (
                                 <div className="btn-group mb-3" role="group" aria-label="Basic mixed styles example">
-                                    <button type="button" onClick={() => { dispatch(deleteVideo(video?.id)); window.location.replace("/videos") }} className="btn btn-danger">Удалить видео</button>
+                                    <button type="button" onClick={() => { dispatch(deleteVideo(video?.id))  }} className="btn btn-danger">Удалить видео</button>
                                     <button type="button" onClick={() => { window.location.replace("http://localhost:3000/video/" + video?.id + "/edit") }} className="btn btn-warning">Изменить видео</button>
                                 </div>
                             )}

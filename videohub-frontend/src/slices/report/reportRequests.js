@@ -25,3 +25,17 @@ export const addReport = createAsyncThunk(
         return await request("post", "/api/report", reportForm, { "Content-Type": "multipart/form-data" }).then((response) => response.data);
     }
 );
+
+export const acceptReport = createAsyncThunk(
+    "report/acceptReport",
+    async ({reportId}) => {
+        return await request("post", `/api/report/accept/${reportId}`).then((response) => response.data);
+    }
+);
+
+export const ignoreReport = createAsyncThunk(
+    "report/ignoreReport",
+    async ({reportId}) => {
+        return await request("post", `/api/report/ignore/${reportId}`).then((response) => response.data);
+    }
+);

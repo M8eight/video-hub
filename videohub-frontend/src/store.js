@@ -5,6 +5,7 @@ import currentVideoReducer from "./slices/currentVideo/currentVideoSlice";
 import commentReducer from "./slices/comment/commentSlice";
 import reportReducer from "./slices/report/reportSlice";
 import userReducer from "./slices/user/userSlice";
+import adminStatsReducer from "./slices/admin/adminStatsSlice";
 
 export default configureStore({
     reducer: {
@@ -13,6 +14,7 @@ export default configureStore({
         currentVideo: currentVideoReducer,
         comment: commentReducer,
         report: reportReducer,
-        user: userReducer
+        user: userReducer,
+        adminStats: adminStatsReducer
     }
 })

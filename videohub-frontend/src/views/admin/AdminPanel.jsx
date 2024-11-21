@@ -4,26 +4,24 @@ import Header from "../../components/Header";
 import VideoAdminScreen from "./screens/VideoAdminScreen";
 import CommentAdminScreen from "./screens/CommentAdminScreen";
 import UserAdminScreen from "./screens/UserAdminScreen";
-import ReportAdminScreen from "./screens/reports/ReportAdminScreen";
-import { request } from "../../helpers/axios_helper";
+import ReportAdminScreen from "./screens/ReportAdminScreen";
+import { useDispatch } from "react-redux";
+import { getCountVideos, getCountComments, getCountUsers } from "../../slices/admin/adminStatsRequests";
+import { useSelector } from "react-redux";
 
 import "./AdminPanel.css";
 
 export default function Camera() {
-  const [userCount, setUserCount] = useState(0);
-  const [videoCount, setVideoCount] = useState(0);
-  const [commentCount, setCommentCount] = useState(0);
+  const statsSlice = useSelector((state) => state.adminStats);
+
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    request("get", "/api/admin/count/video").then((res) => {
-      setVideoCount(res.data);
-    });
-    request("get", "/api/admin/count/comment").then((res) => {
-      setCommentCount(res.data);
-    });
-    request("get", "/api/admin/count/user").then((res) => {
-      setUserCount(res.data);
-    });
+    dispatch(getCountVideos());
+    dispatch(getCountComments());
+    dispatch(getCountUsers());
+
+    console.log(statsSlice.stats)
   }, []);
 
   return (
@@ -178,7 +176,7 @@ export default function Camera() {
                       <div className="card-header"></div>
                       <div className="card-body">
                         <h4 className="card-title">Всего видео</h4>
-                        <h1 className="card-title">{videoCount}</h1>
+                        <h1 className="card-title">{statsSlice.stats.videos}</h1>
                       </div>
                       <div className="card-footer text-body-secondary"></div>
                     </div>
@@ -188,7 +186,7 @@ export default function Camera() {
                       <div className="card-header"></div>
                       <div className="card-body">
                         <h4 className="card-title">Всего пользователей</h4>
-                        <h1 className="card-title">{userCount}</h1>
+                        <h1 className="card-title">{statsSlice?.stats.users}</h1>
                       </div>
                       <div className="card-footer text-body-secondary"></div>
                     </div>
@@ -198,7 +196,7 @@ export default function Camera() {
                       <div className="card-header"></div>
                       <div className="card-body">
                         <h4 className="card-title">Всего коментариев</h4>
-                        <h1 className="card-title">{commentCount}</h1>
+                        <h1 className="card-title">{statsSlice?.stats.comments}</h1>
                       </div>
                       <div className="card-footer text-body-secondary"></div>
                     </div>

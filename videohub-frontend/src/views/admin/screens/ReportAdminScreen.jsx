@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useDispatch, useSelector } from "react-redux";
-import { getReports, getMoreReports } from "../../../../slices/report/reportRequests";
+import { getReports, getMoreReports, acceptReport, ignoreReport } from "../../../slices/report/reportRequests";
 
 export default function ReportAdminScreen(props) {
   const dispatch = useDispatch();
@@ -51,25 +51,19 @@ export default function ReportAdminScreen(props) {
                 </a>
               </div>) : null}
 
-
-              {reportEl.user !== null ? <div>
-                <p>Пользователь</p>
-                <img style={{ width: "200px", height: "200px" }} src={reportEl.user.avatar_path !== null ? ("localhost:8080/pictures/" + reportEl.user.avatar_path) : ("/default-avatar.png")} className="card-img-top" alt="..." />
-              </div> : null}
-
               <div className="card-body">
                 <h5 className="card-title">
-                  Жалоба на
-                  {reportEl.user !== null ? (<React.Fragment> Пользователя: <a className="text-decoration-none fs-4" href={"/user/" + reportEl.user.id}>{reportEl.user.login}</a>  </React.Fragment>) : null}
-                  {reportEl.video !== null ? (<span className="text-bg-secondary"> Видео:  {reportEl.video.name} </span>) : null}
+                  Жалоба на {" "}
+                  {reportEl.video !== null ? reportEl.video.name : null}
                 </h5>
                 <p className="card-text">Описание жалобы: {reportEl.message}</p>
 
-                <div className="btn-group" role="group" aria-label="Basic example">
-                  <button type="button" className="btn btn-warning">Забанить</button>
-                  <button type="button" className="btn btn-danger">Удалить жалобу</button>
-                  <button type="button" className="btn btn-secondary">Удалить жалобу</button>
-                </div>
+                {reportEl.id && (
+                  <div className="btn-group" role="group" aria-label="Basic example">
+                    <button onClick={() => dispatch(ignoreReport({reportId: reportEl.id}))} type="button" className="btn btn-warning">Игнорировать</button>
+                    <button onClick={() => dispatch(acceptReport({reportId: reportEl.id}))} type="button" className="btn btn-danger">Удалить</button>
+                  </div>
+                )}
 
               </div>
             </div>

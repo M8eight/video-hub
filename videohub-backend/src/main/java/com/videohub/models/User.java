@@ -51,7 +51,6 @@ public class User implements UserDetails {
     List<Comment> comments;
 
     @OneToMany
-//    @ToString.Exclude
     @JsonIgnoreProperties({"user", "comments"})
     List<Video> favoriteVideos = new ArrayList<>();
 

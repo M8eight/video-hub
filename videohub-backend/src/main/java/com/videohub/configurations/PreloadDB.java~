@@ -1,11 +1,12 @@
 package com.videohub.configurations;
 
 import com.videohub.dtos.userDtos.UserDto;
+import com.videohub.dtos.videoDtos.VideoDto;
 import com.videohub.enumerations.FoldersNames;
-import com.videohub.models.Role;
+import com.videohub.models.*;
+import com.videohub.repositories.videoRepositories.CommentRepository;
 import com.videohub.repositories.userRepositories.RoleRepository;
 import com.videohub.repositories.userRepositories.UserRepository;
-import com.videohub.repositories.videoRepositories.CommentRepository;
 import com.videohub.repositories.videoRepositories.VideoRepository;
 import com.videohub.services.authServices.AdminService;
 import com.videohub.services.authServices.AuthenticationService;
@@ -18,8 +19,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.io.FileInputStream;
 
 @Configuration
 @RequiredArgsConstructor
