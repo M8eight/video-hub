@@ -13,12 +13,11 @@ import org.springframework.data.elasticsearch.repository.config.EnableElasticsea
 public class ElasticsearchConfig extends ElasticsearchConfiguration {
 
     @Value("${elastic.url}")
-    private String elasticsearchUrl;
 
     @Override
     public ClientConfiguration clientConfiguration() {
         return ClientConfiguration.builder()
-                .connectedTo(elasticsearchUrl)
+                .connectedTo("elasticsearch:9200")
                 .build();
     }
 }

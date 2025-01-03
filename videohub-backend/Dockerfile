@@ -1,16 +1,11 @@
-FROM maven:3.8.6-eclipse-temurin-17 as build
+FROM maven:3.8.4-openjdk-17 as builder
 WORKDIR /app
-COPY pom.xml /app
-RUN mvn dependency:resolve
-COPY . /app
-RUN mvn clean
-RUN mvn package -DskipTests
+COPY . /app/.
+RUN mvn -f /app/pom.xml clean package -Dmaven.test.skip=true
 
-FROM sapmachine:17
-COPY --from=build /app/target/videohub-0.0.1-SNAPSHOT.jar /app/app.jar
-COPY docker-compose.yml /app/docker-compose.yml
-
-RUN apt-get -y update && apt-get -y upgrade && apt-get install -y ffmpeg
-# RUN apt update && apt upgrade -y && apt install ffmpeg -y
-
-ENTRYPOINT java -jar /app/app.jar
+FROM eclipse-temurin:17-jre-alpine
+RUN apk update && apk add ffmpeg && rm -rf /var/lib/apt/lists/*
+WORKDIR /app
+COPY --from=builder /app/target/*.jar /app/*.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "/app/*.jar"]

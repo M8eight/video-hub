@@ -1,13 +1,4 @@
 services:
-  # frontend:
-  #   build:
-  #     context: ./videohub-frontend
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "3000:3000"
-  #   depends_on:
-  #     - backend
-
   # grafana:
   #   image: grafana/grafana
   #   container_name: grafana
@@ -28,47 +19,101 @@ services:
   #     depends_on:
   #       - backend
 
-  # backend:
-  #   container_name: backend
-  #   build:
-  #     context: ./videohub-backend
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "8080:8080"
-  #   depends_on:
-  #     - elasticsearch
-  #   environment:
-  #     - BACKEND_DOCKER_FILE=/app/docker-compose.yml
-  #     - STORAGE_DIR=/app
-  #     - LOG_FILENAME=/app/logs.txt
-  #   restart: unless-stopped
-
   elasticsearch:
     image: elasticsearch:8.15.2
     container_name: elasticsearch
     environment:
       - discovery.type=single-node
+      - bootstrap.memory_lock=true
       - xpack.security.enabled=false
-    depends_on:
-      - service-db
+      - "ES_JAVA_OPTS=-Xms4096m -Xmx4096m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
     volumes:
       - ./elasticsearch_data:/usr/share/elasticsearch/data
     ports:
       - 9200:9200
       - 9300:9300
+    healthcheck:
+      test: ["CMD", "curl", "-f", "-s", "http://localhost:9200/_cat/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+      - mynet
 
   service-db:
-    image: postgres:14.7-alpine
+    image: postgres:latest
     environment:
       POSTGRES_USER: root
       POSTGRES_PASSWORD: root
       POSTGRES_DB: filmsbase
+      PGDATA: /var/lib/postgresql/data/pgdata
     volumes:
       - service-db:/var/lib/postgresql/data
     ports:
-      - "6000:5432"
-    restart: unless-stopped
+      - 6000:5432
+    # restart: unless-stopped
+    depends_on:
+      - elasticsearch
+    networks:
+      - mynet
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    # healthcheck:
+    #   test: ["CMD-SHELL", "pg_isready", "--quiet"]
+    #   interval: 1s
+    #   timeout: 5s
+    #   retries: 10
+
+  backend:
+    container_name: backend
+    build:
+      context: ./videohub-backend
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    depends_on:
+      service-db:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+    environment:
+      BACKEND_DOCKER_FILE: /app/docker-compose.yml
+      STORAGE_DIR: /app
+      LOG_FILENAME: /app/logs.txt
+      POSTGRES_URL: jdbc:postgresql://service-db/filmsbase
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      ELASTIC_URL: http://elasticsearch:9200
+    networks:
+      - mynet
+    # restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./videohub-frontend
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    depends_on:
+      - backend
 
 volumes:
   service-db:
   elasticsearch:
+  frontend:
+  backend:
+
+
+networks:
+  mynet:
+    driver: bridge

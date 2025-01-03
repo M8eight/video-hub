@@ -86,6 +86,7 @@ public class VideoService implements VideoDAO {
     @Override
     @Transactional
     public Video addVideo(VideoDto videoDto) {
+        log.info("addVideo {}", videoDto);
         assert videoDto.getVideoFile() != null;
         String extension = Objects.requireNonNull(videoDto.getVideoFile().getOriginalFilename())
                 .substring(videoDto.getVideoFile().getOriginalFilename().lastIndexOf(".") + 1);
@@ -94,11 +95,16 @@ public class VideoService implements VideoDAO {
             throw new VideoBadRequestException(videoDto.getName());
         }
 
+        log.info("ffmpeg stage");
         //Save video and get duration
         String videoPath = fileStorageManager.save(videoDto.getVideoFile(), StorageFileType.VIDEO);
+        log.info(videoPath);
         int durationSecond = ffmpegHelpers.getDuration(videoPath);
+        log.info(durationSecond + " s");
         String previewPath = ffmpegHelpers.getImageFromVideo(videoPath, durationSecond);
+        log.info(previewPath);
 
+        log.info("create video cut preview");
         ffmpegHelpers.createVideoCutPreview(videoPath, durationSecond);
 
         //Set user
@@ -126,7 +132,8 @@ public class VideoService implements VideoDAO {
                 user,
                 new Rating()
         ));
-        elasticVideoService.save(elasticVideoMapper.toElasticVideo(newVideo));
+        log.info("save elastic video ");
+//        elasticVideoService.save(elasticVideoMapper.toElasticVideo(newVideo));
 
         return newVideo;
     }
