@@ -27,6 +27,7 @@ const currentVideoSlice = createSlice({
     name: 'currentVideo',
     initialState,
     reducers: {
+        
     },
     extraReducers: (builder) => {
         // GET VIDEOS

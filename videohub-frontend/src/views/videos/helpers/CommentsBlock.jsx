@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { getComments, commentRatingDown, commentRatingUp, createComment } from "../../../slices/comment/commentRequests";
+import unixTimeToDate from "../../../helpers/unixTimeToDate";
 
 function CommentsBlock(props) {
     const dispatch = useDispatch();
@@ -64,7 +65,7 @@ function CommentsBlock(props) {
                                         <path fillRule="evenodd" d="M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708" />
                                     </svg>
                                 </button>
-                                <i className="small text-muted mb-0 ms-2 user-select-none">{commentEl.created_at}</i>
+                                <i className="small text-muted mb-0 ms-2 user-select-none">{unixTimeToDate(commentEl.created_at / 1000)}</i>
                             </div>
                         </div>
                     </div>

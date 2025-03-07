@@ -1,34 +1,15 @@
-import React, { useEffect } from "react";
-import { request } from "../../../helpers/axios_helper";
+import React from "react";
 import InfiniteScroll from "react-infinite-scroll-component";
+import { useDispatch, useSelector } from "react-redux";
+import { getUsers } from "../../../slices/user/userRequests";
 
 export default function UserAdminScreen(props) {
-  const [users, setUsers] = React.useState([]);
+  const dispatch = useDispatch();
+  const users = useSelector((state) => state.user.users);
+  const usersIsLast = useSelector((state) => state.user.usersIsLast);
+
   const [offset, setOffset] = React.useState(0);
-  const [limit, setLimit] = React.useState(30);
-
-  function getUsers() {
-    request("get", "/api/admin/user/users").then((res) => {
-      setUsers(res.data.content);
-    });
-    setOffset(offset + 1);
-  }
-  // todo fix last list
-  function getMoreUsers() {
-    request("get", "/api/admin/user/users?offset=" + offset + "&limit=" + limit)
-      .then((res) => {
-        console.warn(res.data?.content);
-        setUsers(users.concat(res.data.content));
-        setOffset(offset + 1);
-      })
-      .catch((err) => {
-        console.error("Error getUsers " + err);
-      });
-  }
-
-  useEffect(() => {
-    getUsers();
-  }, []);
+  const [limit] = React.useState(30);
 
   return (
     <React.Fragment>
@@ -36,24 +17,26 @@ export default function UserAdminScreen(props) {
         <h2 className="text-center">Пользователи</h2>
 
         <InfiniteScroll
-          dataLength={users.length !== undefined ? users.length : 0}
-          next={getMoreUsers}
-          hasMore={!users.last}
+          dataLength={users.length}
+          next={ () => {
+            dispatch(getUsers({ offset, limit }))
+            setOffset(offset + 1);
+          }}
+          hasMore={!usersIsLast}
           style={{ overflow: "visible" }}
-          // loader={
-          //     <div className="d-flex justify-content-center">
-          //         <div className="spinner-border" role="status">
-          //             <span className="visually-hidden">Loading...</span>
-          //         </div>
-          //     </div>
-          // }
+          loader={
+              <div className="d-flex justify-content-center">
+                  <div className="spinner-border" role="status">
+                      <span className="visually-hidden">Loading...</span>
+                  </div>
+              </div>
+          }
           endMessage={<h4 className="text-center">Все конец</h4>}
         >
           <div className="row row-cols-1 row-cols-md-3 g-3 overflow-hidden">
             {users.map((user) => (
               <div className="col">
                 <div className={"card text-bg-dark"}>
-                  {/* <img src="..." className="card-img-top" alt="..." /> */}
                   <a
                     className="text-decoration-none text-light"
                     href={"/user/" + user.id}

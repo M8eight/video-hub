@@ -25,7 +25,7 @@ export default function AddVideoModal() {
             name: data.name,
             description: data.description,
             videoFile: data.videoFile[0],
-            tags: videoTagsFormat
+            videoTags: videoTagsFormat
         }));
     }
 

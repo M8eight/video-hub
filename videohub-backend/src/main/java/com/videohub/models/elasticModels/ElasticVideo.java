@@ -10,7 +10,7 @@ import org.springframework.data.elasticsearch.annotations.Setting;
 
 @Data
 @Document(indexName = ElasticIndices.VIDEO_INDEX)
-@Setting(settingPath = "static/elastic/es-settings.json")
+@Setting(shards = 5, replicas = 1)
 public class ElasticVideo {
     @Id
     @Field(type = FieldType.Keyword)
@@ -24,4 +24,5 @@ public class ElasticVideo {
 
     @Field(type = FieldType.Text)
     private String description;
+
 }

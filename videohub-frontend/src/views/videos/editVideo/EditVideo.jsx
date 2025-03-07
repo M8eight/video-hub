@@ -1,6 +1,9 @@
 import { useRef, useEffect, useState, Fragment } from "react";
 import { request } from "../../../helpers/axios_helper";
 import Header from "../../../components/Header";
+import {useDispatch, useSelector} from "react-redux";
+import { getCurrentVideo } from "../../../slices/video/videoRequests";
+
 
 import { useParams } from "react-router-dom";
 
@@ -8,6 +11,8 @@ export default function EditVideo(props) {
     const [videoData, setVideoData] = useState({});
     const [editedVideoData, setEditedVideoData] = useState({});
 
+    const dispatch = useDispatch();
+    const currentVideo = useSelector((state) => state.currentVideo);
 
     const params = useParams()
     const videoRef = useRef();
@@ -18,9 +23,10 @@ export default function EditVideo(props) {
     const [isLoading, setIsLoading] = useState(false);
 
     const [videoTags, setVideoTags] = useState([]);
+    // const videoTags = useSelector((state) => state.currentVideo.tags?.map((el) => el.text));
 
     useEffect(() => {
-        getCurrentVideo();
+        dispatch(getCurrentVideo({ id: params.id }));
     }, []);
 
     useEffect(() => {
@@ -48,18 +54,15 @@ export default function EditVideo(props) {
     }
 
 
-    function getCurrentVideo() {
-        request("get", 'http://localhost:8080/api/video/' + params.id)
-            .then(function (response) {
-                setVideoData(response.data);
-                setVideoTags(response.data.tags?.map((el) => el.text));
-            })
-            .catch(function (error) {
-            })
-            .finally(function () {
-                // выполняется всегда
-            })
-    }
+    // function getCurrentVideo() {
+    //     request("get", 'http://localhost:8080/api/video/' + params.id)
+    //         .then(function (response) {
+    //             setVideoData(response.data);
+    //             setVideoTags(response.data.tags?.map((el) => el.text));
+    //         })
+    //         .catch(function (error) {
+    //         })
+    // }
 
     function sendEditVideoReq() {
         setIsLoading(true);
@@ -110,7 +113,11 @@ export default function EditVideo(props) {
 
                         <div className="row">
                             <div className="d-grid gap-2 col-6 my-3 mx-auto" >
-                                <button type="button" onClick={() => sendEditVideoReq()} className={"btn btn-info" + (isLoading ? " disabled" : "")} data-bs-toggle="collapse" href="#videoCollapse" aria-expanded="false" aria-controls="videoCollapse">
+                                {/* <button type="button" onClick={() => sendEditVideoReq()} className={"btn btn-info" + (isLoading ? " disabled" : "")} data-bs-toggle="collapse" href="#videoCollapse" aria-expanded="false" aria-controls="videoCollapse">
+                                    {isLoading ? <span className="spinner-border spinner-border-sm" aria-hidden="true"></span> : null}{" "}
+                                    {isLoading ? "Загрузка..." : "Сохранить"}
+                                </button> */}
+                                <button type="button" onClick={() => console.log(editedVideoData)} className={"btn btn-info" + (isLoading ? " disabled" : "")} data-bs-toggle="collapse" href="#videoCollapse" aria-expanded="false" aria-controls="videoCollapse">
                                     {isLoading ? <span className="spinner-border spinner-border-sm" aria-hidden="true"></span> : null}{" "}
                                     {isLoading ? "Загрузка..." : "Сохранить"}
                                 </button>

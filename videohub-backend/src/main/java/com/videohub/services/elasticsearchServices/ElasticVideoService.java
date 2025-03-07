@@ -20,8 +20,12 @@ public class ElasticVideoService {
         elasticVideoRepository.save(video);
     }
 
+    public void deleteVideo(String videoId) {
+        elasticVideoRepository.deleteById(videoId);
+    }
+
     public Page<ElasticVideo> findByName(String name) {
-        return elasticVideoRepository.findByName(name, PageRequest.of(0, 10));
+        return elasticVideoRepository.findFuzzyByName(name, PageRequest.of(0, 10));
     }
 
 

@@ -81,6 +81,7 @@ public class VideoService implements VideoDAO {
     @Override
     public void deleteById(Long id) {
         videoRepository.deleteById(id);
+        elasticVideoService.deleteVideo(id.toString());
     }
 
     @Override
@@ -133,7 +134,7 @@ public class VideoService implements VideoDAO {
                 new Rating()
         ));
         log.info("save elastic video ");
-//        elasticVideoService.save(elasticVideoMapper.toElasticVideo(newVideo));
+        elasticVideoService.save(elasticVideoMapper.toElasticVideo(newVideo));
 
         return newVideo;
     }
