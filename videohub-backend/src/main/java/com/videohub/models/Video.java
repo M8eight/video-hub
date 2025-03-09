@@ -1,15 +1,17 @@
 package com.videohub.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.hypersistence.utils.hibernate.type.search.PostgreSQLTSVectorType;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.Formula;
+import org.hibernate.annotations.Type;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.lang.Nullable;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -23,6 +25,7 @@ import java.util.Set;
         "comments"
 })
 public class Video {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

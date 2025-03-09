@@ -1,6 +1,7 @@
 package com.videohub.configurations;
 
 import com.videohub.dtos.userDtos.UserDto;
+import com.videohub.dtos.videoDtos.VideoDto;
 import com.videohub.enumerations.FoldersNames;
 import com.videohub.models.Role;
 import com.videohub.repositories.userRepositories.RoleRepository;
@@ -53,20 +54,16 @@ public class PreloadDB {
                     FoldersNames.VIDEO_PREVIEWS
             }) {
                 new File(storagePath + el).mkdirs();
-                log.info("create if not exist folder : {}", el.substring(1, el.length() - 2));
+                log.info("create if not exist folder : {}", el.replace("/", ""));
             }
-            log.info("COMMENTS--------------------------------------------");
-//            log.info("preload {}", commentRepository.save(new Comment("Example comment", new Rating(), fr.getReferenceById(1L))));
-//            log.info("preload {}", commentRepository.save(new Comment("Example comment2", new Rating(), fr.getReferenceById(2L))));
             log.info("ROLES----------------------------------------------");
             log.info("preload {}", rr.save(new Role(1L, "ROLE_USER")));
             log.info("preload {}", rr.save(new Role(2L, "ROLE_ADMIN")));
             log.info("USERS----------------------------------------------");
             log.info("preload {}", us.create(UserDto.builder().login("user").password("user123").build()));
             log.info("preload {}", as.createAdmin(UserDto.builder().login("admin").password("admin").build()));
-            log.info("VIDS-----------------------------------------------");
-//            fp.preload();
             log.info("---------------------------------------------------");
+
         };
     }
 

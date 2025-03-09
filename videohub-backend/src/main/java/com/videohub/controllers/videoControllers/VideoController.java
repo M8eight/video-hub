@@ -1,19 +1,20 @@
 package com.videohub.controllers.videoControllers;
 
+import com.videohub.dtos.PaginationLimitBodyDto;
 import com.videohub.dtos.videoDtos.EditVideoDto;
+import com.videohub.dtos.videoDtos.SearchVideoDto;
 import com.videohub.dtos.videoDtos.VideoDto;
 import com.videohub.dtos.videoDtos.VideoFilterCriteriaDto;
 import com.videohub.exceptions.videoExceptions.VideoNotFoundException;
 import com.videohub.models.Video;
-import com.videohub.models.elasticModels.ElasticVideo;
-import com.videohub.services.elasticsearchServices.ElasticVideoService;
 import com.videohub.services.videoServices.VideoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
+import java.util.List;
 
 @RequestMapping("api")
 @RestController
@@ -23,7 +24,6 @@ import java.util.Map;
 public class VideoController {
 
     private final VideoService videoService;
-    private final ElasticVideoService elasticVideoService;
 
     @GetMapping("/videos")
     Page<Video> allVideosEndpoint(VideoFilterCriteriaDto videosDto) {
@@ -35,11 +35,10 @@ public class VideoController {
         return videoService.getVideosWithFilter(videosDto);
     }
 
-    @Deprecated
     @PostMapping("/video/search")
-    Page<ElasticVideo> findByNameEndpoint(@RequestBody Map<String, String> req) {
-//        log.info(name);
-        return elasticVideoService.findByName(req.get("name"));
+    Page<Video> findByNameEndpoint(@RequestBody SearchVideoDto req) {
+        log.info("get search by request: {}", req);
+        return videoService.searchByNameAndDescription(req.getSearch(), PageRequest.of(req.getOffset(), req.getLimit()));
     }
 
     @PostMapping("/video")

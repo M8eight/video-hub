@@ -10,7 +10,6 @@ import com.videohub.helpers.FfmpegHelpers;
 import com.videohub.helpers.FileStorageManager;
 import com.videohub.helpers.StorageFileType;
 import com.videohub.interfaces.VideoDAO;
-import com.videohub.mappers.ElasticVideoMapper;
 import com.videohub.models.Rating;
 import com.videohub.models.User;
 import com.videohub.models.Video;
@@ -18,12 +17,12 @@ import com.videohub.models.VideoTag;
 import com.videohub.repositories.userRepositories.UserRepository;
 import com.videohub.repositories.videoRepositories.VideoRepository;
 import com.videohub.repositories.videoRepositories.VideoTagRepository;
-import com.videohub.services.elasticsearchServices.ElasticVideoService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -40,8 +39,6 @@ public class VideoService implements VideoDAO {
     private final VideoRepository videoRepository;
     private final FileStorageManager fileStorageManager;
     private final FfmpegHelpers ffmpegHelpers;
-    private final ElasticVideoService elasticVideoService;
-    private final ElasticVideoMapper elasticVideoMapper;
     private final UserRepository userRepository;
     private final VideoTagRepository videoTagRepository;
 
@@ -55,6 +52,11 @@ public class VideoService implements VideoDAO {
     @Override
     public Optional<Video> getRefById(Long id) {
         return Optional.of(videoRepository.getReferenceById(id));
+    }
+
+    @Transactional
+    public Page<Video> searchByNameAndDescription(String search, Pageable pageable) {
+        return videoRepository.searchByNameAndDescription(search, pageable);
     }
 
     @Override
@@ -81,7 +83,6 @@ public class VideoService implements VideoDAO {
     @Override
     public void deleteById(Long id) {
         videoRepository.deleteById(id);
-        elasticVideoService.deleteVideo(id.toString());
     }
 
     @Override
@@ -134,7 +135,6 @@ public class VideoService implements VideoDAO {
                 new Rating()
         ));
         log.info("save elastic video ");
-        elasticVideoService.save(elasticVideoMapper.toElasticVideo(newVideo));
 
         return newVideo;
     }

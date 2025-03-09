@@ -68,7 +68,7 @@ export default function AddVideoModal() {
                                 <input type="text" className="form-control form-control-lg mb-2 convex-button" ref={videoTagRef} placeholder="Теги видео (через запятую)"
                                     {...register("videoTags", {
                                         required: true,
-                                        maxLength: 50,
+                                        maxLength: 100,
                                         minLength: 1
                                     })}
                                     onChange={(e) => {
@@ -79,13 +79,13 @@ export default function AddVideoModal() {
                                 <input type="text" className="form-control form-control-lg mb-2 convex-button" placeholder="Описание видео"
                                     {...register("description", {
                                         required: true,
-                                        maxLength: 500,
+                                        maxLength: 1000,
                                         minLength: 5
                                     })}
                                 />
                                 {errors?.description?.type === "required" && <p className="fs-4 pb-2 mb-4 text-danger border-bottom border-danger">Поле описание обязательно</p>}
                                 {errors?.description?.type === "maxLength" && (
-                                    <p className="fs-4 pb-2 mb-4 text-danger border-bottom border-danger">Поле описание должно быть не больше 20 символов</p>
+                                    <p className="fs-4 pb-2 mb-4 text-danger border-bottom border-danger">Поле описание должно быть не больше 500 символов</p>
                                 )}
                                 {errors?.description?.type === "minLength" && (
                                     <p className="fs-4 pb-2 mb-4 text-danger border-bottom border-danger">Поле описание должно быть больше 5 символов</p>

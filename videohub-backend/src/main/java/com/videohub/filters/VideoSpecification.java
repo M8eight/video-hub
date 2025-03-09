@@ -2,6 +2,7 @@ package com.videohub.filters;
 
 import com.videohub.models.Video;
 import com.videohub.models.VideoTag;
+import com.videohub.models.Video_;
 import jakarta.persistence.criteria.Join;
 import org.springframework.data.jpa.domain.Specification;
 
