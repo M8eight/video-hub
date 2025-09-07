@@ -65,4 +65,5 @@ yarn-error.log*
 ### ELASTICSEARCH ###
 elasticsearch_data
 
+*~
 .qodo/

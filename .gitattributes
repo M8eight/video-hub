@@ -1,2 +1,2 @@
 *.javascript linguist-detectable=false
-* text=auto
+* -text
