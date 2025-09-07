@@ -64,3 +64,10 @@ export const deleteVideo = createAsyncThunk(
         return await request("delete", "/api/video/" + id).then((res) => res.data);
     }
 )
+
+export const updateVideo = createAsyncThunk(
+    "currentVideo/updateVideo",
+    async (formData) => {
+        return await request("put", "/api/video/edit", formData, { "Content-Type": "multipart/form-data" }).then((res) => res.data);
+    }
+)

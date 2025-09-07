@@ -24,4 +24,6 @@ public class VideoTagService implements VideoTagDao {
         videoTag.setClicked(videoTag.getClicked() + 1);
         videoTagRepository.save(videoTag);
     }
+
+
 }

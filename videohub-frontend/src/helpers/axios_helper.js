@@ -3,6 +3,16 @@ import axios from "axios";
 axios.defaults.baseURL = "http://localhost:8080";
 axios.defaults.headers.post["Content-Type"] = "application/json";
 
+axios.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response && error.response.status === 401) {
+      localStorage.removeItem("auth_token");
+    }
+    return Promise.reject(error);
+  }
+);
+
 export const getAuthToken = () => {
     return window.localStorage.getItem("auth_token");
 }
@@ -48,6 +58,7 @@ export const request = (method, url, data = [], headers = {}) => {
         data: data,
     });
 }
+
 
 /**
  * Makes a request to the server using the given method and URL.

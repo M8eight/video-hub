@@ -12,11 +12,11 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class EditVideoDto implements Serializable {
     private Long id;
     private String name;
     private String description;
     private @Nullable List<String> videoTags;
-    private @Nullable MultipartFile videoFile;
-    private @Nullable String previewDataUrl;
+    private @Nullable MultipartFile previewFile;
 }

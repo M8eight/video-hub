@@ -1,176 +1,444 @@
 import { useRef, useEffect, useState, Fragment } from "react";
-import { request } from "../../../helpers/axios_helper";
+import { useDispatch, useSelector } from "react-redux";
+import { useParams, useNavigate } from "react-router-dom";
 import Header from "../../../components/Header";
-import {useDispatch, useSelector} from "react-redux";
-import { getCurrentVideo } from "../../../slices/video/videoRequests";
+import { getCurrentVideo, updateVideo } from "../../../slices/video/videoRequests";
 
-
-import { useParams } from "react-router-dom";
-
-export default function EditVideo(props) {
-    const [videoData, setVideoData] = useState({});
-    const [editedVideoData, setEditedVideoData] = useState({});
-
+export default function EditVideo() {
+    const [editedVideoData, setEditedVideoData] = useState({
+        name: "",
+        description: ""
+    });
+    const [videoTags, setVideoTags] = useState([]);
+    const [previewImage, setPreviewImage] = useState(null);
+    const [tagInput, setTagInput] = useState("");
+    const [saveError, setSaveError] = useState(null);
+    const [hasChanges, setHasChanges] = useState(false);
+    
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const currentVideo = useSelector((state) => state.currentVideo);
-
-    const params = useParams()
+    const { id } = useParams();
     const videoRef = useRef();
 
-    const [video, setVideo] = useState(null);
-    const [image, setImage] = useState(null);
-    const [imageBlob, setImageBlob] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
-
-    const [videoTags, setVideoTags] = useState([]);
-    // const videoTags = useSelector((state) => state.currentVideo.tags?.map((el) => el.text));
+    useEffect(() => {
+        dispatch(getCurrentVideo(id));
+    }, [dispatch, id]);
 
     useEffect(() => {
-        dispatch(getCurrentVideo({ id: params.id }));
-    }, []);
-
-    useEffect(() => {
-        if (video !== null) {
-            const fetchData = async () => {
-                await videoRef.current.load();
-            }
-            fetchData()
+        if (currentVideo?.id) {
+            const initialData = {
+                name: currentVideo.name || "",
+                description: currentVideo.description || ""
+            };
+            setEditedVideoData(initialData);
+            setVideoTags(currentVideo.tags?.map(tag => tag.text) || []);
+            setTagInput(currentVideo.tags?.map(tag => tag.text).join(', ') || '');
         }
-    }, [video]);
+    }, [currentVideo]);
 
+    // Отслеживание изменений
+    useEffect(() => {
+        if (!currentVideo?.id) return;
+        
+        const nameChanged = editedVideoData.name !== (currentVideo.name || "");
+        const descChanged = editedVideoData.description !== (currentVideo.description || "");
+        const tagsChanged = JSON.stringify(videoTags.sort()) !== 
+                           JSON.stringify((currentVideo.tags?.map(tag => tag.text) || []).sort());
+        const previewChanged = !!previewImage;
+        
+        setHasChanges(nameChanged || descChanged || tagsChanged || previewChanged);
+    }, [editedVideoData, videoTags, previewImage, currentVideo]);
 
-    function getImage() {
+    const generatePreview = () => {
+        if (!videoRef.current) return;
+
         const canvas = document.createElement("canvas");
-        let video = document.createElement("video");
-        video = videoRef.current;
-        video.crossOrigin = "anonymous";
+        const video = videoRef.current;
+        
         canvas.width = video.videoWidth;
         canvas.height = video.videoHeight;
+        
         const ctx = canvas.getContext("2d");
         ctx.drawImage(video, 0, 0);
-        canvas.crossOrigin = "anonymous";
+        
+        setPreviewImage(canvas.toDataURL("image/jpeg", 0.8));
+    };
 
-        setImage(canvas.toDataURL());
-    }
+    const clearPreview = () => {
+        setPreviewImage(null);
+    };
 
+    const base64ToBlob = (base64String, mimeType) => {
+        const byteCharacters = atob(base64String.split(',')[1]);
+        const byteArray = new Uint8Array(byteCharacters.length);
+        
+        for (let i = 0; i < byteCharacters.length; i++) {
+            byteArray[i] = byteCharacters.charCodeAt(i);
+        }
+        
+        return new Blob([byteArray], { type: mimeType });
+    };
 
-    // function getCurrentVideo() {
-    //     request("get", 'http://localhost:8080/api/video/' + params.id)
-    //         .then(function (response) {
-    //             setVideoData(response.data);
-    //             setVideoTags(response.data.tags?.map((el) => el.text));
-    //         })
-    //         .catch(function (error) {
-    //         })
-    // }
+    const handleSave = async () => {
+        setSaveError(null);
+        
+        if (!editedVideoData.name.trim()) {
+            setSaveError("Название видео не может быть пустым");
+            return;
+        }
 
-    function sendEditVideoReq() {
-        setIsLoading(true);
         const formData = new FormData();
-        formData.append('id', videoData.id);
+        formData.append('id', currentVideo.id);
+        formData.append('name', editedVideoData.name.trim());
+        formData.append('description', editedVideoData.description.trim());
+        formData.append('videoTags', videoTags.join(','));
 
-        formData.append('name', editedVideoData.name);
-        formData.append('description', editedVideoData.description);
+        if (previewImage) {
+            const mimeType = previewImage.substring(
+                previewImage.indexOf(':') + 1, 
+                previewImage.indexOf(';')
+            );
+            const blob = base64ToBlob(previewImage, mimeType);
+            formData.append('previewFile', blob, 'preview.jpg');
+        }
 
-        formData.append('videoTags', videoTags);
+        try {
+            await dispatch(updateVideo(formData)).unwrap();
+            navigate(`/video/${currentVideo.id}`, { replace: true });
+        } catch (error) {
+            setSaveError("Ошибка при сохранении видео. Попробуйте еще раз.");
+            console.error('Ошибка при сохранении видео:', error);
+        }
+    };
 
-        video !== null && formData.append('videoFile', video);
-        image !== null && formData.append('previewDataUrl', image);
+    const handleTagsChange = (e) => {
+        const value = e.target.value;
+        setTagInput(value);
+        
+        const tags = value
+            .split(',')
+            .map(tag => tag.trim())
+            .filter(tag => tag !== "");
+        setVideoTags(tags);
+    };
 
-        request("put", "http://localhost:8080/api/video/edit", formData, { "Content-Type": "multipart/form-data" })
-            .then(function (res) {
-                window.location.replace("http://localhost:3000/video/" + videoData?.id);
-            })
-            .catch(function (err) {
-            })
+    const addTag = (tagText) => {
+        if (!tagText.trim() || videoTags.includes(tagText.trim())) return;
+        
+        const newTags = [...videoTags, tagText.trim()];
+        setVideoTags(newTags);
+        setTagInput(newTags.join(', '));
+    };
+
+    const removeTag = (tagToRemove) => {
+        const newTags = videoTags.filter(tag => tag !== tagToRemove);
+        setVideoTags(newTags);
+        setTagInput(newTags.join(', '));
+    };
+
+    const handleInputChange = (field, value) => {
+        setEditedVideoData(prev => ({ ...prev, [field]: value }));
+        setSaveError(null);
+    };
+
+    const handleCancel = () => {
+        if (hasChanges) {
+            if (window.confirm("У вас есть несохраненные изменения. Вы уверены, что хотите выйти?")) {
+                navigate(`/video/${currentVideo.id}`);
+            }
+        } else {
+            navigate(`/video/${currentVideo.id}`);
+        }
+    };
+
+    const isLoading = currentVideo?.loading;
+    const videoPath = currentVideo?.video_path;
+    const previewPath = currentVideo?.preview_path;
+
+    if (!currentVideo && !isLoading) {
+        return (
+            <Fragment>
+                <Header currentTab="videos" />
+                <div className="container">
+                    <div className="alert alert-danger mt-4" role="alert">
+                        Видео не найдено
+                    </div>
+                </div>
+            </Fragment>
+        );
     }
 
     return (
         <Fragment>
             <Header currentTab="videos" />
+            
+            <div className="container py-4">
+                {/* Заголовок с breadcrumb */}
+                <div className="row mb-4">
+                    <div className="col">
+                        <nav aria-label="breadcrumb">
+                            <ol className="breadcrumb">
+                                <li className="breadcrumb-item">
+                                    <button className="btn btn-link p-0" onClick={() => navigate('/videos')}>
+                                        Видео
+                                    </button>
+                                </li>
+                                <li className="breadcrumb-item">
+                                    <button className="btn btn-link p-0" onClick={() => navigate(`/video/${id}`)}>
+                                        {currentVideo?.name || 'Загрузка...'}
+                                    </button>
+                                </li>
+                                <li className="breadcrumb-item active">Редактирование</li>
+                            </ol>
+                        </nav>
+                        <h1 className="h2 mb-0">Редактирование видео</h1>
+                    </div>
+                </div>
 
-            <div className="container">
-                <h2 className="text-center my-3">Изменить видео</h2>
+                <div className="row g-4">
+                    {/* Левая колонка - Видеоплеер */}
+                    <div className="col-lg-8">
+                        <div className="card shadow-sm">
+                            <div className="card-body p-3">
+                                <div className="ratio ratio-16x9">
+                                    <video 
+                                        ref={videoRef}
+                                        className="rounded" 
+                                        controls
+                                        crossOrigin="anonymous"
+                                        poster={previewPath ? 
+                                            `http://localhost:8080/media/${previewPath}` : 
+                                            "http://localhost:8080/media/video_error.png"
+                                        }
+                                    >
+                                        {videoPath && (
+                                            <source 
+                                                src={`http://localhost:8080/media/${videoPath}`}
+                                                type='video/mp4;codecs="avc1.42E01E, mp4a.40.2"'
+                                                crossOrigin="anonymous"
+                                            />
+                                        )}
+                                    </video>
+                                </div>
+                            </div>
+                        </div>
 
-                <div className="row p-2">
-
-                    <div className="p-2 col-sm-11 col-md-10 col-lg-8 col-12 mx-auto">
-                        <div className="row">
-                            <div className="ratio ratio-16x9">
-                                <video crossorigin="anonymous" className="videoPlayer" autoPlay muted controls ref={videoRef} poster={videoData?.preview_path !== undefined ?
-                                    "http://localhost:8080/media/" + videoData.preview_path :
-                                    "http://localhost:8080/media/video_error.png"} >
-
-                                    {videoData?.video_path !== undefined ? (
-                                        <source crossorigin="anonymous" src={video !== null ? URL.createObjectURL(video) : "http://localhost:8080/media/" + videoData.video_path} type='video/mp4;codecs="avc1.42E01E, mp4a.40.2"' />
-                                    ) : null}
-                                </video>
+                        {/* Секция превью */}
+                        <div className="card shadow-sm mt-4">
+                            <div className="card-header">
+                                <h5 className="card-title mb-0">
+                                    <i className="bi bi-image me-2"></i>
+                                    Превью видео
+                                </h5>
+                            </div>
+                            <div className="card-body">
+                                <div className="row g-3">
+                                    <div className="col-md-6">
+                                        <button 
+                                            className="btn btn-outline-primary w-100" 
+                                            onClick={generatePreview}
+                                            disabled={!videoRef.current}
+                                        >
+                                            <i className="bi bi-camera me-2"></i>
+                                            Создать из текущего кадра
+                                        </button>
+                                    </div>
+                                    <div className="col-md-6">
+                                        {previewImage && (
+                                            <button 
+                                                className="btn btn-outline-secondary w-100" 
+                                                onClick={clearPreview}
+                                            >
+                                                <i className="bi bi-trash me-2"></i>
+                                                Удалить превью
+                                            </button>
+                                        )}
+                                    </div>
+                                </div>
+                                {previewImage && (
+                                    <div className="mt-3">
+                                        <div className="position-relative">
+                                            <img 
+                                                src={previewImage} 
+                                                alt="Новое превью видео" 
+                                                className="img-fluid rounded shadow-sm"
+                                                style={{ maxHeight: '200px', width: 'auto' }}
+                                            />
+                                            <span className="position-absolute top-0 start-0 badge bg-success m-2">
+                                                Новое
+                                            </span>
+                                        </div>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
 
-                    <div className="col-sm-11 col-md-10 col-lg-9 col-12 mx-auto mb-3">
+                    {/* Правая колонка - Форма редактирования */}
+                    <div className="col-lg-4">
+                        <div className="card shadow-sm">
+                            <div className="card-header">
+                                <h5 className="card-title mb-0">
+                                    <i className="bi bi-pencil me-2"></i>
+                                    Параметры видео
+                                </h5>
+                            </div>
+                            <div className="card-body">
+                                {/* Ошибки */}
+                                {saveError && (
+                                    <div className="alert alert-danger alert-dismissible" role="alert">
+                                        <i className="bi bi-exclamation-triangle me-2"></i>
+                                        {saveError}
+                                        <button type="button" className="btn-close" onClick={() => setSaveError(null)}></button>
+                                    </div>
+                                )}
 
-                        <div className="row">
-                            <div className="d-grid gap-2 col-6 my-3 mx-auto" >
-                                {/* <button type="button" onClick={() => sendEditVideoReq()} className={"btn btn-info" + (isLoading ? " disabled" : "")} data-bs-toggle="collapse" href="#videoCollapse" aria-expanded="false" aria-controls="videoCollapse">
-                                    {isLoading ? <span className="spinner-border spinner-border-sm" aria-hidden="true"></span> : null}{" "}
-                                    {isLoading ? "Загрузка..." : "Сохранить"}
-                                </button> */}
-                                <button type="button" onClick={() => console.log(editedVideoData)} className={"btn btn-info" + (isLoading ? " disabled" : "")} data-bs-toggle="collapse" href="#videoCollapse" aria-expanded="false" aria-controls="videoCollapse">
-                                    {isLoading ? <span className="spinner-border spinner-border-sm" aria-hidden="true"></span> : null}{" "}
-                                    {isLoading ? "Загрузка..." : "Сохранить"}
-                                </button>
+                                {/* Название */}
+                                <div className="mb-3">
+                                    <label className="form-label fw-semibold">
+                                        <i className="bi bi-card-text me-2"></i>
+                                        Название
+                                    </label>
+                                    {currentVideo?.name !== undefined ? (
+                                        <input 
+                                            type="text" 
+                                            className="form-control" 
+                                            value={editedVideoData.name}
+                                            onChange={(e) => handleInputChange('name', e.target.value)}
+                                            placeholder="Введите название видео"
+                                        />
+                                    ) : (
+                                        <div className="placeholder-glow">
+                                            <span className="placeholder col-12 placeholder-lg" />
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Описание */}
+                                <div className="mb-3">
+                                    <label className="form-label fw-semibold">
+                                        <i className="bi bi-text-paragraph me-2"></i>
+                                        Описание
+                                    </label>
+                                    {currentVideo?.description !== undefined ? (
+                                        <textarea 
+                                            className="form-control"
+                                            rows="4"
+                                            value={editedVideoData.description}
+                                            onChange={(e) => handleInputChange('description', e.target.value)}
+                                            placeholder="Добавьте описание видео"
+                                        />
+                                    ) : (
+                                        <div className="placeholder-glow">
+                                            {[...Array(4)].map((_, i) => (
+                                                <span key={i} className="placeholder col-12 placeholder-sm d-block mb-1" />
+                                            ))}
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Теги */}
+                                <div className="mb-4">
+                                    <label className="form-label fw-semibold">
+                                        <i className="bi bi-tags me-2"></i>
+                                        Теги
+                                    </label>
+                                    
+                                    {/* Отображение текущих тегов */}
+                                    {videoTags.length > 0 && (
+                                        <div className="mb-2">
+                                            {videoTags.map((tag) => (
+                                                <span key={tag} className="badge bg-secondary me-1 mb-1">
+                                                    {tag}
+                                                    <button 
+                                                        type="button" 
+                                                        className="btn-close btn-close-white ms-1" 
+                                                        style={{ fontSize: '0.7rem' }}
+                                                        onClick={() => removeTag(tag)}
+                                                        aria-label="Удалить тег"
+                                                    ></button>
+                                                </span>
+                                            ))}
+                                        </div>
+                                    )}
+                                    
+                                    <input 
+                                        type="text" 
+                                        className="form-control" 
+                                        placeholder="Введите теги через запятую"
+                                        value={tagInput}
+                                        onChange={handleTagsChange}
+                                    />
+                                    <div className="form-text">
+                                        Разделяйте теги запятыми. Нажмите на крестик, чтобы удалить тег.
+                                    </div>
+                                </div>
+
+                                {/* Индикатор изменений */}
+                                {hasChanges && (
+                                    <div className="alert alert-info py-2">
+                                        <i className="bi bi-info-circle me-2"></i>
+                                        <small>У вас есть несохраненные изменения</small>
+                                    </div>
+                                )}
+
+                                {/* Кнопки действий */}
+                                <div className="d-grid gap-2">
+                                    <button 
+                                        type="button" 
+                                        onClick={handleSave}
+                                        className="btn btn-primary"
+                                        disabled={isLoading || !hasChanges}
+                                    >
+                                        {isLoading ? (
+                                            <>
+                                                <span className="spinner-border spinner-border-sm me-2" />
+                                                Сохранение...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <i className="bi bi-check-lg me-2"></i>
+                                                Сохранить изменения
+                                            </>
+                                        )}
+                                    </button>
+                                    
+                                    <button 
+                                        type="button" 
+                                        className="btn btn-outline-secondary"
+                                        onClick={handleCancel}
+                                        disabled={isLoading}
+                                    >
+                                        <i className="bi bi-x-lg me-2"></i>
+                                        Отмена
+                                    </button>
+                                </div>
                             </div>
                         </div>
 
-                        <div className="row row-cols-1 row-cols-md-2 g-4">
-                            <div className="col">
-                                <input required type="file" onChange={(e) => setVideo(e.target.files[0])} className="align-middle form-control-lg my-2" name="video" />
-                                <button className="btn btn-primary" onClick={getImage}>Сделать из карда превью</button>
+                        {/* Информация о видео */}
+                        {currentVideo && (
+                            <div className="card shadow-sm mt-3">
+                                <div className="card-header">
+                                    <h6 className="card-title mb-0">
+                                        <i className="bi bi-info-circle me-2"></i>
+                                        Информация
+                                    </h6>
+                                </div>
+                                <div className="card-body py-2">
+                                    <small className="text-muted">
+                                        <div>ID: {currentVideo.id}</div>
+                                        {currentVideo.created_at && (
+                                            <div>Создано: {new Date(currentVideo.created_at).toLocaleDateString()}</div>
+                                        )}
+                                    </small>
+                                </div>
                             </div>
-                            <div className="col">
-                                {image !== null ? <img src={image} alt="" crossOrigin="anonymous" className="img-fluid" /> : null}
-                            </div>
-                        </div>
-
-                        <hr />
-
-                        <div className="row p-2">
-                            <h3>Имя:</h3>
-                            {videoData?.name !== undefined ?
-                                <input type="text" onChange={(e) => setEditedVideoData({ ...editedVideoData, name: e.target.value })} value={editedVideoData.name} className="form-control-lg form-control convex-button" id="name" defaultValue={videoData.name} />
-                                : <p className="placeholder-glow"><span className="placeholder col-8 placeholder-lg"></span></p>
-                            }
-                        </div>
-
-                        <div className="row p-2">
-                            <h3>Описание:</h3>
-                            {videoData?.description !== undefined ?
-                                <textarea className="form-control form-control-lg convex-button" onChange={(e) => setEditedVideoData({ ...editedVideoData, description: e.target.value })} value={editedVideoData.description} id="exampleFormControlTextarea1" defaultValue={videoData.description} rows="3"></textarea> :
-                                <p className="placeholder-glow mb-0"><span className="placeholder col-8 placeholder-sm"></span><span className="placeholder col-8 placeholder-sm"></span><span className="placeholder col-8 placeholder-sm"></span></p>
-                            }
-                        </div>
-
-                        <hr />
-
-                        <div className="row p-2">
-                            <h3>Теги:</h3>
-                            <h4 className="overflow-hidden">
-                                {videoTags?.map((el) => el !== "" && (
-                                    <span key={el} className="badge text-bg-secondary mt-2">{el}</span>
-                                ))}
-                            </h4>
-                            <input type="text" className="form-control form-control-lg mt-2 convex-button" placeholder="Теги видео (через запятую)" defaultValue={videoData.tags?.map((el) => el.text).join(', ')}
-                                onChange={(e) => {
-                                    setVideoTags(Array.from(e.target.value.split(',').filter((el) => el.trim() !== "").map((el) => el.trim())));
-                                }}
-                            />
-                        </div>
-
+                        )}
                     </div>
                 </div>
             </div>
         </Fragment>
-    )
+    );
 }

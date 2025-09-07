@@ -1,6 +1,6 @@
 
 import { createSlice } from "@reduxjs/toolkit";
-import { getCurrentVideo, videoRatingUp, videoRatingDown, deleteVideo } from "../video/videoRequests";
+import { getCurrentVideo, videoRatingUp, videoRatingDown, deleteVideo, updateVideo } from "../video/videoRequests";
 
 const initialState = {
     id: null,
@@ -27,7 +27,7 @@ const currentVideoSlice = createSlice({
     name: 'currentVideo',
     initialState,
     reducers: {
-        
+
     },
     extraReducers: (builder) => {
         // GET VIDEOS
@@ -64,6 +64,30 @@ const currentVideoSlice = createSlice({
 
         builder.addCase(deleteVideo.fulfilled, (state) => {
             state = initialState;
+        })
+        
+        builder.addCase(updateVideo.pending, (state) => {
+            state.loading = true;
+        })
+        builder.addCase(updateVideo.fulfilled, (state, action) => {
+            // Обновляем все поля из ответа
+            state.id = action.payload.id;
+            state.name = action.payload.name;
+            state.description = action.payload.description;
+            state.duration = action.payload.duration;
+            state.rating = action.payload.rating;
+            state.tags = action.payload.tags;
+            state.user = action.payload.user;
+            state.views = action.payload.views;
+            state.updated_at = action.payload.updated_at;
+            state.created_at = action.payload.created_at;
+            state.video_path = action.payload.video_path;
+            state.preview_path = action.payload.preview_path;
+            state.loading = false;
+        })
+        builder.addCase(updateVideo.rejected, (state, action) => {
+            state.error = true;
+            state.loading = false;
         })
     },
 })

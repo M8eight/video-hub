@@ -139,13 +139,18 @@ public class VideoService implements VideoDAO {
         return newVideo;
     }
 
+
     @Override
     @Transactional
     public Video editVideo(EditVideoDto editVideoDto) {
         Video video = videoRepository.findById(editVideoDto.getId()).orElseThrow();
 
-        video.setName(editVideoDto.getName());
-        video.setDescription(editVideoDto.getDescription());
+        if (editVideoDto.getName() == null || editVideoDto.getName().trim().isEmpty()) {
+            throw new IllegalArgumentException("Video name cannot be empty");
+        }
+
+        video.setName(editVideoDto.getName().trim());
+        video.setDescription(editVideoDto.getDescription().trim());
         if (editVideoDto.getVideoTags() != null) {
             Set<VideoTag> videoTagList = new HashSet<>();
             for (String el : editVideoDto.getVideoTags()) {
@@ -155,32 +160,15 @@ public class VideoService implements VideoDAO {
             video.setTags(videoTagList);
         }
 
-        //File edit
-        String transientVideoPath = video.getVideo_path();
         String transientPreviewPath = video.getPreview_path();
-        int transientDuration = video.getDuration();
-
-        if (editVideoDto.getVideoFile() != null) {
-            transientVideoPath = fileStorageManager.save(editVideoDto.getVideoFile(), StorageFileType.VIDEO);
-            fileStorageManager.delete(video.getVideo_path(), StorageFileType.VIDEO);
-            transientDuration = ffmpegHelpers.getDuration(transientVideoPath);
-            ffmpegHelpers.createVideoCutPreview(transientVideoPath, transientDuration);
-        }
-
-        if (editVideoDto.getPreviewDataUrl() != null) {
-            String dataUrl = editVideoDto.getPreviewDataUrl();
-            MultipartFile multipartFile = fileStorageManager.dataUrlToMultipartFile(dataUrl);
-            transientPreviewPath = fileStorageManager.save(multipartFile, StorageFileType.PICTURE);
+        if (editVideoDto.getPreviewFile() != null) {
+            MultipartFile previewFile = editVideoDto.getPreviewFile();
+            transientPreviewPath = fileStorageManager.save(previewFile, StorageFileType.PICTURE);
             fileStorageManager.delete(video.getPreview_path(), StorageFileType.PICTURE);
         }
 
-        if (editVideoDto.getVideoFile() != null && editVideoDto.getPreviewDataUrl() == null) {
-            transientPreviewPath = ffmpegHelpers.getImageFromVideo(transientVideoPath, transientDuration);
-        }
-
-        video.setVideo_path(transientVideoPath);
         video.setPreview_path(transientPreviewPath);
-        video.setDuration(transientDuration);
+        log.info("transient {}", transientPreviewPath);
 
         return videoRepository.save(video);
     }
